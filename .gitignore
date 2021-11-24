@@ -25,3 +25,5 @@ fp-info-cache
 *.xml
 *.csv
 /old
+/OpenFlowMeter-cache.lib
+/OpenFlowMeter_CurrentSource-cache.lib
