@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 7
+Sheet 1 5
 Title "Open Flow Meter"
 Date "2021-03-30"
 Rev "1"
@@ -14,19 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Sheet
-S 1000 1000 2150 500 
+S 1950 2900 2150 500 
 U 606200AB
 F0 "Controller" 50
 F1 "OpenFlowMeter_Controller.sch" 50
-$EndSheet
-$Sheet
-S 5100 3000 1650 550 
-U 60624FF4
-F0 "DAC 1" 50
-F1 "OpenFlowMeter_DAC.sch" 50
-F2 "Uout" O R 6750 3100 50 
-F3 "SCL" I L 5100 3100 50 
-F4 "SDA" B L 5100 3200 50 
 $EndSheet
 $Sheet
 S 7700 3000 1800 550 
@@ -37,85 +28,6 @@ F2 "ISET" I L 7700 3100 50
 F3 "IMEAS" O L 7700 3200 50 
 F4 "UMEAS" O L 7700 3300 50 
 $EndSheet
-Wire Wire Line
-	7700 3100 6750 3100
-$Sheet
-S 5100 3800 1650 500 
-U 6062EBC0
-F0 "ADC" 50
-F1 "OpenFlowMeter_ADC.sch" 50
-F2 "IN0" I R 6750 3900 50 
-F3 "IN1" I R 6750 4000 50 
-F4 "IN2" I R 6750 4100 50 
-F5 "IN3" I R 6750 4200 50 
-F6 "SCL" I L 5100 4000 50 
-F7 "SDA" B L 5100 4100 50 
-$EndSheet
-Wire Wire Line
-	6750 3900 7400 3900
-Wire Wire Line
-	7400 3900 7400 3200
-Wire Wire Line
-	7400 3200 7700 3200
-Wire Wire Line
-	6750 4000 7500 4000
-Wire Wire Line
-	7500 4000 7500 3300
-Wire Wire Line
-	7500 3300 7700 3300
-$Comp
-L Device:R R14
-U 1 1 6064B5B5
-P 10250 1200
-F 0 "R14" H 10320 1246 50  0000 L CNN
-F 1 "10k" H 10320 1155 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" V 10180 1200 50  0001 C CNN
-F 3 "~" H 10250 1200 50  0001 C CNN
-	1    10250 1200
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R R13
-U 1 1 6064C030
-P 9950 1200
-F 0 "R13" H 10020 1246 50  0000 L CNN
-F 1 "10k" H 10020 1155 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" V 9880 1200 50  0001 C CNN
-F 3 "~" H 9950 1200 50  0001 C CNN
-	1    9950 1200
-	1    0    0    -1  
-$EndComp
-Text Label 5000 4000 2    50   ~ 0
-SCL
-Text Label 5000 4100 2    50   ~ 0
-SDA
-Text Label 5000 3100 2    50   ~ 0
-SCL
-Text Label 5000 3200 2    50   ~ 0
-SDA
-Wire Wire Line
-	4800 3100 5100 3100
-Wire Wire Line
-	4800 3200 5100 3200
-$Sheet
-S 5100 4550 1650 550 
-U 606570C9
-F0 "DAC 2" 50
-F1 "OpenFlowMeter_DAC.sch" 50
-F2 "Uout" O R 6750 4650 50 
-F3 "SCL" I L 5100 4650 50 
-F4 "SDA" B L 5100 4750 50 
-$EndSheet
-Wire Wire Line
-	7700 4650 6750 4650
-Text Label 5000 4650 2    50   ~ 0
-SCL
-Text Label 5000 4750 2    50   ~ 0
-SDA
-Wire Wire Line
-	4800 4650 5100 4650
-Wire Wire Line
-	4800 4750 5100 4750
 $Sheet
 S 7700 4550 1800 550 
 U 6065743C
@@ -125,44 +37,140 @@ F2 "ISET" I L 7700 4650 50
 F3 "IMEAS" O L 7700 4750 50 
 F4 "UMEAS" O L 7700 4850 50 
 $EndSheet
-Text Label 10550 1400 2    50   ~ 0
-SCL
-Text Label 10550 1500 2    50   ~ 0
-SDA
-Wire Wire Line
-	10650 1400 10250 1400
-Wire Wire Line
-	10650 1500 9950 1500
-Wire Wire Line
-	10250 1400 10250 1350
-Connection ~ 10250 1400
-Wire Wire Line
-	10250 1400 9500 1400
-Wire Wire Line
-	9950 1500 9950 1350
-Connection ~ 9950 1500
-Wire Wire Line
-	9950 1500 9500 1500
-Wire Wire Line
-	4800 4100 5100 4100
-Wire Wire Line
-	4800 4000 5100 4000
-Wire Wire Line
-	7700 4750 7500 4750
-Wire Wire Line
-	7500 4750 7500 4100
-Wire Wire Line
-	7500 4100 6750 4100
-Wire Wire Line
-	7700 4850 7400 4850
-Wire Wire Line
-	7400 4850 7400 4200
-Wire Wire Line
-	7400 4200 6750 4200
-Text Notes 5100 2750 0    118  ~ 24
+Text Notes 1950 2650 0    118  ~ 24
 Powered with 3V3
 Text Notes 7700 2750 0    118  ~ 24
 Powered with 24V
-Text Notes 7050 6800 0    118  ~ 0
+Text Notes 7050 6800 0    118  ~ 24
 Two channel flow meter.
+$Comp
+L Mechanical:MountingHole_Pad H1
+U 1 1 61B62926
+P 5750 6700
+F 0 "H1" H 5850 6703 50  0000 L CNN
+F 1 "MountingHole_Pad" H 5850 6658 50  0001 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 5750 6700 50  0001 C CNN
+F 3 "~" H 5750 6700 50  0001 C CNN
+	1    5750 6700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2
+U 1 1 61B6647F
+P 6050 6700
+F 0 "H2" H 6150 6703 50  0000 L CNN
+F 1 "MountingHole_Pad" H 6150 6658 50  0001 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 6050 6700 50  0001 C CNN
+F 3 "~" H 6050 6700 50  0001 C CNN
+	1    6050 6700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H3
+U 1 1 61B66B14
+P 6350 6700
+F 0 "H3" H 6450 6703 50  0000 L CNN
+F 1 "MountingHole_Pad" H 6450 6658 50  0001 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 6350 6700 50  0001 C CNN
+F 3 "~" H 6350 6700 50  0001 C CNN
+	1    6350 6700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4
+U 1 1 61B6715E
+P 6650 6700
+F 0 "H4" H 6750 6703 50  0000 L CNN
+F 1 "MountingHole_Pad" H 6750 6658 50  0001 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad_Via" H 6650 6700 50  0001 C CNN
+F 3 "~" H 6650 6700 50  0001 C CNN
+	1    6650 6700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5750 6800 5750 6900
+$Comp
+L power:GND #PWR?
+U 1 1 61B6C0DB
+P 5750 6900
+AR Path="/6062503A/61B6C0DB" Ref="#PWR?"  Part="1" 
+AR Path="/6065743C/61B6C0DB" Ref="#PWR?"  Part="1" 
+AR Path="/61B6C0DB" Ref="#PWR0102"  Part="1" 
+F 0 "#PWR0102" H 5750 6650 50  0001 C CNN
+F 1 "GND" H 5755 6727 50  0000 C CNN
+F 2 "" H 5750 6900 50  0001 C CNN
+F 3 "" H 5750 6900 50  0001 C CNN
+	1    5750 6900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 6800 6050 6900
+$Comp
+L power:GND #PWR?
+U 1 1 61B6C6FF
+P 6050 6900
+AR Path="/6062503A/61B6C6FF" Ref="#PWR?"  Part="1" 
+AR Path="/6065743C/61B6C6FF" Ref="#PWR?"  Part="1" 
+AR Path="/61B6C6FF" Ref="#PWR0108"  Part="1" 
+F 0 "#PWR0108" H 6050 6650 50  0001 C CNN
+F 1 "GND" H 6055 6727 50  0000 C CNN
+F 2 "" H 6050 6900 50  0001 C CNN
+F 3 "" H 6050 6900 50  0001 C CNN
+	1    6050 6900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6350 6800 6350 6900
+$Comp
+L power:GND #PWR?
+U 1 1 61B6CCDC
+P 6350 6900
+AR Path="/6062503A/61B6CCDC" Ref="#PWR?"  Part="1" 
+AR Path="/6065743C/61B6CCDC" Ref="#PWR?"  Part="1" 
+AR Path="/61B6CCDC" Ref="#PWR0109"  Part="1" 
+F 0 "#PWR0109" H 6350 6650 50  0001 C CNN
+F 1 "GND" H 6355 6727 50  0000 C CNN
+F 2 "" H 6350 6900 50  0001 C CNN
+F 3 "" H 6350 6900 50  0001 C CNN
+	1    6350 6900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6650 6800 6650 6900
+$Comp
+L power:GND #PWR?
+U 1 1 61B6D37D
+P 6650 6900
+AR Path="/6062503A/61B6D37D" Ref="#PWR?"  Part="1" 
+AR Path="/6065743C/61B6D37D" Ref="#PWR?"  Part="1" 
+AR Path="/61B6D37D" Ref="#PWR0112"  Part="1" 
+F 0 "#PWR0112" H 6650 6650 50  0001 C CNN
+F 1 "GND" H 6655 6727 50  0000 C CNN
+F 2 "" H 6650 6900 50  0001 C CNN
+F 3 "" H 6650 6900 50  0001 C CNN
+	1    6650 6900
+	1    0    0    -1  
+$EndComp
+$Sheet
+S 5150 3000 1350 2100
+U 61B7A600
+F0 "PWM Filter" 50
+F1 "OpenFlowMeter_PWM_Filter.sch" 50
+F2 "OUT1" O R 6500 3100 50 
+F3 "OUT2" O R 6500 4650 50 
+F4 "IN1" I L 5150 3100 50 
+F5 "IN2" I L 5150 4650 50 
+$EndSheet
+Wire Wire Line
+	7700 3100 6500 3100
+Wire Wire Line
+	7700 4650 6500 4650
+Wire Wire Line
+	7200 4750 7700 4750
+Wire Wire Line
+	7200 4850 7700 4850
+Wire Wire Line
+	7200 3300 7700 3300
+Wire Wire Line
+	7200 3200 7700 3200
 $EndSCHEMATC
