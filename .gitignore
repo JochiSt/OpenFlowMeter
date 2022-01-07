@@ -24,8 +24,13 @@ fp-info-cache
 # Exported BOM files
 *.xml
 *.csv
+
+# additional ignores
 /old
 /OpenFlowMeter-cache.lib
 /OpenFlowMeter_CurrentSource-cache.lib
-#auto_saved_files#
+
+*auto_saved_files*
 *.zip
+
+
