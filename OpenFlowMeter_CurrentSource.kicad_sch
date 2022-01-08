@@ -545,6 +545,7 @@
     )
   )
 
+
   (junction (at 181.61 115.57) (diameter 0) (color 0 0 0 0)
     (uuid 2e0a9f64-1b78-4597-8d50-d12d2268a95a)
   )
@@ -1314,7 +1315,7 @@
     (property "Value" "C" (id 1) (at 181.991 64.643 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" (id 2) (at 180.0352 67.31 0)
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder" (id 2) (at 180.0352 67.31 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 179.07 63.5 0)
@@ -1333,7 +1334,7 @@
     (property "Value" "C" (id 1) (at 125.603 63.119 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" (id 2) (at 128.27 65.0748 0)
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder" (id 2) (at 128.27 65.0748 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 124.46 66.04 0)
