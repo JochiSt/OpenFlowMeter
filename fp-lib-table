@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "w_conn_strip")(type "KiCad")(uri "${KIPRJMOD}/w_conn_strip.pretty")(options "")(descr ""))
+)
