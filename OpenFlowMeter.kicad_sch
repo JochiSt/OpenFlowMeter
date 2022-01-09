@@ -1261,6 +1261,15 @@
     (path "/00000000-0000-0000-0000-0000606200ab/cc400159-3146-4e9a-aa7b-0cce747ba63e"
       (reference "#PWR041") (unit 1) (value "GND") (footprint "")
     )
+    (path "/00000000-0000-0000-0000-0000606200ab/e569f607-4ead-48c0-a9b4-d8d706fb6a6b"
+      (reference "#PWR042") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/544fe985-5c83-4306-bf8e-183bfb185a78"
+      (reference "#PWR043") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/1e2036ce-6ff9-411c-a2ba-e45611783d45"
+      (reference "#PWR044") (unit 1) (value "GND") (footprint "")
+    )
     (path "/00000000-0000-0000-0000-00006065743c/00000000-0000-0000-0000-000060648385"
       (reference "#PWR0101") (unit 1) (value "GND") (footprint "")
     )
@@ -1362,6 +1371,12 @@
     )
     (path "/00000000-0000-0000-0000-0000606200ab/b43a890e-8010-49cc-bea8-f2de1708f976"
       (reference "C18") (unit 1) (value "C") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/b25297ba-abc3-49fe-b7c4-bb72a72dde5a"
+      (reference "C19") (unit 1) (value "C") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/d569f76e-17e6-4f2c-979e-8668808a9798"
+      (reference "C20") (unit 1) (value "C") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
     (path "/00000000-0000-0000-0000-000061b62926"
       (reference "H1") (unit 1) (value "MountingHole_Pad") (footprint "MountingHole:MountingHole_3.2mm_M3_Pad_Via")
@@ -1521,6 +1536,9 @@
     )
     (path "/00000000-0000-0000-0000-00006065743c/00000000-0000-0000-0000-00006062f4d0"
       (reference "U6") (unit 3) (value "LT1492") (footprint "Package_SO:OnSemi_Micro8")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/7b03310a-49a7-4bf3-a428-317aeef7b319"
+      (reference "Y1") (unit 1) (value "12 MHz") (footprint "Crystal:Crystal_SMD_EuroQuartz_MT-4Pin_3.2x2.5mm_HandSoldering")
     )
   )
 )
