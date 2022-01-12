@@ -1474,9 +1474,6 @@
     (path "/00000000-0000-0000-0000-0000606200ab/dca700b6-f807-4bfd-a68f-b981f9c20e86"
       (reference "#PWR060") (unit 1) (value "GND") (footprint "")
     )
-    (path "/00000000-0000-0000-0000-0000606200ab/a7c826ed-ccdd-4e1c-82e5-632e469fc7af"
-      (reference "#PWR061") (unit 1) (value "GND") (footprint "")
-    )
     (path "/00000000-0000-0000-0000-0000606200ab/2a84ed17-b1a5-4d4b-89bd-e3ad61041264"
       (reference "#PWR062") (unit 1) (value "+3.3V") (footprint "")
     )
@@ -1560,6 +1557,12 @@
     )
     (path "/00000000-0000-0000-0000-0000606200ab/568d0beb-be3c-42db-a816-bc4900ed0286"
       (reference "#PWR0121") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/86a387d7-d59d-4cb0-8812-3483f6c46b2b"
+      (reference "#PWR0122") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/eb2fc9ee-b2da-4568-af10-e538cf222f1b"
+      (reference "#PWR0123") (unit 1) (value "+3.3V") (footprint "")
     )
     (path "/00000000-0000-0000-0000-00006062503a/00000000-0000-0000-0000-000061b370db"
       (reference "C1") (unit 1) (value "100n") (footprint "Capacitor_SMD:C_0603_1608Metric")
@@ -1690,6 +1693,9 @@
     (path "/b7455cb0-7b2c-4705-81e8-9f04239d7398"
       (reference "JP1") (unit 1) (value "Jumper_2_Open") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
     )
+    (path "/00000000-0000-0000-0000-0000606200ab/46976201-7082-4572-8aa8-ac3f9a99a878"
+      (reference "JP2") (unit 1) (value "Jumper_2_Bridged") (footprint "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm")
+    )
     (path "/00000000-0000-0000-0000-00006062503a/00000000-0000-0000-0000-00006066c81e"
       (reference "Q1") (unit 1) (value "BC856") (footprint "Package_TO_SOT_SMD:SOT-23")
     )
@@ -1815,6 +1821,9 @@
     )
     (path "/00000000-0000-0000-0000-00006062503a/5c04f4fc-2196-46f0-a4d5-92171f09cb2c"
       (reference "R40") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/00000000-0000-0000-0000-0000606200ab/b926082b-d1ff-4416-afc8-75b26aa45cde"
+      (reference "R41") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-00006062503a/00000000-0000-0000-0000-000061b0b87d"
       (reference "TH1") (unit 1) (value "PT100") (footprint "Resistor_SMD:R_0805_2012Metric")
