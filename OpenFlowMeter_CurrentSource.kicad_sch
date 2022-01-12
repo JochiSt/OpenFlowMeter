@@ -777,7 +777,7 @@
     (uuid bd793ae5-cde5-43f6-8def-1f95f35b1be6)
   )
 
-  (wire (pts (xy 38.1 81.28) (xy 46.99 81.28))
+  (wire (pts (xy 30.48 81.28) (xy 46.99 81.28))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid be41ac9e-b8ba-4089-983b-b84269707f1c)
   )
@@ -878,7 +878,7 @@
     (uuid f44d04c5-0d17-4d52-8328-ef3b4fdfba5f)
   )
 
-  (hierarchical_label "ISET" (shape input) (at 38.1 81.28 180)
+  (hierarchical_label "ISET" (shape input) (at 30.48 81.28 180)
     (effects (font (size 1.27 1.27)) (justify right))
     (uuid 44646447-0a8e-4aec-a74e-22bf765d0f33)
   )
