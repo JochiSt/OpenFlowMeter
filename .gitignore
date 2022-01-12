@@ -35,3 +35,6 @@ fp-info-cache
 
 /grb
 w_conn_strip.pretty/*.kicad_mod
+
+# firmware files
+firmware/build
