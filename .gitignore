@@ -41,3 +41,4 @@ firmware/build
 
 # simulation generated files
 *.log
+*.raw
