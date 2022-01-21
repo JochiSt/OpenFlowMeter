@@ -1,6 +1,6 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
+	******************************************************************************
   * @file           : main.h
   * @brief          : Header for main.c file.
   *                   This file contains the common defines of the application.
@@ -68,6 +68,7 @@ void Error_Handler(void);
 #define LED1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+#define STDOUT_UART huart1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -36,6 +36,7 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
+Src/syscalls.c \
 Src/main.c \
 Src/gpio.c \
 Src/adc.c \

@@ -29,6 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <syscalls.h>
 
 /* USER CODE END Includes */
 
@@ -106,6 +107,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("successfully started everything\n");
   while (1)
   {
     /* USER CODE END WHILE */
