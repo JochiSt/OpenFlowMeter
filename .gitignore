@@ -25,6 +25,9 @@ fp-info-cache
 *.xml
 *.csv
 
+# generated outputs
+/output
+
 # additional ignores
 /old
 /OpenFlowMeter-cache.lib
