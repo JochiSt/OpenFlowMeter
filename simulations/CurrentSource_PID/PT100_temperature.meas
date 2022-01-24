@@ -1,0 +1,2 @@
+.meas TRAN Rpt100 PARAM V(voltage_measure)/I(B1)
+.meas TRAN Tpt100 PARAM (Rpt100 / 100 -1)/3.9083e-3
