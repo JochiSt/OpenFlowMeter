@@ -46,3 +46,4 @@ firmware/build
 *.log
 *.raw
 *.plt
+*.mout
