@@ -14,11 +14,3 @@ The working principle of this device is adapted from a proposal of the LHC gas g
 
 # PCBs
 PCBs are available from AISLER https://aisler.net/p/MVHMBVKT
-
-## SmartTest Error
-When AISLER is doing their SmartTest, the following error is reported.
-![](https://github.com/JochiSt/OpenFlowMeter/blob/db96e790106f075d02dbe3f1536355f5300a0a81/images/aisler/SmartTestResult.PNG)
-
-This error is fine, because the jumper 
-
-![](https://github.com/JochiSt/OpenFlowMeter/blob/db96e790106f075d02dbe3f1536355f5300a0a81/images/aisler/EEPROM_jumper.PNG) is closed on default connecting pin 7 of the EEPROM to GND.
