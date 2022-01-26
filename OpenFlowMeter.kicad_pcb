@@ -10,6 +10,7 @@
     (date "2022-01-11")
     (rev "1")
     (comment 1 "Jochen Steinmann")
+    (comment 4 "AISLER Project ID: MVHMBVKT")
   )
 
   (layers
@@ -1420,9 +1421,9 @@
     (fp_line (start 1 0.625) (end -1 0.625) (layer "F.Fab") (width 0.1) (tstamp 40fb713b-3e1b-4ca1-b32b-5a9aea3df735))
     (fp_line (start 1 -0.625) (end 1 0.625) (layer "F.Fab") (width 0.1) (tstamp d476ee99-f915-47bb-bc5d-98e60df88272))
     (fp_line (start -1 0.625) (end -1 -0.625) (layer "F.Fab") (width 0.1) (tstamp d998c3d6-e590-4c0a-8435-47c499599d7e))
-    (pad "1" smd roundrect locked (at -0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902)
+    (pad "1" smd roundrect locked (at -0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902439)
       (net 4 "/Current Source 1/Iout") (pintype "passive") (tstamp ed78cd7a-c719-43c5-85ba-627e550e56d3))
-    (pad "2" smd roundrect locked (at 0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902)
+    (pad "2" smd roundrect locked (at 0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902439)
       (net 40 "GND") (pintype "passive") (tstamp 39e4b6eb-a1fe-4cb5-a6fd-282a9ff5da5f))
     (model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0805_2012Metric.wrl"
       (offset (xyz 0 0 0))
@@ -1462,9 +1463,9 @@
     (fp_line (start -1 0.625) (end -1 -0.625) (layer "F.Fab") (width 0.1) (tstamp bda15ee9-b44d-4dc8-b2b1-024f6516d860))
     (fp_line (start 1 0.625) (end -1 0.625) (layer "F.Fab") (width 0.1) (tstamp c1f22372-d0a7-487f-b12d-572047ecc2f5))
     (fp_line (start -1 -0.625) (end 1 -0.625) (layer "F.Fab") (width 0.1) (tstamp c792d8d9-4817-4d6f-a57e-3c117c43a497))
-    (pad "1" smd roundrect locked (at -0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902)
+    (pad "1" smd roundrect locked (at -0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902439)
       (net 42 "/Current Source 2/Iout") (pintype "passive") (tstamp 64b90e1f-b66a-437d-be77-1d73d8d72146))
-    (pad "2" smd roundrect locked (at 0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902)
+    (pad "2" smd roundrect locked (at 0.9125 0 270) (size 1.025 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.243902439)
       (net 40 "GND") (pintype "passive") (tstamp 32450ce7-fbe5-4a8a-a4f0-430408f6414a))
     (model "${KICAD6_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_0805_2012Metric.wrl"
       (offset (xyz 0 0 0))
