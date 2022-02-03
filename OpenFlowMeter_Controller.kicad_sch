@@ -2051,6 +2051,11 @@
     (uuid fcd1c98a-d394-4066-97bb-34d554a33b8b)
   )
 
+  (text "With 2k2 the LEDs are quite dimmed.\nMaybe reduce to 1k2."
+    (at 159.385 152.4 0)
+    (effects (font (size 1.27 1.27) italic) (justify left bottom))
+    (uuid 070569f3-8118-41a9-ae0d-9ac889645e9d)
+  )
   (text "JTAG 4 pin debug interface" (at 156.21 118.11 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 2ab5e118-ca26-4402-a06a-d967fb73b293)
@@ -2078,6 +2083,10 @@
   (text "8k2" (at 93.345 52.705 0)
     (effects (font (size 1.27 1.27) italic) (justify left bottom))
     (uuid 687272a7-823c-45f1-9323-63f4d0c9f2e0)
+  )
+  (text "Not on board v1.0" (at 71.12 161.925 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 761ae40f-3f8a-403d-a7cc-68e01bb7c218)
   )
   (text "I2C extension" (at 13.97 166.37 0)
     (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
