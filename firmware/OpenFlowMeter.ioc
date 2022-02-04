@@ -290,6 +290,7 @@ RCC.HCLKFreq_Value=54000000
 RCC.HSEDivPLL=RCC_HSE_PREDIV_DIV2
 RCC.HSE_VALUE=12000000
 RCC.IPParameters=ADCFreqValue,ADCPresc,AHBFreq_Value,APB1CLKDivider,APB1Freq_Value,APB1TimFreq_Value,APB2Freq_Value,APB2TimFreq_Value,FCLKCortexFreq_Value,FamilyName,HCLKFreq_Value,HSEDivPLL,HSE_VALUE,MCOFreq_Value,PLLCLKFreq_Value,PLLMCOFreq_Value,PLLMUL,PLLSourceVirtual,SYSCLKFreq_VALUE,SYSCLKSource,TimSysFreq_Value,USBFreq_Value,USBPrescaler,VCOOutput2Freq_Value
+RCC.LockedElements=APB1Output
 RCC.MCOFreq_Value=54000000
 RCC.PLLCLKFreq_Value=54000000
 RCC.PLLMCOFreq_Value=27000000
