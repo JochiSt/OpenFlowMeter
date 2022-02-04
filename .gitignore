@@ -46,3 +46,7 @@ firmware/build
 *.log
 *.raw
 *.plt
+
+# CubeMX generated reports
+firmware/OpenFlowMeter.txt
+firmware/OpenFlowMeter.pdf
