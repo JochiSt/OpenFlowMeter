@@ -105,6 +105,9 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   
+  printf("Compiled at "__DATE__" - "__TIME__"\r\n");
+  printf("Compiled with GCC Version "__VERSION__"\r\n");
+  
   // all OFF
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
@@ -135,7 +138,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  printf("successfully started everything\n");
+  printf("successfully started everything\r\n");
   while (1)
   {
     /* USER CODE END WHILE */
