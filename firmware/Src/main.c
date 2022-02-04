@@ -134,6 +134,8 @@ int main(void)
   HAL_Delay(500);
   HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
 
+
+  HAL_CAN_Start(&hcan); //start CAN
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -142,9 +144,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    /* USER CODE BEGIN 3 */
     HAL_Delay(500);
     HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
-    /* USER CODE BEGIN 3 */
+    
+    uint16_t can_id = 0x123;
+    uint8_t size = 2;
+    uint8_t * data = NULL;
+    CAN_send_data_frame(can_id, size, data);
+
   }
   /* USER CODE END 3 */
 }
@@ -207,6 +215,8 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  // switch ON red LED
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   while (1)
   {
   }
