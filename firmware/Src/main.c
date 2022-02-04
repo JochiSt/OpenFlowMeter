@@ -134,12 +134,22 @@ int main(void)
   HAL_Delay(500);
   HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
 
-
-  HAL_CAN_Start(&hcan); //start CAN
+  // START CAN Bus (required for transmission of messages)
+  printf("starting CAN Bus...\r\n");
+  HAL_CAN_Start(&hcan);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  // variables for transmitting CAN messages
+  uint16_t can_id = 0x123;
+  uint8_t size = 3;
+  uint8_t data[3] = {0};
+  data[0] =  0;
+  data[1] = 34;
+  data[2] = 56;
+  
   printf("successfully started everything\r\n");
   while (1)
   {
@@ -148,9 +158,7 @@ int main(void)
     HAL_Delay(500);
     HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     
-    uint16_t can_id = 0x123;
-    uint8_t size = 2;
-    uint8_t * data = NULL;
+    data[0] ++;
     CAN_send_data_frame(can_id, size, data);
 
   }

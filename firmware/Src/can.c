@@ -121,7 +121,6 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
  * @param data array
  */
 void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
-  uint8_t               TxData[8];
   uint32_t              TxMailbox;
   
   CAN_TxHeaderTypeDef   TxHeader;
@@ -129,12 +128,9 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
   TxHeader.StdId = can_id;      // message ID
   TxHeader.RTR = CAN_RTR_DATA;  // sending data frame
   TxHeader.DLC = size;          // length of data bytes
-  
-  TxData[0] = 1;
-  TxData[1] = 2;
-  
+   
   if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
-    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox) != HAL_OK){
+    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
       Error_Handler ();
     }
   }else{
