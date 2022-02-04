@@ -138,6 +138,9 @@ int main(void)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
   
+  printf("starting TIM2...\r\n");
+  HAL_TIM_Base_Start_IT(&htim2);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
