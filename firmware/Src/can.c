@@ -114,6 +114,35 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 
 /* USER CODE BEGIN 1 */
 
+/**
+ * send data frame via CAN bus
+ * @param can_id ID of frame
+ * @param size length of data
+ * @param data array
+ */
+void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
+  uint8_t               TxData[8];
+  uint32_t              TxMailbox;
+  
+  CAN_TxHeaderTypeDef   TxHeader;
+  TxHeader.IDE = CAN_ID_STD;    // use standard ID (not extended)
+  TxHeader.StdId = can_id;      // message ID
+  TxHeader.RTR = CAN_RTR_DATA;  // sending data frame
+  TxHeader.DLC = size;          // length of data bytes
+  
+  TxData[0] = 1;
+  TxData[1] = 2;
+  
+  if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
+    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox) != HAL_OK){
+      Error_Handler ();
+    }
+  }else{
+    // ignore message?
+    printf("No free CAN Mailbox\r\n");
+    HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+  }
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
