@@ -181,10 +181,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   // variables for transmitting CAN messages
   uint16_t can_id = 0x123;
-  uint8_t size = 8;
+  uint8_t size = 3;
   uint8_t data[8] = {0};
-  data[0] =  0;
-  data[1] = 34;
+  data[0] = 0x12;
+  data[1] = 0x34;
+  data[2] = 0x56;
+    
+  printf("sending CAN message\r\n");
+  CAN_send_data_frame(0x123, 3, data);
   
   printf("successfully started everything\r\n");
   while (1)
@@ -197,16 +201,37 @@ int main(void)
       can_message_received = 0;
     }
        
-    if( timer2_elapsed == 2 ){
-      data[0] ++;
-      data[2] = adcBuf[0];
-      data[3] = adcBuf[1];
-      data[4] = adcBuf[2];
-      data[5] = adcBuf[3];
-      data[6] = adcBuf[4];
-      data[7] = adcBuf[5];
-      CAN_send_data_frame(can_id, size, data);
+    if( timer2_elapsed == 2){ 
+      //CAN_send_data_frame(can_id, size, data);
       timer2_elapsed = 0;
+    }
+    // we have a new ADC result -> send out via CAN
+    if(has_new_adc_result){
+    
+      for(uint8_t i = 0; i<6; i++){
+        printf("%ld\t", adcBuf[i]);
+      }
+      printf("\r\n");
+    /*
+      data[0] = upper(adcBuf[0]);
+      data[1] = lower(adcBuf[0]);
+      data[2] = upper(adcBuf[1]);
+      data[3] = lower(adcBuf[1]);
+      data[4] = upper(adcBuf[2]);
+      data[5] = lower(adcBuf[2]);
+      data[6] = upper(adcBuf[3]);
+      data[7] = lower(adcBuf[3]);
+    */
+      //CAN_send_data_frame(can_id, size, data);
+    /*
+      data[0] = upper(adcBuf[4]);
+      data[1] = lower(adcBuf[4]);
+      data[2] = upper(adcBuf[5]);
+      data[3] = lower(adcBuf[5]);
+      CAN_send_data_frame(0x125, 4, data);
+    */
+      LED_ERROR_TOGGLE;
+      has_new_adc_result = 0;
     }
     
 //    TIM3->CCR1 = 128; // set channel 1 max. 1024
