@@ -41,6 +41,7 @@ void MX_CAN_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data);
+void CAN_prepare_filter(uint16_t canID);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
