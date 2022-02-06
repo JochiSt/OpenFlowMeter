@@ -50,6 +50,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+#define ADC_BUFLEN 6
+uint32_t adcBuf[ADC_BUFLEN];   // store the ADC samples
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -152,6 +154,7 @@ int main(void)
   /***************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
+
 /*  
   printf("starting TIM3 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
@@ -161,6 +164,17 @@ int main(void)
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
+  
+  // start ADC DMA
+  printf("starting ADC DMA...\r\n");
+  HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
+  
+  // Timer 4 triggers the ADC, so it must be after the DMA
+  // https://www.bartslinger.com/stm32/stm32-cubemx-timer-adc-dma-configuration/
+  printf("starting TIM4...\r\n");
+  //HAL_TIM_Base_Start_IT(&htim4);
+  // start output compare
+  HAL_TIM_OC_Start(&htim4, TIM_CHANNEL_4);
   /***************************************************************************/
   /* USER CODE END 2 */
 
@@ -168,11 +182,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   // variables for transmitting CAN messages
   uint16_t can_id = 0x123;
-  uint8_t size = 3;
-  uint8_t data[3] = {0};
+  uint8_t size = 8;
+  uint8_t data[8] = {0};
   data[0] =  0;
   data[1] = 34;
-  data[2] = 56;
   
   printf("successfully started everything\r\n");
   while (1)
@@ -187,6 +200,12 @@ int main(void)
        
     if( timer2_elapsed == 2 ){
       data[0] ++;
+      data[2] = adcBuf[0];
+      data[3] = adcBuf[1];
+      data[4] = adcBuf[2];
+      data[5] = adcBuf[3];
+      data[6] = adcBuf[4];
+      data[7] = adcBuf[5];
       CAN_send_data_frame(can_id, size, data);
       timer2_elapsed = 0;
     }
@@ -236,7 +255,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
