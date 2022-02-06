@@ -106,6 +106,7 @@ Mcu.UserName=STM32F103C8Tx
 MxCube.Version=6.1.2
 MxDb.Version=DB.6.0.10
 NVIC.BusFault_IRQn=true\:0\:0\:false\:false\:true\:false\:false
+NVIC.CAN1_RX1_IRQn=true\:0\:0\:false\:false\:true\:true\:true
 NVIC.DMA1_Channel1_IRQn=true\:0\:0\:false\:false\:true\:false\:true
 NVIC.DebugMonitor_IRQn=true\:0\:0\:false\:false\:true\:false\:false
 NVIC.ForceEnableDMAVector=true
