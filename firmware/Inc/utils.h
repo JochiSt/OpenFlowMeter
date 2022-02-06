@@ -15,4 +15,11 @@
 #define LED_CANTX_TOGGLE	HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
 #define LED_STATUS_TOGGLE	HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
 
+inline uint8_t upper(uint16_t val){
+	return (val >> 8) & 0xFF;
+};
+inline uint8_t lower(uint16_t val){
+	return (val & 0xFF);
+};
+
 #endif //__UTILS_H__
