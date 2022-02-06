@@ -55,7 +55,6 @@ void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-
 }
 /* TIM3 init function */
 void MX_TIM3_Init(void)
@@ -162,7 +161,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TIM2_IRQn);
   /* USER CODE BEGIN TIM2_MspInit 1 */
-
+  timer2_elapsed = 0;
   /* USER CODE END TIM2_MspInit 1 */
   }
   else if(tim_baseHandle->Instance==TIM3)
@@ -259,8 +258,12 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 /* USER CODE BEGIN 1 */
 // timer interrupt for periodic tasks
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
-    // ToDo: check for TIM2
-    LED_STATUS_TOGGLE;
+    // check for TIM2, this is our periodic timer
+    // every 500ms
+    if(htim->Instance==TIM2){
+      LED_STATUS_TOGGLE;
+      timer2_elapsed++;
+    }
 }
 /* USER CODE END 1 */
 

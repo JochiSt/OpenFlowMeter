@@ -36,7 +36,7 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN Private defines */
-
+uint8_t timer2_elapsed;
 /* USER CODE END Private defines */
 
 void MX_TIM2_Init(void);
