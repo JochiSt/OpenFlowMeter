@@ -155,11 +155,13 @@ int main(void)
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
 
-/*  
   printf("starting TIM3 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
-*/
+  
+  // initialise PWM outputs with 0
+  TIM3->CCR1 = 0; // set channel 1 max. 1024
+  TIM3->CCR2 = 0; // set channel 2 max. 1024  
   /***************************************************************************/
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
@@ -181,7 +183,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   // variables for transmitting CAN messages
   uint16_t can_id = 0x123;
-  uint8_t size = 3;
+  uint8_t size = 8;
   uint8_t data[8] = {0};
   data[0] = 0x12;
   data[1] = 0x34;
@@ -191,6 +193,7 @@ int main(void)
   CAN_send_data_frame(0x123, 3, data);
   
   printf("successfully started everything\r\n");
+    
   while (1)
   {
     /* USER CODE END WHILE */
@@ -200,42 +203,36 @@ int main(void)
     if (can_message_received){
       can_message_received = 0;
     }
-       
-    if( timer2_elapsed == 2){ 
-      //CAN_send_data_frame(can_id, size, data);
+    
+    // check timer 2 for doing periodic tasks
+    // one timer2_elapsed is equal to 500ms
+    if( timer2_elapsed >= 4){ 
+      CAN_send_data_frame(can_id, size, data);
       timer2_elapsed = 0;
     }
     // we have a new ADC result -> send out via CAN
-    if(has_new_adc_result){
+    if(has_new_adc_result >= 1){
     
-      for(uint8_t i = 0; i<6; i++){
+      // first 4 samples are from current sources
+      for(uint8_t i = 0; i<4; i++){
         printf("%ld\t", adcBuf[i]);
       }
+      uint32_t temperature = adcBuf[4];
+      uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
+      
+      printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
       printf("\r\n");
-    /*
-      data[0] = upper(adcBuf[0]);
-      data[1] = lower(adcBuf[0]);
-      data[2] = upper(adcBuf[1]);
-      data[3] = lower(adcBuf[1]);
-      data[4] = upper(adcBuf[2]);
-      data[5] = lower(adcBuf[2]);
-      data[6] = upper(adcBuf[3]);
-      data[7] = lower(adcBuf[3]);
-    */
-      //CAN_send_data_frame(can_id, size, data);
-    /*
-      data[0] = upper(adcBuf[4]);
-      data[1] = lower(adcBuf[4]);
-      data[2] = upper(adcBuf[5]);
-      data[3] = lower(adcBuf[5]);
-      CAN_send_data_frame(0x125, 4, data);
-    */
+      
+      for(uint8_t i = 0; i<4; i++){
+        data[2*i    ] = upper(adcBuf[i]);
+        data[2*i + 1] = lower(adcBuf[i]);
+      }
+      
       LED_ERROR_TOGGLE;
       has_new_adc_result = 0;
     }
     
-//    TIM3->CCR1 = 128; // set channel 1 max. 1024
-//    TIM3->CCR2 = 128; // set channel 2 max. 1024
+
 
   }
   /* USER CODE END 3 */
