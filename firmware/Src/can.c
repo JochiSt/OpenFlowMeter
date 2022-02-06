@@ -21,6 +21,12 @@
 #include "can.h"
 
 /* USER CODE BEGIN 0 */
+#include "syscalls.h"
+
+/// store the current used filter bank
+uint8_t can_filter_bank = 0;
+/// is there a new message, which we have received?
+uint8_t can_message_received = 0;
 
 /* USER CODE END 0 */
 
@@ -113,6 +119,49 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 }
 
 /* USER CODE BEGIN 1 */
+/**
+ * prepare CAN filter
+ * https://schulz-m.github.io/2017/03/23/stm32-can-id-filter/
+ *
+*/
+void CAN_prepare_filter(uint16_t canID){
+  if(can_filter_bank < 14){
+    CAN_FilterTypeDef canfilterconfig;
+    canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;
+    canfilterconfig.FilterBank            = can_filter_bank++;
+    canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;   // choose FIFO0 (each FiFo holds 3 messages)
+    canfilterconfig.FilterIdHigh          = 0x123<<5;
+    canfilterconfig.FilterIdLow           = 0x124<<5;
+    canfilterconfig.FilterMaskIdHigh      = 0x7FF<<5;
+    canfilterconfig.FilterMaskIdLow       = 0x7FF<<5;
+    canfilterconfig.FilterMode            = CAN_FILTERMODE_IDMASK;
+    canfilterconfig.FilterScale           = CAN_FILTERSCALE_16BIT;  // for usage with 2x standard ID
+    canfilterconfig.SlaveStartFilterBank  = 14;   // how many filters do we want to set for CAN1
+                                                  // irrelevant for single CAN types
+                                                  // STM32F103 -> single CAN 14 filter (0-13)
+
+    HAL_CAN_ConfigFilter(&hcan, &canfilterconfig);// set filter in CAN module
+  }else{
+    printf("No free CAN filter bank!\r\n");
+  }
+}
+
+
+CAN_RxHeaderTypeDef   RxHeader;
+uint8_t               RxData[8];
+/**
+ * CAN RX interrupt callback
+ */
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK){
+    Error_Handler();
+  }
+  if ((RxHeader.StdId == 0x123)) {
+	  can_message_received = 1;
+  }else{
+    printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
+  }
+}
 
 /**
  * send data frame via CAN bus
@@ -132,6 +181,8 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
   if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
     if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
       Error_Handler ();
+    }else{
+      HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
     }
   }else{
     // ignore message?

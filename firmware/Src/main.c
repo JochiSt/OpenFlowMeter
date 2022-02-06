@@ -45,13 +45,11 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,10 +107,10 @@ int main(void)
   printf("Compiled with GCC Version "__VERSION__"\r\n");
   
   // all OFF
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);    // red      -> failure
+  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);    // yellow   -> RX
+  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);    // yellow   -> TX
+  HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_SET);    // green    -> TIM2
 
   // all LEDs ON
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
@@ -137,9 +135,23 @@ int main(void)
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
+
+  // activate notifications
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
+	  Error_Handler();
+  }
   
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
+/*  
+  printf("starting TIM3 PWM...\r\n");
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
+*/
+
+  // Calibrate The ADC On Power-Up For Better Accuracy
+  printf("calibrating ADC...\r\n");
+  HAL_ADCEx_Calibration_Start(&hadc1);
   
   /* USER CODE END 2 */
 
@@ -158,11 +170,20 @@ int main(void)
   {
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
+
+    if (can_message_received){
+      HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+      can_message_received = 0;
+    }
+    
     HAL_Delay(500);
     HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     
     data[0] ++;
     CAN_send_data_frame(can_id, size, data);
+    
+//    TIM3->CCR1 = 128; // set channel 1 max. 1024
+//    TIM3->CCR2 = 128; // set channel 2 max. 1024
 
   }
   /* USER CODE END 3 */
