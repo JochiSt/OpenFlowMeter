@@ -101,7 +101,6 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI2_Init();
   MX_TIM3_Init();
-  MX_TIM4_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   /***************************************************************************/
@@ -169,18 +168,16 @@ int main(void)
   
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
-  HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
   
-  // Timer 4 triggers the ADC, so it must be after the DMA
-  // https://www.bartslinger.com/stm32/stm32-cubemx-timer-adc-dma-configuration/
-  printf("starting TIM4...\r\n");
-  // start output compare needed to trigger ADC
-  HAL_TIM_OC_Start(&htim4, TIM_CHANNEL_4);
+  
   /***************************************************************************/
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  
+  uint16_t timer2_elapsed_old = 0;
+  
   // variables for transmitting CAN messages
   uint16_t can_id = 0x123;
   uint8_t size = 8;
@@ -206,9 +203,14 @@ int main(void)
     
     // check timer 2 for doing periodic tasks
     // one timer2_elapsed is equal to 500ms
+    if( timer2_elapsed != timer2_elapsed_old){
+      HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
+      timer2_elapsed_old = timer2_elapsed;
+    }
     if( timer2_elapsed >= 4){ 
       CAN_send_data_frame(can_id, size, data);
       timer2_elapsed = 0;
+      timer2_elapsed_old = 0;
     }
     // we have a new ADC result -> send out via CAN
     if(has_new_adc_result >= 1){
