@@ -184,11 +184,12 @@ int main(void)
     if (can_message_received){
       can_message_received = 0;
     }
-    
-    HAL_Delay(500);
-    
-    data[0] ++;
-    CAN_send_data_frame(can_id, size, data);
+       
+    if( timer2_elapsed == 2 ){
+      data[0] ++;
+      CAN_send_data_frame(can_id, size, data);
+      timer2_elapsed = 0;
+    }
     
 //    TIM3->CCR1 = 128; // set channel 1 max. 1024
 //    TIM3->CCR2 = 128; // set channel 2 max. 1024
