@@ -172,8 +172,7 @@ int main(void)
   // Timer 4 triggers the ADC, so it must be after the DMA
   // https://www.bartslinger.com/stm32/stm32-cubemx-timer-adc-dma-configuration/
   printf("starting TIM4...\r\n");
-  //HAL_TIM_Base_Start_IT(&htim4);
-  // start output compare
+  // start output compare needed to trigger ADC
   HAL_TIM_OC_Start(&htim4, TIM_CHANNEL_4);
   /***************************************************************************/
   /* USER CODE END 2 */
