@@ -127,15 +127,19 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 void CAN_prepare_filter(uint16_t canID){
   if(can_filter_bank < 14){
     CAN_FilterTypeDef canfilterconfig;
-    canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;
-    canfilterconfig.FilterBank            = can_filter_bank++;
+    canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
+    canfilterconfig.FilterBank            = can_filter_bank++;  // increment filter bank by one
     canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;   // choose FIFO0 (each FiFo holds 3 messages)
+    
     canfilterconfig.FilterIdHigh          = 0x123<<5;
-    canfilterconfig.FilterIdLow           = 0x124<<5;
-    canfilterconfig.FilterMaskIdHigh      = 0x7FF<<5;
-    canfilterconfig.FilterMaskIdLow       = 0x7FF<<5;
-    canfilterconfig.FilterMode            = CAN_FILTERMODE_IDMASK;
+    canfilterconfig.FilterMaskIdHigh      = 0x7FF<<5;           // get just this ID    
+    
+    canfilterconfig.FilterIdLow           = 0x124<<5;           
+    canfilterconfig.FilterMaskIdLow       = 0x7FF<<5;           // get just this ID
+    
+    canfilterconfig.FilterMode            = CAN_FILTERMODE_IDMASK;  // or IDLIST for double amount of IDs (but no mask)
     canfilterconfig.FilterScale           = CAN_FILTERSCALE_16BIT;  // for usage with 2x standard ID
+    
     canfilterconfig.SlaveStartFilterBank  = 14;   // how many filters do we want to set for CAN1
                                                   // irrelevant for single CAN types
                                                   // STM32F103 -> single CAN 14 filter (0-13)
@@ -158,6 +162,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
   }
   if ((RxHeader.StdId == 0x123)) {
 	  can_message_received = 1;
+      printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
   }else{
     printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
   }
