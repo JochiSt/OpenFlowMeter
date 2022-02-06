@@ -197,7 +197,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
       uint16_t pwm1 = RxData[0] <<8 | RxData[1];
       uint16_t pwm2 = RxData[2] <<8 | RxData[3];
       
-      printf("PWM1 %ld PWM2 %ld\r\n", pwm1, pwm2);
+      printf("PWM1 %x PWM2 %x\r\n", pwm1, pwm2);
       
       TIM3->CCR1 = pwm1; // set channel 1 max. 1024
       TIM3->CCR2 = pwm2; // set channel 2 max. 1024  
