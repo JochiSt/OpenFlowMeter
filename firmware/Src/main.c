@@ -136,12 +136,17 @@ int main(void)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
 
-  CAN_prepare_filter(0x123);
+  // prepare CAN filter for receiving messages
+  CAN_prepare_filter(0x123, 0x124, 0);
+  CAN_prepare_filter(0x125, 0x126, 1);
 
   // activate notifications
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
 	  Error_Handler();
   }
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
+	  Error_Handler();
+  }  
   
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);

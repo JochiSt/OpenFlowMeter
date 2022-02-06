@@ -127,17 +127,32 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
  * https://schulz-m.github.io/2017/03/23/stm32-can-id-filter/
  *
 */
-void CAN_prepare_filter(uint16_t canID){
+void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   if(can_filter_bank < 14){
     CAN_FilterTypeDef canfilterconfig;
     canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
     canfilterconfig.FilterBank            = can_filter_bank++;  // increment filter bank by one
-    canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;   // choose FIFO0 (each FiFo holds 3 messages)
     
-    canfilterconfig.FilterIdHigh          = 0x123<<5;
+    // choose FIFO for filter (each FiFo holds 3 messages)
+    if(can_fifo == 0){
+      // use FIFO0
+      canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;
+    }else if(can_fifo == 1){
+      // use FIFO1
+      canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO1;
+    }else{
+      // automatic assignment of FIFO
+      if ( can_filter_bank % 2 == 0){
+        canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO1;
+      }else{
+        canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;
+      }
+    }
+        
+    canfilterconfig.FilterIdHigh          = canID0<<5;
     canfilterconfig.FilterMaskIdHigh      = 0x7FF<<5;           // get just this ID    
     
-    canfilterconfig.FilterIdLow           = 0x124<<5;           
+    canfilterconfig.FilterIdLow           = canID1<<5;           
     canfilterconfig.FilterMaskIdLow       = 0x7FF<<5;           // get just this ID
     
     canfilterconfig.FilterMode            = CAN_FILTERMODE_IDMASK;  // or IDLIST for double amount of IDs (but no mask)
@@ -163,6 +178,15 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK){
     Error_Handler();
   }
+  CAN_parse_message(RxHeader, RxData);
+}
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData) != HAL_OK){
+    Error_Handler();
+  }
+  CAN_parse_message(RxHeader, RxData);
+}
+void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   if ((RxHeader.StdId == 0x123)) {
 	  can_message_received = 1;
       printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
