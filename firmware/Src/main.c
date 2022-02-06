@@ -30,8 +30,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <syscalls.h>
-
+#include "syscalls.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,36 +102,38 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  
+  /***************************************************************************/
+  printf("\r\n\r\n");
   printf("Compiled at "__DATE__" - "__TIME__"\r\n");
   printf("Compiled with GCC Version "__VERSION__"\r\n");
-  
+  /***************************************************************************/
   // all OFF
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);    // red      -> failure
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);    // yellow   -> RX
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);    // yellow   -> TX
-  HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_SET);    // green    -> TIM2
+  LED_ERROR(SET);    // red      -> failure
+  LED_CANRX(SET);    // yellow   -> RX
+  LED_CANTX(SET);    // yellow   -> TX
+  LED_STATUS(SET);   // green    -> TIM2
 
   // all LEDs ON
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+  LED_ERROR(RESET);
   HAL_Delay(500);
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+  LED_CANRX(RESET);
   HAL_Delay(500);
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
+  LED_CANTX(RESET);
   HAL_Delay(500);
-  HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_RESET);
+  LED_STATUS(RESET);
 
   HAL_Delay(1000);
 
-  // all LEDs off
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+  // all LEDs off  
+  LED_ERROR(SET);
   HAL_Delay(500);
-  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+  LED_CANRX(SET);
   HAL_Delay(500);
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
+  LED_CANTX(SET);
   HAL_Delay(500);
-  HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
-
+  LED_STATUS(SET);
+  /***************************************************************************/
+  
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
@@ -147,7 +149,7 @@ int main(void)
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
 	  Error_Handler();
   }  
-  
+  /***************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
 /*  
@@ -155,11 +157,11 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
 */
-
+  /***************************************************************************/
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
-  
+  /***************************************************************************/
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -180,12 +182,10 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
     if (can_message_received){
-      HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
       can_message_received = 0;
     }
     
     HAL_Delay(500);
-    HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
     
     data[0] ++;
     CAN_send_data_frame(can_id, size, data);

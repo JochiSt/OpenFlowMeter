@@ -22,6 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "syscalls.h"
+#include "utils.h"
 
 /// store the current used filter bank
 uint8_t can_filter_bank = 0;
@@ -187,6 +188,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
   CAN_parse_message(RxHeader, RxData);
 }
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
+  LED_CANRX_TOGGLE;
   if ((RxHeader.StdId == 0x123)) {
 	  can_message_received = 1;
       printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
@@ -214,12 +216,12 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
     if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
       Error_Handler ();
     }else{
-      HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+      LED_CANTX_TOGGLE;
     }
   }else{
     // ignore message?
     printf("No free CAN Mailbox\r\n");
-    HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+    LED_ERROR_TOGGLE;
   }
 }
 /* USER CODE END 1 */

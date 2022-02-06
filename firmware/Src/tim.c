@@ -21,7 +21,7 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "utils.h"
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -260,7 +260,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 // timer interrupt for periodic tasks
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
     // ToDo: check for TIM2
-    HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+    LED_STATUS_TOGGLE;
 }
 /* USER CODE END 1 */
 
