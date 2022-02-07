@@ -223,17 +223,28 @@ int main(void)
       printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
       printf("\r\n");
       
+    }
+    
+    // every 2 seconds sendout ADC data via CAN
+    if( timer2_elapsed >= 4){ 
+      // convert 16bit ADC result into 2x 8bit for CAN message
       for(uint8_t i = 0; i<4; i++){
         data[2*i    ] = upper(adcBuf[i]);
         data[2*i + 1] = lower(adcBuf[i]);
-      }
+      }    
+      // sendout frame with data
+      CAN_send_data_frame(can_id, size, data);
       
-      LED_ERROR_TOGGLE;
-      has_new_adc_result = 0;
+      // reset timer counter
+      timer2_elapsed = 0;
+      timer2_elapsed_old = 0;
     }
     
-
-
+    // we have a new ADC result -> do calculations
+    if(has_new_adc_result >= 1){
+      adc_result_cnt++;         // count how often the ADC is updating
+      has_new_adc_result = 0;   // reset new result flag
+    }
   }
   /* USER CODE END 3 */
 }
