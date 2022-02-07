@@ -202,42 +202,41 @@ int main(void)
       can_message_received = 0;
     }
     
-    // check timer 2 for doing periodic tasks
-    // one timer2_elapsed is equal to 500ms
-    if( timer2_elapsed > timer2_elapsed_old){
-      printf("collected ADC results %d\r\n", adc_result_cnt);
-      adc_result_cnt = 0;
-      
-      timer2_elapsed_old = timer2_elapsed;
-      
-      // first 4 samples are from current sources
-      for(uint8_t i = 0; i<4; i++){
-        printf("%ld\t", adcBuf[i]);
+    if( adc_result_cnt > 0 ){   // are there new ADC results?
+      // check timer 2 for doing periodic tasks
+      // one timer2_elapsed is equal to 500ms
+      if( timer2_elapsed > timer2_elapsed_old){
+        printf("collected ADC results %d\r\n", adc_result_cnt);
+        adc_result_cnt = 0;
+        
+        timer2_elapsed_old = timer2_elapsed;
+        
+        // first 4 samples are from current sources
+        for(uint8_t i = 0; i<4; i++){
+          printf("%ld\t", adcBuf[i]);
+        }
+        uint32_t temperature = adcBuf[4];
+        uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
+        
+        printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
+        printf("\r\n");
       }
       
-      uint32_t temperature = adcBuf[4];
-      uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
-      
-      printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
-      printf("\r\n");
-
+      // every 2 seconds sendout ADC data via CAN
+      if( timer2_elapsed >= 4){ 
+        // convert 16bit ADC result into 2x 8bit for CAN message
+        for(uint8_t i = 0; i<4; i++){
+          data[2*i    ] = upper(adcBuf[i]);
+          data[2*i + 1] = lower(adcBuf[i]);
+        }    
+        // sendout frame with data
+        CAN_send_data_frame(can_id, size, data);
+        
+        // reset timer counter
+        timer2_elapsed = 0;
+        timer2_elapsed_old = 0;
+      }
     }
-    
-    // every 2 seconds sendout ADC data via CAN
-    if( timer2_elapsed >= 4){ 
-      // convert 16bit ADC result into 2x 8bit for CAN message
-      for(uint8_t i = 0; i<4; i++){
-        data[2*i    ] = upper(adcBuf[i]);
-        data[2*i + 1] = lower(adcBuf[i]);
-      }    
-      // sendout frame with data
-      CAN_send_data_frame(can_id, size, data);
-      
-      // reset timer counter
-      timer2_elapsed = 0;
-      timer2_elapsed_old = 0;
-    }
-    
     // we have a new ADC result -> do calculations
     if(has_new_adc_result >= 1){
       adc_result_cnt++;         // count how often the ADC is updating
