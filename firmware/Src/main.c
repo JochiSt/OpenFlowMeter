@@ -168,7 +168,7 @@ int main(void)
   
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
-  
+  HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
   
   /***************************************************************************/
   /* USER CODE END 2 */
@@ -204,27 +204,29 @@ int main(void)
     // check timer 2 for doing periodic tasks
     // one timer2_elapsed is equal to 500ms
     if( timer2_elapsed != timer2_elapsed_old){
-      HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
       timer2_elapsed_old = timer2_elapsed;
-    }
-    if( timer2_elapsed >= 4){ 
-      CAN_send_data_frame(can_id, size, data);
-      timer2_elapsed = 0;
-      timer2_elapsed_old = 0;
-    }
-    // we have a new ADC result -> send out via CAN
-    if(has_new_adc_result >= 1){
-    
+      
       // first 4 samples are from current sources
       for(uint8_t i = 0; i<4; i++){
         printf("%ld\t", adcBuf[i]);
       }
+      
       uint32_t temperature = adcBuf[4];
       uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
       
       printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
       printf("\r\n");
-      
+    }
+    
+    // every 2 seconds sendout ADC data via CAN
+    if( timer2_elapsed >= 4){ 
+      CAN_send_data_frame(can_id, size, data);
+      timer2_elapsed = 0;
+      timer2_elapsed_old = 0;
+    }
+    
+    // we have a new ADC result -> do calculations
+    if(has_new_adc_result >= 1){
       for(uint8_t i = 0; i<4; i++){
         data[2*i    ] = upper(adcBuf[i]);
         data[2*i + 1] = lower(adcBuf[i]);
@@ -233,9 +235,6 @@ int main(void)
       LED_ERROR_TOGGLE;
       has_new_adc_result = 0;
     }
-    
-
-
   }
   /* USER CODE END 3 */
 }
@@ -278,7 +277,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV8;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
