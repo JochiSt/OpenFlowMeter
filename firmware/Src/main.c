@@ -191,6 +191,7 @@ int main(void)
   
   printf("successfully started everything\r\n");
     
+  uint16_t adc_result_cnt = 0;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -203,7 +204,10 @@ int main(void)
     
     // check timer 2 for doing periodic tasks
     // one timer2_elapsed is equal to 500ms
-    if( timer2_elapsed != timer2_elapsed_old){
+    if( timer2_elapsed > timer2_elapsed_old){
+      printf("collected ADC results %d\r\n", adc_result_cnt);
+      adc_result_cnt = 0;
+      
       timer2_elapsed_old = timer2_elapsed;
       
       // first 4 samples are from current sources
@@ -231,8 +235,7 @@ int main(void)
         data[2*i    ] = upper(adcBuf[i]);
         data[2*i + 1] = lower(adcBuf[i]);
       }
-      
-      LED_ERROR_TOGGLE;
+      adc_result_cnt++;
       has_new_adc_result = 0;
     }
   }
