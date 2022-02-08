@@ -50,3 +50,6 @@ firmware/build
 # CubeMX generated reports
 firmware/OpenFlowMeter.txt
 firmware/OpenFlowMeter.pdf
+
+# Spyder
+*/.spyproject/*
