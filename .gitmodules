@@ -1,3 +1,4 @@
 [submodule "software/pyUSBtin"]
 	path = software/pyUSBtin
-	url = https://github.com/fishpepper/pyUSBtin.git
+	# url = https://github.com/fishpepper/pyUSBtin.git
+	url = https://github.com/JochiSt/pyUSBtin.git
