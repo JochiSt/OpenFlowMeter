@@ -7,6 +7,7 @@ from pyusbtin.canmessage import CANMessage
 
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
+from CANsetup import CANsetup
 
 import time
 
@@ -15,12 +16,10 @@ import matplotlib.pyplot as plt
 
 def main():
     # initialise USBtin
-    usbtin = USBtin()
-    usbtin.connect("COM7")
-    usbtin.open_can_channel(500000, USBtin.ACTIVE)
+    setup = CANsetup()
 
     # initialise OFM
-    ofm =  OpenFlowMeter(usbtin = usbtin, boardID=0x1)
+    ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
 
     measurement_successful = False
 
@@ -33,12 +32,7 @@ def main():
         print(e)
         pass
 
-
-    # shutting down CAN interface
-    usbtin.stop_rx_thread()
-    usbtin.close_can_channel()
-    # disconnect from USBtin
-    usbtin.disconnect()
+    setup.deinit()
 
     if not measurement_successful:
         return
