@@ -8,25 +8,56 @@ from pyusbtin.canmessage import CANMessage
 from time import sleep
 
 def log_data(msg):
-    print("Message ID %x"%(msg.mid) )
-    print("length %d"%(msg.dlc) )
+    #print("Message ID %x"%(msg.mid) )
+    #print("length %d"%(msg.dlc) )
     if msg.mid == 0x123:
         if msg.dlc == 8:
             print(msg)
+
 
 usbtin = USBtin()
 usbtin.connect("COM7")
 usbtin.add_message_listener(log_data)
 usbtin.open_can_channel(500000, USBtin.ACTIVE)
 
+DACsettings = [0]*4
+
+#usbtin.send(CANMessage(0x123, DACsettings))
+
 def main():
     try:
         while True:
-            print("tick")
+            try:
+                # input channel and value
+                channel = int( input("channel (0,1): ") )
+                # if channel < 0 exit loop
+                if channel < 0:
+                    break
 
-            #usbtin.send(CANMessage(0x123, [0, 0]))
+                # if channel > 1 do nothing
+                if channel > 1:
+                    print("channel larger 1")
+                    continue
 
-            sleep(1)
+                value = int (input("value 0 - 1023: ") )
+            except Exception:
+                continue
+
+            if value > 1023 or value < 0:
+                print("value not between 0 and 1023")
+                continue
+
+            # set channel and send out via CAN
+            # inside STM32
+            #       uint16_t pwm1 = RxData[0] <<8 | RxData[1];
+            #       uint16_t pwm2 = RxData[2] <<8 | RxData[3];
+            DACsettings[2 * channel      ] = ( value >> 8)
+            DACsettings[2 * channel +1 ] = ( value & 0xFF )
+
+            canmessage = CANMessage(mid=0x123, dlc=4, data=DACsettings.copy() )
+            print(canmessage)
+            usbtin.send(canmessage)
+
     except KeyboardInterrupt:
         pass
 
