@@ -5,7 +5,6 @@
 import sys
 sys.path.append("pyUSBtin")
 from pyusbtin.usbtin import USBtin
-from pyusbtin.canmessage import CANMessage
 
 class CANsetup(object):
     def __init__(self, COMport="COM7"):
