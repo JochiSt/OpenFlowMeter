@@ -2,9 +2,12 @@
 
 import sys
 sys.path.append("../pyUSBtin")
-
 from pyusbtin.usbtin import USBtin
 from pyusbtin.canmessage import CANMessage
+
+sys.path.append("../")
+from OpenFlowMeter import OpenFlowMeter
+
 from time import sleep
 
 def log_data(msg):
@@ -25,6 +28,9 @@ DACsettings = [0]*4
 #usbtin.send(CANMessage(0x123, DACsettings))
 
 def main():
+
+    ofm =  OpenFlowMeter(usbtin = usbtin, boardID=0x1)
+
     try:
         while True:
             try:
