@@ -44,12 +44,8 @@ def main():
 
     # analyse data
     for chan in channels:
-        plt.plot(dac[chan][1:], voltage[chan][1:], label="U%d"%chan)
-        plt.plot(dac[chan][1:], current[chan][1:], label="I%d"%chan)
-
-        print(dac[chan])
-        print(voltage[chan])
-        print(current[chan])
+        plt.plot(dac[chan], voltage[chan], label="U%d"%chan)
+        plt.plot(dac[chan], current[chan], label="I%d"%chan)
 
     plt.ylabel('ADC / V')
     plt.xlabel('DAC / LSB')
@@ -61,7 +57,7 @@ def main():
         resistance[chan] = voltage[chan] / current [chan]
 
     for chan in channels:
-        plt.plot(dac[chan], resistance[chan], label="R%d"%chan)
+        plt.plot(dac[chan][1:], resistance[chan][1:], label="R%d"%chan)
 
     plt.ylabel('R / LSB')
     plt.xlabel('DAC / LSB')
