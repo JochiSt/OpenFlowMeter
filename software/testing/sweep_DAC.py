@@ -99,10 +99,8 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
                 voltage[chan] = np.append(voltage[chan], ofm.voltage(chan))
 
     # switch off current
-    for chan in channel:
-        if ofm:
-            ofm.setDAC(chan, 0)
-            time.sleep(1)
+    if ofm:
+        ofm.setDAC(0, 0)
 
     return dac, voltage, current
 
