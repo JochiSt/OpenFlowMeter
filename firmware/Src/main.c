@@ -51,7 +51,14 @@
 
 /* USER CODE BEGIN PV */
 #define ADC_BUFLEN 6
-uint32_t adcBuf[ADC_BUFLEN];   // store the ADC samples
+uint32_t adcBuf[ADC_BUFLEN];              // store the ADC samples
+uint16_t avr_adcBuf[ADC_BUFLEN] = {0};    // average the ADC samples with
+                                          // moving average
+const uint16_t SMOO = 14;     // averaging factor
+                              // gives the number of old samples
+                              // SMOO_MAX - SMOO is number of new samples
+                              // VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
+const uint16_t SMOO_MAX = 16; // Maximal value of SMOO
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -213,7 +220,7 @@ int main(void)
         
         // first 4 samples are from current sources
         for(uint8_t i = 0; i<4; i++){
-          printf("%ld\t", adcBuf[i]);
+          printf("%d\t", avr_adcBuf[i]);
         }
         uint32_t temperature = adcBuf[4];
         uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
@@ -226,8 +233,8 @@ int main(void)
       if( timer2_elapsed >= 4){ 
         // convert 16bit ADC result into 2x 8bit for CAN message
         for(uint8_t i = 0; i<4; i++){
-          data[2*i    ] = upper(adcBuf[i]);
-          data[2*i + 1] = lower(adcBuf[i]);
+          data[2*i    ] = upper(avr_adcBuf[i]);
+          data[2*i + 1] = lower(avr_adcBuf[i]);
         }    
         // sendout frame with data
         CAN_send_data_frame(can_id, size, data);
@@ -240,6 +247,10 @@ int main(void)
     // we have a new ADC result -> do calculations
     if(has_new_adc_result >= 1){
       adc_result_cnt++;         // count how often the ADC is updating
+      for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+        // moving average
+        avr_adcBuf[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf[i]*SMOO) / SMOO_MAX;
+      }
       has_new_adc_result = 0;   // reset new result flag
     }
   }
