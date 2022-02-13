@@ -54,3 +54,4 @@ firmware/OpenFlowMeter.pdf
 # Spyder
 */.spyproject/*
 *.pyc
+*.npz
