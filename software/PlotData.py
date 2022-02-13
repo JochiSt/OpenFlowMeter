@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 
 def plotVoltageVsDAC(dac, voltage):
     plt.plot(dac, voltage, label="U")
-    plt.set_xlabel('DAC / LSB')
-    plt.set_ylabel('voltage / V')
+    plt.xlabel('DAC / LSB')
+    plt.ylabel('voltage / V')
     plt.legend()
     plt.show()
 
 def plotCurrentVsDAC(dac, current):
     plt.plot(dac, current, label="I")
-    plt.set_xlabel('DAC / LSB')
-    plt.set_ylabel('current / mA')
+    plt.xlabel('DAC / LSB')
+    plt.ylabel('current / mA')
     plt.legend()
     plt.show()
 
@@ -21,4 +21,7 @@ def plotResistanceVsDAC(dac, voltage, current):
     plt.ylabel('R / LSB')
     plt.xlabel('DAC / LSB')
     plt.legend()
+
+    plt.ylim([90,100])
+
     plt.show()
