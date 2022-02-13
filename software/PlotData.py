@@ -9,7 +9,7 @@ def plotVoltageVsDAC(dac, voltage):
     plt.show()
 
 def plotCurrentVsDAC(dac, current):
-    plt.plot(dac, current, label="I")
+    plt.plot(dac, current*1000, label="I")
     plt.xlabel('DAC / LSB')
     plt.ylabel('current / mA')
     plt.legend()
