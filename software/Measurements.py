@@ -41,6 +41,8 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
                 current[chan] = np.append(current[chan], ofm.current(chan))
                 voltage[chan] = np.append(voltage[chan], ofm.voltage(chan))
 
+            ofm.hasNewMessage = False
+
     # switch off current
     if ofm:
         ofm.setDAC(0, 0)
@@ -48,3 +50,39 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
     print("\n...done")
 
     return dac, voltage, current
+
+def StabilityTest(ofm, channel=[0,1], DACs = [128], repetitions=200):
+    # prepare data structures
+    voltage = {}
+    current = {}
+
+    for chan in channel:
+        voltage[chan] = {}
+        current[chan] = {}
+        for dac in DACs:
+            voltage[chan][dac] = np.array([])
+            current[chan][dac] = np.array([])
+
+    # set DAC
+    for dac in DACs:
+        DACset = [dac,dac]
+        if ofm:
+            ofm.setDAC(DACset[0], DACset[1])
+
+        # wait some seconds to settle everything
+        time.sleep(2)
+
+        for rep in range(repetitions):
+            # wait until we have a new message
+            if ofm:
+                while not ofm.hasNewMessage:
+                    time.sleep(0.5)
+
+            if ofm:
+                for chan in channel:
+                    current[chan][dac] = np.append(current[chan][dac], ofm.current(chan))
+                    voltage[chan][dac] = np.append(voltage[chan][dac], ofm.voltage(chan))
+
+                ofm.hasNewMessage = False
+
+    return voltage, current
