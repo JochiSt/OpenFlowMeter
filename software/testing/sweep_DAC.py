@@ -8,6 +8,7 @@ from pyusbtin.canmessage import CANMessage
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
 from CANsetup import CANsetup
+from PlotData import plotVoltageVsDAC, plotCurrentVsDAC, plotResistanceVsDAC
 
 import time
 
@@ -26,7 +27,7 @@ def main():
     channels = [0,1]    # channels, we want to analyse
 
     try:
-        dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = 1000)
+        dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = 3)
         measurement_successful = True
     except Exception as e:
         print(e)
@@ -45,34 +46,9 @@ def main():
     for chan in channels:
         np.savez("measurement_CH%d_%s.npz"%(chan, time.strftime("%Y%m%d_%H%M%S")), dac=dac[chan], voltage=voltage[chan], current=current[chan])
 
-    fig, ax1 = plt.subplots()
-    ax2 = ax1.twinx()
-    # analyse data
-    for chan in channels:
-        ax1.plot(dac[chan], voltage[chan],          label="U%d"%chan)
-        ax2.plot(dac[chan], current[chan]*1000, label="I%d"%chan)
+    plotCurrentVsDAC(dac[0], current[0])
+    plotResistanceVsDAC(dac[0], voltage[0], current[0])
 
-    ax1.set_xlabel('DAC / LSB')
-    ax1.set_ylabel('voltage / V')
-    ax2.set_ylabel("current / mA")
-
-    lines, labels    = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax2.legend(lines + lines2, labels + labels2, loc=0)
-
-    plt.show()
-
-    resistance = {}
-    for chan in channels:
-        resistance[chan] = voltage[chan] / current [chan]
-
-    for chan in channels:
-        plt.plot(dac[chan][1:], resistance[chan][1:], label="R%d"%chan)
-
-    plt.ylabel('R / LSB')
-    plt.xlabel('DAC / LSB')
-    plt.legend()
-    plt.show()
 
 def DACsweep(ofm, channel = [0, 1], steps = 128):
     # initialise dictionaries of arrays to store data
