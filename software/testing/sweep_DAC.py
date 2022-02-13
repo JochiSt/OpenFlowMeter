@@ -26,7 +26,7 @@ def main():
     channels = [0,1]    # channels, we want to analyse
 
     try:
-        dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = 16)
+        dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = 1000)
         measurement_successful = True
     except Exception as e:
         print(e)
@@ -41,6 +41,9 @@ def main():
     for chan in channels:
         voltage[chan] = 3.3/4095 * voltage[chan]
         current[chan] = 3.3/4095 * current[chan] * 10e-3    # from simulation 1V = 10mA
+
+    for chan in channels:
+        np.savez("measurement_CH%d_%s.npz"%(chan, time.strftime("%Y%m%d_%H%M%S")), dac=dac[chan], voltage=voltage[chan], current=current[chan])
 
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
@@ -83,6 +86,7 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
         dac[chan] = np.array([])
 
     for DAC in np.linspace(start=0, stop=1023, num=steps, endpoint=True).astype(int):
+        print("%d "%(DAC), end="", flush=True)
         # set DAC
         DACset = [0, 0]
         for chan in channel:
@@ -108,6 +112,8 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
     # switch off current
     if ofm:
         ofm.setDAC(0, 0)
+
+    print("\n...done")
 
     return dac, voltage, current
 
