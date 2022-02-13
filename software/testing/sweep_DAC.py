@@ -13,7 +13,6 @@ from PlotData import plotVoltageVsDAC, plotCurrentVsDAC, plotResistanceVsDAC
 import time
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 def main():
     # initialise USBtin
@@ -24,10 +23,12 @@ def main():
 
     measurement_successful = False
 
-    channels = [0,1]    # channels, we want to analyse
+    # configuration
+    channels = [0,1]      # channels, we want to analyse
+    steps = 32              # how many steps do we want to have
 
     try:
-        dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = 3)
+        dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = steps)
         measurement_successful = True
     except Exception as e:
         print(e)
@@ -43,8 +44,11 @@ def main():
         voltage[chan] = 3.3/4095 * voltage[chan]
         current[chan] = 3.3/4095 * current[chan] * 10e-3    # from simulation 1V = 10mA
 
+    # save recorded data in NPZ files
     for chan in channels:
-        np.savez("measurement_CH%d_%s.npz"%(chan, time.strftime("%Y%m%d_%H%M%S")), dac=dac[chan], voltage=voltage[chan], current=current[chan])
+        np.savez("measurement_%s_CH%d_%d.npz"%(time.strftime("%Y%m%d_%H%M%S"),
+                                               chan, steps),
+                        dac=dac[chan], voltage=voltage[chan], current=current[chan])
 
     plotCurrentVsDAC(dac[0], current[0])
     plotResistanceVsDAC(dac[0], voltage[0], current[0])
