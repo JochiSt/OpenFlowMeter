@@ -15,8 +15,6 @@ def readFile(filename):
     return npzfile['dac'], npzfile['current'], npzfile['voltage']
 
 if __name__ == "__main__":
-    dac, current, voltage = readFile("measurement_CH0_20220213_132416.npz")
-
-    print( voltage[0] )
+    dac, current, voltage = readFile("measurement_CH0_20220213_135838.npz")
 
     PlotData.plotResistanceVsDAC(dac, voltage, current)
