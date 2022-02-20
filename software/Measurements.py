@@ -85,4 +85,8 @@ def StabilityTest(ofm, channel=[0,1], DACs = [128], repetitions=200):
 
                 ofm.hasNewMessage = False
 
+    if ofm:
+        ofm.setDAC(0, 0)
+
+    print("\n...done")
     return voltage, current
