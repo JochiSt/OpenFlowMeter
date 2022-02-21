@@ -20,6 +20,8 @@ def plot_stability(filename):
             continue
         plt.plot( npzfile['U'+str(dac)], label="DAC = %d"%(dac) )
 
+    plt.ylabel("voltage / V")
+    plt.xlabel("measurement point")
     plt.legend()
     plt.show()
 
@@ -29,6 +31,8 @@ def plot_stability(filename):
             continue
         plt.plot( npzfile['I'+str(dac)] * 1000, label="DAC = %d"%(dac) )
 
+    plt.ylabel("current / mA")
+    plt.xlabel("measurement point")
     plt.legend()
     plt.show()
 
@@ -38,6 +42,8 @@ def plot_stability(filename):
             continue
         plt.plot( npzfile['U'+str(dac)] / npzfile['I'+str(dac)], label="DAC = %d"%(dac))
 
+    plt.ylabel("resistance / Ohm")
+    plt.xlabel("measurement point")
     plt.legend()
     plt.show()
 
@@ -48,8 +54,10 @@ def plot_stability(filename):
         if dac == 0:
             continue
         all_U = np.append( all_U, npzfile['U'+str(dac)])
-        all_I = np.append( all_I, npzfile['I'+str(dac)])
+        all_I = np.append( all_I, npzfile['I'+str(dac)] * 1000)
 
+    plt.xlabel("voltage / V")
+    plt.ylabel("current / mA")
     plt.plot( all_U, all_I )
     plt.legend()
     plt.show()
