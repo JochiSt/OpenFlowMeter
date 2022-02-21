@@ -90,3 +90,36 @@ def StabilityTest(ofm, channel=[0,1], DACs = [128], repetitions=200):
 
     print("\n...done")
     return voltage, current
+
+def CurrentCalibration(ofm, channel=0, DACs=[], repetitions=10):
+
+    voltage = np.array([])
+    current = np.array([])
+    MMcurrent = np.array([])
+
+    # set DAC
+    for dac in DACs:
+        DACset = [dac,dac]
+        if ofm:
+            ofm.setDAC(DACset[0], DACset[1])
+
+        # wait some seconds to settle everything
+        time.sleep(2)
+
+        # read current from MultiMeter
+        readCurrent = float(input("read current: "))
+        MMcurrent = np.appen(MMcurrent, readCurrent)
+
+        for rep in range(repetitions):
+            # wait until we have a new message
+            if ofm:
+                while not ofm.hasNewMessage:
+                    time.sleep(0.5)
+
+            if ofm:
+                current = np.append(current, ofm.current(channel))
+                voltage = np.append(voltage, ofm.voltage(channel))
+
+                ofm.hasNewMessage = False
+
+    return voltage, current, MMcurrent
