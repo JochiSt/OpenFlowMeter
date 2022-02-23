@@ -108,13 +108,14 @@ def CurrentCalibration(ofm, channel=0, DACs=[], repetitions=10):
 
         # read current from MultiMeter
         readCurrent = float(input("read current: "))
-        MMcurrent = np.appen(MMcurrent, readCurrent)
+        if readCurrent < 0:
+            break
 
+        MMcurrent = np.append(MMcurrent, readCurrent)
         for rep in range(repetitions):
             # wait until we have a new message
             if ofm:
-                while not ofm.hasNewMessage:
-                    time.sleep(0.5)
+                ofm.waitForNewMessage()
 
             if ofm:
                 current = np.append(current, ofm.current(channel))
