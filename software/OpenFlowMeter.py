@@ -5,8 +5,8 @@
 
 import sys,os
 sys.path.append( os.path.dirname(os.path.realpath(__file__)) + "/pyUSBtin")
-from pyusbtin.usbtin import USBtin
 from pyusbtin.canmessage import CANMessage
+import time
 
 class OpenFlowMeter(object):
     """
@@ -34,6 +34,13 @@ class OpenFlowMeter(object):
 
     def current(self, channel):
         return self._current[channel]
+
+    def waitForNewMessage(self):
+        """
+            wait until a new mesage is received and parsed
+        """
+        while not self.hasNewMessage:
+            time.sleep(0.5)
 
     def handleCANmessage(self, msg):
         """"
