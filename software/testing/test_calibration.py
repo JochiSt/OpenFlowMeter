@@ -5,39 +5,41 @@ sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
 from CANsetup import CANsetup
 from Measurements import CurrentCalibration
+from DMMsetup import DMMsetup
 
 import time
 
 import numpy as np
-
 def main():
     # initialise USBtin
-    setup = CANsetup()
+    cansetup = CANsetup()
+    # initialise DMM
+    dmmsetup = DMMsetup()
+    dmm = dmmsetup.dmm
 
     # initialise OFM
-    ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
-
+    ofm =  OpenFlowMeter(usbtin = cansetup.usbtin, boardID=0x1)
     measurement_successful = False
 
     # configuration
     channel = 0            # channels, we want to analyse
-    repetitions = 10      # repeat how many times
-
-    dac_steps = [0, 128, 256, 512, 1023]
-
+    repetitions = 100      # repeat how many times
+    dac_steps = np.linspace(0,1024, 100).astype(int)
 
     # just for testing python
 #    repetitions = 1
 #    dac_steps = [128]
 
     try:
-        voltage, current, MMcurrent = CurrentCalibration(ofm=ofm, channel=channel, repetitions = repetitions, DACs = dac_steps)
+        voltage, current, MMcurrent = CurrentCalibration(ofm=ofm, dmm=dmm, channel=channel, repetitions = repetitions, DACs = dac_steps)
         measurement_successful = True
     except Exception as e:
         print(e)
         pass
 
-    setup.deinit()
+    # deinit all SETUPs
+    dmmsetup.deinit()
+    cansetup.deinit()
 
     if not measurement_successful:
         print("Measurement has not been successuful!")
