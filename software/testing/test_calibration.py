@@ -23,7 +23,7 @@ def main():
 
     # configuration
     channel = 0            # channels, we want to analyse
-    repetitions = 100      # repeat how many times
+    repetitions = 10      # repeat how many times
     dac_steps = np.linspace(0,1024, 100).astype(int)
 
     # just for testing python
