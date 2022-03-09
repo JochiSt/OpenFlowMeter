@@ -63,17 +63,25 @@ def plot_calibration(filename):
     ax1.tick_params(axis='y', labelcolor=color)
     ax1.set_ylim([0,max(MMcurrent)])
     ax1.set_xlim([0,max(dac_steps)])
-
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.show()
 
     def fit_func(x, a):
         return a*x
 
+    print("Fitting DAC step and MM current")
     popt, pcov = curve_fit(fit_func, dac_steps, MMcurrent, bounds=([0], [0.05]) )
     perr = np.sqrt(np.diag(pcov))
+    print("MMcurrent = (", popt[0], "+-", perr[0], ") * dac_step")
 
-    print(popt, perr)
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    plt.show()
+    dac_for_1mA = int( 1 / popt[0] )
+    print("\t1mA is equal to a DAC setting of", dac_for_1mA)
+
+    print("Fitting OFM current and MM current")
+    popt, pcov = curve_fit(fit_func, current, MMcurrent, bounds=([0.8], [1.2]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("MMcurrent = (", popt[0], "+-", perr[0], ") * OFM current")
+
 
 if __name__ == "__main__":
     #plot_calibration("calibration_20220307_133034_CH0_10.npz")
