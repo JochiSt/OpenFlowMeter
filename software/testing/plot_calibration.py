@@ -4,6 +4,7 @@
 """
 
 import numpy as np
+from scipy.optimize import curve_fit
 
 import sys
 sys.path.append("../")
@@ -28,7 +29,7 @@ def plot_calibration(filename):
     MMcurrent =np.array(  [0 if v is None else v for v in MMcurrent] )
 
     voltage *= 3.3/4095
-    current *= 3.3/4095 * 10
+    current *= 3.3/4095 * 10    # 10mA = 1V
     MMcurrent /= 10 # to get it in mA
 
     fig, ax1 = plt.subplots()
@@ -62,6 +63,15 @@ def plot_calibration(filename):
     ax1.tick_params(axis='y', labelcolor=color)
     ax1.set_ylim([0,max(MMcurrent)])
     ax1.set_xlim([0,max(dac_steps)])
+
+
+    def fit_func(x, a):
+        return a*x
+
+    popt, pcov = curve_fit(fit_func, dac_steps, MMcurrent, bounds=([0], [0.05]) )
+    perr = np.sqrt(np.diag(pcov))
+
+    print(popt, perr)
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
