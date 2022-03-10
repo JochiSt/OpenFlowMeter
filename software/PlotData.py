@@ -18,10 +18,10 @@ def plotCurrentVsDAC(dac, current):
 def plotResistanceVsDAC(dac, voltage, current):
     resistance = voltage / current
     plt.plot(dac[1:], resistance[1:], label="R")
-    plt.ylabel('R / LSB')
+    plt.ylabel('R / Ohm')
     plt.xlabel('DAC / LSB')
     plt.legend()
 
-    plt.ylim([90,100])
+    #plt.ylim([90,100])
 
     plt.show()
