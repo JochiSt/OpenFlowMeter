@@ -34,8 +34,23 @@ def plot_sweepDAC(filename):
     ax2.tick_params(axis='y', labelcolor=color)
     ax2.set_ylim([0,4.0])
 
+
+    ax3 = ax1.twinx()
+    color = 'tab:green'
+
+    ax3.spines['right'].set_position(('outward', 60))
+
+    ax3.set_ylabel('OFM resistance / Ohm', color=color)  # we already handled the x-label with ax1
+    ax3.plot( dac, voltage/current, color=color)
+    ax3.tick_params(axis='y', labelcolor=color)
+
+    ax3.vlines(32, 0, 200)
+
+    ax3.set_ylim([100*0.9,100*1.1])
+
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
 if __name__ == "__main__":
     plot_sweepDAC("measurement_20220309_065823_CH0_1023.npz")
+    plot_sweepDAC("measurement_20220309_065823_CH1_1023.npz")
