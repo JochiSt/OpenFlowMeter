@@ -41,6 +41,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// sendout the can message about the ADC
+//  gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
+#define CAN_ADC_RATE    1
+
+/* CAN Message IDs */
+#define CAN_ADC_MSG_ID  0x123
+#define CAN_STATUS_ID   0x124
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -229,15 +236,15 @@ int main(void)
         printf("\r\n");
       }
       
-      // every 2 seconds sendout ADC data via CAN
-      if( timer2_elapsed >= 4){ 
+      // sendout ADC data via CAN
+      if( timer2_elapsed >= CAN_ADC_RATE){ 
         // convert 16bit ADC result into 2x 8bit for CAN message
         for(uint8_t i = 0; i<4; i++){
           data[2*i    ] = upper(avr_adcBuf[i]);
           data[2*i + 1] = lower(avr_adcBuf[i]);
         }    
         // sendout frame with data
-        CAN_send_data_frame(can_id, size, data);
+        CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);
         
         // reset timer counter
         timer2_elapsed = 0;
