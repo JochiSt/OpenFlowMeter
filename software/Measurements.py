@@ -18,7 +18,7 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
         dac[chan] = np.array([])
 
     for DAC in np.linspace(start=0, stop=1023, num=steps, endpoint=True).astype(int):
-        print("%d "%(DAC), end="", flush=True)
+        print("%05d "%(DAC), end="", flush=True)
         # set DAC
         DACset = [0, 0]
         for chan in channel:
@@ -38,10 +38,25 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
 
         if ofm:
             for chan in channel:
-                current[chan] = np.append(current[chan], ofm.current(chan))
-                voltage[chan] = np.append(voltage[chan], ofm.voltage(chan))
+                ofm_current = ofm.current(chan)
+                ofm_voltage = ofm.voltage(chan)
+                current[chan] = np.append(current[chan], ofm_current)
+                voltage[chan] = np.append(voltage[chan], ofm_voltage)
+
+                ofm_current *= 3.3/4095 * 10e-3
+                ofm_voltage *= 3.3/4095
+
+                try:
+                    ofm_resistance = ofm_voltage/ofm_current
+                except:
+                    ofm_resistance = 0
+
+                print("\t%4.2f V\t%6.3f mA\t%7.2f Ohm"%(
+                        ofm_voltage, ofm_current*1000, ofm_resistance), end='', flush=True)
 
             ofm.hasNewMessage = False
+
+        print() # newline
 
     # switch off current
     if ofm:
