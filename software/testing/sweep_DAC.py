@@ -22,7 +22,10 @@ def main():
 
     # configuration
     channels = [0,1]      # channels, we want to analyse
-    steps = 32              # how many steps do we want to have
+    steps = 1024           # how many steps do we want to have
+
+    if steps >= 1024:
+        steps = 1023
 
     try:
         dac, voltage, current = DACsweep(ofm=ofm, channel=channels, steps = steps)
@@ -49,6 +52,9 @@ def main():
 
     plotCurrentVsDAC(dac[0], current[0])
     plotResistanceVsDAC(dac[0], voltage[0], current[0])
+
+    plotCurrentVsDAC(dac[1], current[1])
+    plotResistanceVsDAC(dac[1], voltage[1], current[1])
 
 if __name__ == "__main__":
     main()
