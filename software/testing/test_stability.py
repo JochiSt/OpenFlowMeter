@@ -4,7 +4,6 @@ import sys
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
 from CANsetup import CANsetup
-from PlotData import plotVoltageVsDAC, plotCurrentVsDAC, plotResistanceVsDAC
 from Measurements import StabilityTest
 
 import time
@@ -22,9 +21,9 @@ def main():
 
     # configuration
     channels = [0,1]            # channels, we want to analyse
-    repetitions = 1000         # repeat how many times
+    repetitions = 100         # repeat how many times
 
-    dac_steps = [0, 128, 256, 512, 1023]
+    dac_steps = [32] #, 64, 96, 128]
 
 
     # just for testing python
@@ -45,11 +44,12 @@ def main():
         return
 
     # convert from ADC LSB into SI
+    """
     for chan in channels:
         for dac_step in voltage[chan].keys():
             voltage[chan][dac_step] = 3.3/4095 * voltage[chan][dac_step]
             current[chan][dac_step] = 3.3/4095 * current[chan][dac_step] * 10e-3    # from simulation 1V = 10mA
-
+    """
     # replace keys to be unique
     for chan in channels:
         for k in list(voltage[chan].keys()):
