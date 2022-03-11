@@ -34,19 +34,30 @@ def plot_sweepDAC(filename):
     ax2.tick_params(axis='y', labelcolor=color)
     ax2.set_ylim([0,4.0])
 
-
+    ###########################################################
+    # plot resistance
     ax3 = ax1.twinx()
     color = 'tab:green'
-
     ax3.spines['right'].set_position(('outward', 60))
-
     ax3.set_ylabel('OFM resistance / Ohm', color=color)  # we already handled the x-label with ax1
     ax3.plot( dac, voltage/current, color=color)
     ax3.tick_params(axis='y', labelcolor=color)
+    ax3.set_ylim([100*0.9,100*1.1])
 
+    # add vertical line for 1mA which is about 32 LSB
     ax3.vlines(32, 0, 200)
 
-    ax3.set_ylim([100*0.9,100*1.1])
+    # get closest index of a value in an array
+    def find_nearest_idx(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return idx
+
+    dac_1mA_idx = find_nearest_idx( dac, 32)
+    resistance_1mA = voltage[dac_1mA_idx] / current[dac_1mA_idx]
+    print("resistance at DAC=",dac[dac_1mA_idx],"LSBs is ", resistance_1mA , " Ohm" )
+
+    ax3.hlines(resistance_1mA, 0, 1023, color=color, linestyle="--")
 
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
