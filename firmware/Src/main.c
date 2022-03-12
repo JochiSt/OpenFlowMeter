@@ -61,7 +61,7 @@
 uint32_t adcBuf[ADC_BUFLEN];              // store the ADC samples
 uint16_t avr_adcBuf[ADC_BUFLEN] = {0};    // average the ADC samples with
                                           // moving average
-const uint16_t SMOO = 14;     // averaging factor
+const uint16_t SMOO = 15;     // averaging factor
                               // gives the number of old samples
                               // SMOO_MAX - SMOO is number of new samples
                               // VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
@@ -193,16 +193,7 @@ int main(void)
   uint16_t timer2_elapsed_old = 0;
   
   // variables for transmitting CAN messages
-  uint16_t can_id = 0x123;
-  uint8_t size = 8;
   uint8_t data[8] = {0};
-  data[0] = 0x12;
-  data[1] = 0x34;
-  data[2] = 0x56;
-    
-  printf("sending CAN message\r\n");
-  CAN_send_data_frame(0x123, 3, data);
-  
   printf("successfully started everything\r\n");
     
   uint16_t adc_result_cnt = 0;
