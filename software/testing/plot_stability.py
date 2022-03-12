@@ -50,7 +50,7 @@ def plot_stability(filename):
         ax2a.plot( npzfile['I'+str(dac)], label="DAC = %d"%(dac), linestyle="--" )
 
     ax2a.set_ylabel("current / LSB (dotted)")
-    ax2a.set_ylim( [min(all_I)*0.8, max(all_I)*1.2] )
+    ax2a.set_ylim( [min(all_I)*0.9, max(all_I)*1.1] )
 
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
@@ -100,5 +100,8 @@ def plot_stability(filename):
 
 if __name__ == "__main__":
     #plot_stability("stability_20220311_124812_CH0_100.npz")
-    plot_stability("stability_20220311_124812_CH1_100.npz")
+    #plot_stability("stability_20220311_124812_CH1_100.npz")
+
+    #plot_stability("stability_20220311_221412_CH0_10000.npz")
+    plot_stability("stability_20220312_064753_CH1_100.npz")
 
