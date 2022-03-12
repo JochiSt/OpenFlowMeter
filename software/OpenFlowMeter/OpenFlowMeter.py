@@ -4,7 +4,8 @@
 """
 
 import sys,os
-sys.path.append( os.path.dirname(os.path.realpath(__file__)) + "/pyUSBtin")
+sys.path.append( os.path.dirname(os.path.realpath(__file__)) + "../pyUSBtin")
+sys.path.append("../pyUSBtin")
 from pyusbtin.canmessage import CANMessage
 import time
 
