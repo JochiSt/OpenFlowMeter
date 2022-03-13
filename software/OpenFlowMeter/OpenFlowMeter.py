@@ -41,7 +41,7 @@ class OpenFlowMeter(object):
             wait until a new mesage is received and parsed
         """
         while not self.hasNewMessage:
-            time.sleep(0.5)
+            time.sleep(0.1)
 
     def handleCANmessage(self, msg):
         """"
