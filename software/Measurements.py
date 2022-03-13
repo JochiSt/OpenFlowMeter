@@ -33,8 +33,7 @@ def DACsweep(ofm, channel = [0, 1], steps = 128):
 
         # wait until we have a new message
         if ofm:
-            while not ofm.hasNewMessage:
-                time.sleep(0.5)
+            ofm.waitForNewMessage()
 
         if ofm:
             for chan in channel:
@@ -90,10 +89,8 @@ def StabilityTest(ofm, channel=[0,1], DACs = [128], repetitions=200):
         for rep in range(repetitions):
             # wait until we have a new message
             if ofm:
-                while not ofm.hasNewMessage:
-                    time.sleep(0.5)
+                ofm.waitForNewMessage()
 
-            if ofm:
                 for chan in channel:
                     current[chan][dac] = np.append(current[chan][dac], ofm.current(chan))
                     voltage[chan][dac] = np.append(voltage[chan][dac], ofm.voltage(chan))
@@ -131,7 +128,6 @@ def CurrentCalibration(ofm, dmm, channel=0, DACs=[], repetitions=10):
             if ofm:
                 ofm.waitForNewMessage()
 
-            if ofm:
                 current = np.append(current, ofm.current(channel))
                 voltage = np.append(voltage, ofm.voltage(channel))
 
