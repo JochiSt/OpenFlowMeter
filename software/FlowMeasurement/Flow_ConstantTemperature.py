@@ -22,9 +22,9 @@ def Flow_ConstantTemprature():
     ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
 
     # initialise PID controller
-    PID_KP = 10
-    PID_KD = 2
-    PID_KI = 4
+    PID_KP = 1
+    PID_KD = 4
+    PID_KI = 0.5
     pid = OFM_PID(dt=0.5,
                   max=1000,     # maximal DAC setpoint
                   min=32,         # minimal DAC setpoint (below 32 no reliable measurement can be done)
@@ -37,7 +37,7 @@ def Flow_ConstantTemprature():
     channel = 1                  # channels, we want to control the temperature
     SETPOINT_T =  40        # PT100 temperature set point
 
-    MINUTES_RUNTIME = 5 # run time of the measurement
+    MINUTES_RUNTIME = 15 # run time of the measurement
 
     # arrays to store the infomration for later analysis
     log_time = np.array([])
