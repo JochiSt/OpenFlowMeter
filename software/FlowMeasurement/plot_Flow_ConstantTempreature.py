@@ -9,7 +9,7 @@ sys.path.append("../")
 import os
 
 
-def plot_Flow_ConstantTempreature(filename):
+def plot_Flow_ConstantTemperature(filename):
     npzfile = np.load(filename)
 
     log_dac=npzfile['log_dac'][2:]
@@ -72,4 +72,4 @@ def plot_Flow_ConstantTempreature(filename):
     plt.show()
 
 if __name__ == "__main__":
-    plot_Flow_ConstantTempreature("Tregulation_20220314_065512_CH1_40.npz")
+    plot_Flow_ConstantTemperature("Tregulation_20220314_070804_CH1_40.npz")
