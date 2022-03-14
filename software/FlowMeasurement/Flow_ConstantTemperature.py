@@ -117,7 +117,8 @@ def Flow_ConstantTemprature():
                         log_time=log_time,
                         log_T=log_T,
                         log_current=log_current,
-                        log_voltage=log_voltage
+                        log_voltage=log_voltage,
+                        pid_params = [PID_KP, PID_KD, PID_KI]
                         )
 
     plot_Flow_ConstantTemperature.plot_Flow_ConstantTempreature(filename)
