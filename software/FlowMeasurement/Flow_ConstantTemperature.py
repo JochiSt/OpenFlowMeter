@@ -12,6 +12,8 @@ from CANsetup import CANsetup
 import time
 import numpy as np
 
+from plot_Flow_ConstantTemperature import plot_Flow_ConstantTemperature
+
 def Flow_ConstantTemprature():
     # initialise USBtin
     setup = CANsetup()
@@ -20,12 +22,15 @@ def Flow_ConstantTemprature():
     ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
 
     # initialise PID controller
+    PID_KP = 2
+    PID_KD = 0.2
+    PID_KI = 0.9
     pid = OFM_PID(dt=0.5,
                   max=1000,     # maximal DAC setpoint
                   min=32,         # minimal DAC setpoint (below 32 no reliable measurement can be done)
-                  kp=2,             # proportional term
-                  kd=0.2,          # differential term
-                  ki=0.9            # integral term
+                  kp=PID_KP,    # proportional term
+                  kd=PID_KD,    # differential term
+                  ki=PID_KI       # integral term
                   )
 
     # configuration
@@ -104,14 +109,18 @@ def Flow_ConstantTemprature():
     setup.deinit()
 
     # save everything to a NPZ file
-    np.savez("Tregulation_%s_CH%d_%d.npz"%(
-                        time.strftime("%Y%m%d_%H%M%S"), channel, SETPOINT_T),
+    filename = "Tregulation_%s_CH%d_%d_%4.3f_%4.3f_%4.3f.npz"%(
+                        time.strftime("%Y%m%d_%H%M%S"), channel, SETPOINT_T,
+                            PID_KP, PID_KD, PID_KI )
+    np.savez( filename,
                         log_dac=log_dac,
                         log_time=log_time,
                         log_T=log_T,
                         log_current=log_current,
                         log_voltage=log_voltage
                         )
+
+    plot_Flow_ConstantTemperature.plot_Flow_ConstantTempreature(filename)
 
 if __name__ == "__main__":
     Flow_ConstantTemprature()
