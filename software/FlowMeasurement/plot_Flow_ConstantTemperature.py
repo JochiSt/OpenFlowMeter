@@ -72,4 +72,4 @@ def plot_Flow_ConstantTemperature(filename):
     plt.show()
 
 if __name__ == "__main__":
-    plot_Flow_ConstantTemperature("Tregulation_20220314_070804_CH1_40.npz")
+    plot_Flow_ConstantTemperature("Tregulation_20220314_072217_CH1_40_2.000_0.200_0.900.npz")
