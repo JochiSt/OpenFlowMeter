@@ -22,9 +22,9 @@ def Flow_ConstantTemprature():
     ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
 
     # initialise PID controller
-    PID_KP = 2
-    PID_KD = 0.2
-    PID_KI = 0.9
+    PID_KP = 10
+    PID_KD = 2
+    PID_KI = 4
     pid = OFM_PID(dt=0.5,
                   max=1000,     # maximal DAC setpoint
                   min=32,         # minimal DAC setpoint (below 32 no reliable measurement can be done)
@@ -58,7 +58,6 @@ def Flow_ConstantTemprature():
         ofm.setDAC(dac, 0)
 
     time.sleep(1) # wait one second
-
     try:
         while time.time() < t_end:
             ofm.waitForNewMessage()
@@ -70,7 +69,7 @@ def Flow_ConstantTemprature():
             # get the readings from OFM
             ofm_current = ofm.current(channel)
             ofm_voltage = ofm.voltage(channel)
-            print("%7d\t%5d\t%5d"%(runtime, ofm_current, ofm_voltage), end="", flush=True)
+            print("%7.2f\t%5d\t%5d"%(runtime, ofm_current, ofm_voltage), end="", flush=True)
 
             # log the raw current and voltage values
             log_current = np.append(log_current, ofm_current)
@@ -121,7 +120,7 @@ def Flow_ConstantTemprature():
                         pid_params = [PID_KP, PID_KD, PID_KI]
                         )
 
-    plot_Flow_ConstantTemperature.plot_Flow_ConstantTempreature(filename)
+    plot_Flow_ConstantTemperature(filename)
 
 if __name__ == "__main__":
     Flow_ConstantTemprature()
