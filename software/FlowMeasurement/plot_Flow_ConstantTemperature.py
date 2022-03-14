@@ -34,6 +34,7 @@ def plot_Flow_ConstantTemperature(filename):
     ax3.set_ylabel('OFM temperature / °C', color=color)
     ax3.plot( log_time, log_T, color=color, label="temperature")
     ax3.tick_params(axis='y', labelcolor=color)
+    ax3.hlines(40, 0, np.max(log_time), color=color, linestyle="--")
 
     ax4 = ax1.twinx()
     color = 'tab:orange'
