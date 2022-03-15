@@ -22,9 +22,9 @@ def main():
 
     # configuration
     channels = [0,1]            # channels, we want to analyse
-    repetitions = 100          # repeat how many times
+    repetitions = 1000          # repeat how many times
 
-    dac_steps = [32, 512, 768] #, 64, 96, 128]
+    dac_steps = [32, 512] #, 64, 96, 128]
 
 
     # just for testing python
