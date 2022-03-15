@@ -57,3 +57,4 @@ firmware/OpenFlowMeter.pdf
 *.npz
 
 software/FlowMeasurement/*.png
+*.png
