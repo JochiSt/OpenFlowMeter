@@ -42,7 +42,7 @@ def plot_Flow_ConstantTemperature(filename):
     ax4.set_ylabel('OFM dac / LSB', color=color)  # we already handled the x-label with ax1
     ax4.plot( log_time, log_dac, color=color, label="DAC")
     ax4.tick_params(axis='y', labelcolor=color)
-    ax4.set_ylim([100,600])
+    #ax4.set_ylim([100,600])
 
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.savefig(os.path.splitext(filename)[0]+".png")
