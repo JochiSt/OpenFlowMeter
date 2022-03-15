@@ -7,6 +7,7 @@ import numpy as np
 
 import sys
 sys.path.append("../")
+from OpenFlowMeter import PT100
 
 import matplotlib.pyplot as plt
 
@@ -98,10 +99,22 @@ def plot_stability(filename):
     plt.legend()
     plt.show()
 
+    # plot temperature
+    for dac in dac_steps:
+        if dac == 0:
+            continue
+        plt.plot( PT100.convertPT100_T( npzfile['U'+str(dac)] / (npzfile['I'+str(dac)] * 10e-3) ), label="DAC = %d"%(dac))
+
+    plt.title("OFM measured resistance")
+    plt.ylabel("temperature / °C")
+    plt.xlabel("measurement point")
+    plt.legend()
+    plt.show()
+
 if __name__ == "__main__":
     #plot_stability("stability_20220311_124812_CH0_100.npz")
     #plot_stability("stability_20220311_124812_CH1_100.npz")
 
     #plot_stability("stability_20220311_221412_CH0_10000.npz")
-    plot_stability("stability_20220312_064753_CH1_100.npz")
+    plot_stability("stability_20220312_120806_CH1_1000.npz")
 
