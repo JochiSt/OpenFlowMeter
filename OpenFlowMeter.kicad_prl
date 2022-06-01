@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 0,
+    "active_layer": 31,
     "active_layer_preset": "Alle Kupferlagen",
     "auto_track_width": false,
     "hidden_nets": [],
