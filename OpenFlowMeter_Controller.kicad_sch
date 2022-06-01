@@ -2006,6 +2006,11 @@
     (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
     (uuid 4771faff-ab77-472e-b53b-57c893802f8b)
   )
+  (text "p. 75 of https://www.st.com/resource/en/datasheet/stm32f103c8.pdf\n\nThe maximal allowed external impedance is: 104.91 kOhm\nusing TS = 55.5 cycles and Fadc = 6.75 MHz, which is the \nconfiguration used here.\n  "
+    (at 135.255 82.55 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 4bd9a00f-6a69-4bb2-afd1-9b04700f5de3)
+  )
   (text "I2C address: 0x50" (at 238.76 66.04 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 4eb3d137-c3a0-4ced-8508-897e6609d25f)
