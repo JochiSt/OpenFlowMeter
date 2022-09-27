@@ -1,10 +1,14 @@
 {
   "board": {
+<<<<<<< Updated upstream
     "active_layer": 31,
+=======
+    "active_layer": 0,
+>>>>>>> Stashed changes
     "active_layer_preset": "Alle Kupferlagen",
     "auto_track_width": false,
     "hidden_nets": [],
-    "high_contrast_mode": 1,
+    "high_contrast_mode": 0,
     "net_color_mode": 1,
     "opacity": {
       "pads": 1.0,
