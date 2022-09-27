@@ -44,7 +44,7 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "45_degree_only": false,
+          "45_degree_only": true,
           "min_clearance": 0.254
         }
       },
@@ -626,6 +626,10 @@
     [
       "00000000-0000-0000-0000-000061b7a600",
       "PWM Filter"
+    ],
+    [
+      "504813d8-ac02-4268-9012-f5868abf7d63",
+      "Switching Gain Amplifier"
     ]
   ],
   "text_variables": {}
