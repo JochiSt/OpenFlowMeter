@@ -55,7 +55,9 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "courtyards_overlap|165755601|102846427|8aeae536-fd36-430e-be47-1a856eced2fc|ac400113-5b0c-4ba3-90f5-fba5c1ab46ed"
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -86,8 +88,8 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_over_copper": "warning",
-        "silk_overlap": "warning",
+        "silk_over_copper": "ignore",
+        "silk_overlap": "ignore",
         "skew_out_of_range": "error",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
@@ -104,7 +106,7 @@
         "allow_blind_buried_vias": false,
         "allow_microvias": false,
         "max_error": 0.005,
-        "min_clearance": 0.0,
+        "min_clearance": 0.19999999999999998,
         "min_copper_edge_clearance": 0.049999999999999996,
         "min_hole_clearance": 0.25,
         "min_hole_to_hole": 0.25,
