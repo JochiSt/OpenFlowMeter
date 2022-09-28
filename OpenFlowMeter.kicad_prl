@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 31,
+    "active_layer": 37,
     "active_layer_preset": "",
     "auto_track_width": false,
     "hidden_nets": [],
@@ -62,8 +62,8 @@
       35,
       36
     ],
-    "visible_layers": "000d000_fffffff9",
-    "zone_display_mode": 1
+    "visible_layers": "0001038_fffffff9",
+    "zone_display_mode": 0
   },
   "meta": {
     "filename": "OpenFlowMeter.kicad_prl",
