@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (rev "2")
+    (company "Jochen Steinmann")
+  )
+
   (lib_symbols
     (symbol "Amplifier_Operational:LT1493" (pin_names (offset 0.127)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at 2.54 5.08 0)
