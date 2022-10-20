@@ -522,6 +522,10 @@
     [
       "504813d8-ac02-4268-9012-f5868abf7d63",
       "Switching Gain Amplifier"
+    ],
+    [
+      "b9eee879-01fc-4990-ba41-0cf4f1ff1316",
+      "I2C components"
     ]
   ],
   "text_variables": {}
