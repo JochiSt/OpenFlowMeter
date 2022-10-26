@@ -2504,6 +2504,18 @@
     (path "/504813d8-ac02-4268-9012-f5868abf7d63/a5637990-4bb3-466d-8aa1-dab9448b5f24"
       (reference "R57") (unit 1) (value "220") (footprint "Resistor_SMD:R_0603_1608Metric")
     )
+    (path "/504813d8-ac02-4268-9012-f5868abf7d63/2fd75f85-0605-42a5-93ae-8aada9743e01"
+      (reference "R58") (unit 1) (value "120") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/504813d8-ac02-4268-9012-f5868abf7d63/df815fda-314f-4c0c-bc36-2690bb91ea96"
+      (reference "R59") (unit 1) (value "120") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/504813d8-ac02-4268-9012-f5868abf7d63/dee22303-0324-4809-9cdf-82b5880de09a"
+      (reference "R60") (unit 1) (value "120") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
+    (path "/504813d8-ac02-4268-9012-f5868abf7d63/390fcd4a-d849-4ce5-b635-c6a18f7a78d0"
+      (reference "R61") (unit 1) (value "120") (footprint "Resistor_SMD:R_0603_1608Metric")
+    )
     (path "/00000000-0000-0000-0000-00006062503a/00000000-0000-0000-0000-000061b0b87d"
       (reference "TH1") (unit 1) (value "PT100") (footprint "Resistor_SMD:R_0805_2012Metric")
     )
