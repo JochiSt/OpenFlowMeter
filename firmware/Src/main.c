@@ -61,6 +61,8 @@
 uint32_t adcBuf[ADC_BUFLEN];              // store the ADC samples
 uint16_t avr_adcBuf_GAIN_0[ADC_BUFLEN] = {0};   // average the ADC samples with
                                                 // moving average
+uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN] = {0};
+
 const uint16_t SMOO = 15;     // averaging factor
                               // gives the number of old samples
                               // SMOO_MAX - SMOO is number of new samples
