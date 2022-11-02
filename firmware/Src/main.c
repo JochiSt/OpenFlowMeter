@@ -182,6 +182,7 @@ int main(void)
   
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
+  // start first ADC conversion
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
   
   /***************************************************************************/
@@ -244,12 +245,17 @@ int main(void)
     }
     // we have a new ADC result -> do calculations
     if(has_new_adc_result >= 1){
+      /*
+       * if we have a new ADC result, toggle the GAIN selection and start the next conversion
+       */
       adc_result_cnt++;         // count how often the ADC is updating
       for(uint8_t i = 0; i<ADC_BUFLEN; i++){
         // moving average
         avr_adcBuf[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf[i]*SMOO) / SMOO_MAX;
       }
       has_new_adc_result = 0;   // reset new result flag
+      // start new ADC conversion
+      HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
     }
   }
   /* USER CODE END 3 */
