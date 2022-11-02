@@ -237,8 +237,14 @@ int main(void)
           data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
           data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
         }    
+        // send internal data
+        for(uint8_t i = 0; i<2; i++){
+          data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 2]);
+          data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
+        }
         // sendout frame with data
         CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);
+        CAN_send_data_frame(CAN_STATUS_ID, 4, data);   // 8 bytes are maximum        
         
         // reset timer counter
         timer2_elapsed = 0;
