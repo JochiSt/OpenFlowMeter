@@ -233,17 +233,25 @@ int main(void)
       // sendout ADC data via CAN
       if( timer2_elapsed >= CAN_ADC_RATE){ 
         // convert 16bit ADC result into 2x 8bit for CAN message
-        for(uint8_t i = 0; i<4; i++){
+        // position 0 - 3 GAIN_0
+        for(uint8_t i = 0; i<2; i++){
           data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
           data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
-        }    
+        }
+        // position 4 - 7 GAIN_1
+        for(uint8_t i = 0; i<2; i++){
+          data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i]);
+          data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
+        }
+        // sendout frame with data
+        CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);   // 8 bytes are maximum
+        
         // send internal data
         for(uint8_t i = 0; i<2; i++){
           data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 2]);
           data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);
         CAN_send_data_frame(CAN_STATUS_ID, 4, data);   // 8 bytes are maximum        
         
         // reset timer counter
