@@ -32,6 +32,7 @@
 /* USER CODE BEGIN Includes */
 #include "syscalls.h"
 #include "utils.h"
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -129,7 +130,7 @@ int main(void)
   LED_CANRX(SET);    // yellow   -> RX
   LED_CANTX(SET);    // yellow   -> TX
   LED_STATUS(SET);   // green    -> TIM2
-
+  
   // all LEDs ON
   LED_ERROR(RESET);
   HAL_Delay(500);
@@ -181,6 +182,11 @@ int main(void)
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
+  
+  // set gain = 0
+  bool gain_status = false;
+  GAIN_I(RESET);
+  GAIN_U(RESET);
   
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
@@ -265,10 +271,24 @@ int main(void)
        * if we have a new ADC result, toggle the GAIN selection and start the next conversion
        */
       adc_result_cnt++;         // count how often the ADC is updating
-      for(uint8_t i = 0; i<ADC_BUFLEN; i++){
-        // moving average
-        avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
+      if( !gain_status ){             
+        for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+          // moving average
+          avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
+        }
+        gain_status = true;
+        GAIN_I(SET);
+        GAIN_U(SET);
+      }else{
+        for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+          // moving average
+          avr_adcBuf_GAIN_1[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_1[i]*SMOO) / SMOO_MAX;
+        }
+        gain_status = false;
+        GAIN_I(RESET);
+        GAIN_U(RESET);
       }
+      
       has_new_adc_result = 0;   // reset new result flag
       // start new ADC conversion
       HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
