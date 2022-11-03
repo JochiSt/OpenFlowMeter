@@ -22,19 +22,28 @@ class OpenFlowMeter(object):
         self.boardID = boardID
         self.DACsettings = [0]*4
 
-        self._current = [0]*2
-        self._voltage = [0]*2
+        self._current_0 = [0]*2
+        self._voltage_0 = [0]*2
+        
+        self._current_1 = [0]*2
+        self._voltage_1 = [0]*2
 
         self.hasNewMessage = False
 
         # register this module to the USBtin interface
         self.usbtin.add_message_listener(self.handleCANmessage)
 
-    def voltage(self, channel):
-        return self._voltage[channel]
+    def voltage(self, channel, gain=0):
+        if gain == 0:
+            return self._voltage_0[channel]
+        else:
+            return self._voltage_1[channel]
 
-    def current(self, channel):
-        return self._current[channel]
+    def current(self, channel, gain=0):
+        if gain == 0:
+            return self._current_0[channel]
+        else:
+            return self._current_1[channel]
 
     def waitForNewMessage(self):
         """
@@ -56,16 +65,16 @@ class OpenFlowMeter(object):
         if msg.dlc < 8:
             return
 
-        self._current[0] = (msg[0] << 8)  + msg[1]
-        self._voltage[0] = (msg[2] << 8)  + msg[3]
-        self._current[1] = (msg[4] << 8)  + msg[5]
-        self._voltage[1] = (msg[6] << 8)  + msg[7]
+        self._current_0[0] = (msg[0] << 8)  + msg[1]
+        self._voltage_0[0] = (msg[2] << 8)  + msg[3]
+        self._current_0[1] = (msg[4] << 8)  + msg[5]
+        self._voltage_0[1] = (msg[6] << 8)  + msg[7]
 
         self.hasNewMessage = True
 
         #print("OFM", msg)
         #for i in [0, 1]:
-        #   print(self._current[i], self._voltage[i])
+        #   print(self._current_0[i], self._voltage_0[i])
 
     def setDAC(self, channel1, channel2):
             """
