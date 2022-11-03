@@ -30,8 +30,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <syscalls.h>
-
+#include "syscalls.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,17 +41,31 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// sendout the can message about the ADC
+//  gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
+#define CAN_ADC_RATE    1
+
+/* CAN Message IDs */
+#define CAN_ADC_MSG_ID  0x123
+#define CAN_STATUS_ID   0x124
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+#define ADC_BUFLEN 6
+uint32_t adcBuf[ADC_BUFLEN];              // store the ADC samples
+uint16_t avr_adcBuf[ADC_BUFLEN] = {0};    // average the ADC samples with
+                                          // moving average
+const uint16_t SMOO = 15;     // averaging factor
+                              // gives the number of old samples
+                              // SMOO_MAX - SMOO is number of new samples
+                              // VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
+const uint16_t SMOO_MAX = 16; // Maximal value of SMOO
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,20 +115,142 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI2_Init();
   MX_TIM3_Init();
-  MX_TIM4_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  /***************************************************************************/
+  printf("\r\n\r\n");
+  printf("Compiled at "__DATE__" - "__TIME__"\r\n");
+  printf("Compiled with GCC Version "__VERSION__"\r\n");
+  /***************************************************************************/
+  // all OFF
+  LED_ERROR(SET);    // red      -> failure
+  LED_CANRX(SET);    // yellow   -> RX
+  LED_CANTX(SET);    // yellow   -> TX
+  LED_STATUS(SET);   // green    -> TIM2
 
+  // all LEDs ON
+  LED_ERROR(RESET);
+  HAL_Delay(500);
+  LED_CANRX(RESET);
+  HAL_Delay(500);
+  LED_CANTX(RESET);
+  HAL_Delay(500);
+  LED_STATUS(RESET);
+
+  HAL_Delay(1000);
+
+  // all LEDs off  
+  LED_ERROR(SET);
+  HAL_Delay(500);
+  LED_CANRX(SET);
+  HAL_Delay(500);
+  LED_CANTX(SET);
+  HAL_Delay(500);
+  LED_STATUS(SET);
+  /***************************************************************************/
+  
+  // START CAN Bus (required for transmission of messages)
+  printf("starting CAN Bus...\r\n");
+  HAL_CAN_Start(&hcan);
+
+  // prepare CAN filter for receiving messages
+  CAN_prepare_filter(0x123, 0x124, 0);
+  CAN_prepare_filter(0x125, 0x126, 1);
+
+  // activate notifications
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
+	  Error_Handler();
+  }
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
+	  Error_Handler();
+  }  
+  /***************************************************************************/
+  printf("starting TIM2...\r\n");
+  HAL_TIM_Base_Start_IT(&htim2);
+
+  printf("starting TIM3 PWM...\r\n");
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
+  
+  // initialise PWM outputs with 0
+  TIM3->CCR1 = 0; // set channel 1 max. 1024
+  TIM3->CCR2 = 0; // set channel 2 max. 1024  
+  /***************************************************************************/
+  // Calibrate The ADC On Power-Up For Better Accuracy
+  printf("calibrating ADC...\r\n");
+  HAL_ADCEx_Calibration_Start(&hadc1);
+  
+  // start ADC DMA
+  printf("starting ADC DMA...\r\n");
+  HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
+  
+  /***************************************************************************/
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  printf("successfully started everything\n");
+  
+  uint16_t timer2_elapsed_old = 0;
+  
+  // variables for transmitting CAN messages
+  uint8_t data[8] = {0};
+  printf("successfully started everything\r\n");
+    
+  uint16_t adc_result_cnt = 0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    if (can_message_received){
+      can_message_received = 0;
+    }
+    
+    if( adc_result_cnt > 0 ){   // are there new ADC results?
+      // check timer 2 for doing periodic tasks
+      // one timer2_elapsed is equal to 500ms
+      if( timer2_elapsed > timer2_elapsed_old){
+        printf("collected ADC results %d\r\n", adc_result_cnt);
+        adc_result_cnt = 0;
+        
+        timer2_elapsed_old = timer2_elapsed;
+        
+        // first 4 samples are from current sources
+        for(uint8_t i = 0; i<4; i++){
+          printf("%d\t", avr_adcBuf[i]);
+        }
+        uint32_t temperature = adcBuf[4];
+        uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
+        
+        printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
+        printf("\r\n");
+      }
+      
+      // sendout ADC data via CAN
+      if( timer2_elapsed >= CAN_ADC_RATE){ 
+        // convert 16bit ADC result into 2x 8bit for CAN message
+        for(uint8_t i = 0; i<4; i++){
+          data[2*i    ] = upper(avr_adcBuf[i]);
+          data[2*i + 1] = lower(avr_adcBuf[i]);
+        }    
+        // sendout frame with data
+        CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);
+        
+        // reset timer counter
+        timer2_elapsed = 0;
+        timer2_elapsed_old = 0;
+      }
+    }
+    // we have a new ADC result -> do calculations
+    if(has_new_adc_result >= 1){
+      adc_result_cnt++;         // count how often the ADC is updating
+      for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+        // moving average
+        avr_adcBuf[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf[i]*SMOO) / SMOO_MAX;
+      }
+      has_new_adc_result = 0;   // reset new result flag
+    }
   }
   /* USER CODE END 3 */
 }
@@ -157,7 +293,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV8;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -177,6 +313,8 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  // switch ON red LED
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   while (1)
   {
   }

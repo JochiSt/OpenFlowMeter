@@ -46,4 +46,24 @@ firmware/build
 *.log
 *.raw
 *.plt
-*.mout
+
+# CubeMX generated reports
+firmware/OpenFlowMeter.txt
+firmware/OpenFlowMeter.pdf
+
+# Spyder
+*/.spyproject/*
+*.pyc
+*.npz
+
+software/FlowMeasurement/*.png
+*.png
+
+### VisualStudioCode ###
+.vscode/*
+#!.vscode/settings.json
+#!.vscode/tasks.json
+#!.vscode/launch.json
+#!.vscode/extensions.json
+
+firmware/.project

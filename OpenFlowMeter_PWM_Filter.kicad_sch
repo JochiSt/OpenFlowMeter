@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (rev "2")
+    (company "Jochen Steinmann")
+  )
+
   (lib_symbols
     (symbol "Amplifier_Operational:LT1492" (pin_names (offset 0.127)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at 0 5.08 0)
@@ -226,7 +231,7 @@
       )
       (symbol "+3.3V_1_1"
         (pin power_in line (at 0 0 90) (length 0) hide
-          (name "+3V3" (effects (font (size 1.27 1.27))))
+          (name "+3.3V" (effects (font (size 1.27 1.27))))
           (number "1" (effects (font (size 1.27 1.27))))
         )
       )
@@ -466,6 +471,11 @@
     (pin "1" (uuid 214e41d3-ead9-4e70-8205-61f67874e54d))
     (pin "2" (uuid f1740d90-a1e8-475c-9f8b-799d406d4de8))
     (pin "3" (uuid 8cc91efe-3984-40cd-99b3-b1f0afb4ce0d))
+    (pin "5" (uuid 6638d84f-e3be-4c25-8b7d-cd5378a1fde7))
+    (pin "6" (uuid b950770e-c665-4991-975f-8f37d6e2f23a))
+    (pin "7" (uuid 4261e516-37bf-42c1-8350-cc5ed13d5b1a))
+    (pin "4" (uuid bbce8be5-6a93-49e3-862b-9e8e540717c5))
+    (pin "8" (uuid 57ad6e93-1a80-4741-87de-15eaf53fd934))
   )
 
   (symbol (lib_id "Amplifier_Operational:LT1492") (at 151.13 59.69 0) (unit 3)
@@ -483,6 +493,12 @@
     (property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/14923f.pdf" (id 3) (at 151.13 59.69 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+    (pin "1" (uuid 24e4deed-ba76-42f2-bacc-260f1bed3515))
+    (pin "2" (uuid f9e85e5d-a38d-47f7-b5a9-8d8ff70221a9))
+    (pin "3" (uuid 96feb751-ea9d-4022-83d2-14aa59df327e))
+    (pin "5" (uuid 8be11f12-680c-43b9-9712-7b07e2dcffcc))
+    (pin "6" (uuid fec867b7-a1c2-4b88-9688-400d1a780f58))
+    (pin "7" (uuid 481ce444-2372-4779-b518-4939e6cbc677))
     (pin "4" (uuid 354f0054-5f3a-4867-a3f2-b3008e918feb))
     (pin "8" (uuid 1531d6c4-a0da-49ca-878b-afe2464a861b))
   )
@@ -549,9 +565,14 @@
     (property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/14923f.pdf" (id 3) (at 147.32 124.46 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+    (pin "1" (uuid 583be820-2edd-4eb9-adbb-93984cd7ad43))
+    (pin "2" (uuid 12912394-0578-4e7e-928f-b5ced6608752))
+    (pin "3" (uuid 26bcc244-6f39-412e-b678-9498228ab7dd))
     (pin "5" (uuid eb6a726e-fed9-4891-95fa-b4d4a5f77b35))
     (pin "6" (uuid d70d1cd3-1668-4688-8eb7-f773efb7bb87))
     (pin "7" (uuid 3c646c61-400f-4f60-98b8-05ed5e632a3f))
+    (pin "4" (uuid f3872dd3-d27d-4e1d-a20d-070235064fbd))
+    (pin "8" (uuid df0cdd62-71a3-494b-aee4-3b17096e0d9d))
   )
 
   (symbol (lib_id "Device:R") (at 104.14 93.98 270) (unit 1)
