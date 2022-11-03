@@ -48,6 +48,12 @@ class OpenFlowMeter(object):
         else:
             return self._current_1[channel]
 
+    def uCtemperature(self):
+        return self.uCtemperature
+
+    def uCrefVoltage(self):
+        return self.uCrefvoltage * 3300 / 4096
+
     def waitForNewMessage(self):
         """
             wait until a new mesage is received and parsed
