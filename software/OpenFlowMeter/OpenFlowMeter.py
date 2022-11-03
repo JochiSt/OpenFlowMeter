@@ -24,9 +24,12 @@ class OpenFlowMeter(object):
 
         self._current_0 = [0]*2
         self._voltage_0 = [0]*2
-        
+
         self._current_1 = [0]*2
         self._voltage_1 = [0]*2
+
+        self.uCtemperature = 0
+        self.uCrefvoltage  = 0
 
         self.hasNewMessage = False
 
@@ -53,7 +56,7 @@ class OpenFlowMeter(object):
             time.sleep(0.1)
 
     def handleCANmessage(self, msg):
-        """"
+        """
             handle a can message from USBtin
         """
         # first check, that the message belongs to our module
@@ -62,13 +65,38 @@ class OpenFlowMeter(object):
         #  data[2*i    ] = upper(adcBuf[i]);
         #  data[2*i + 1] = lower(adcBuf[i]);
         # }
-        if msg.dlc < 8:
-            return
 
-        self._current_0[0] = (msg[0] << 8)  + msg[1]
-        self._voltage_0[0] = (msg[2] << 8)  + msg[3]
-        self._current_0[1] = (msg[4] << 8)  + msg[5]
-        self._voltage_0[1] = (msg[6] << 8)  + msg[7]
+        """
+            CAN message IDs from firmware
+            #define CAN_ADC_MSG_ID_CH0  0x123
+            #define CAN_ADC_MSG_ID_CH1  0x124
+            #define CAN_STATUS_ID       0x120
+        """
+        if msg.mid == 0x123:    # channel 0
+            if msg.dlc < 8:
+                return
+            self._current_0[0] = (msg[0] << 8)  + msg[1]
+            self._voltage_0[0] = (msg[2] << 8)  + msg[3]
+            self._current_1[0] = (msg[4] << 8)  + msg[5]
+            self._voltage_1[0] = (msg[6] << 8)  + msg[7]
+
+        elif msg.mid == 0x124:  # channel 1
+            if msg.dlc < 8:
+                return
+            self._current_0[1] = (msg[0] << 8)  + msg[1]
+            self._voltage_0[1] = (msg[2] << 8)  + msg[3]
+            self._current_1[1] = (msg[4] << 8)  + msg[5]
+            self._voltage_1[1] = (msg[6] << 8)  + msg[7]
+
+        elif msg.mid == 0x120:  # uC status
+            if msg.dlc < 4:
+                return
+            self.uCtemperature = (msg[0] << 8)  + msg[1]
+            self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
+
+        else:
+            print("Message IDs not implemented")
+            return
 
         self.hasNewMessage = True
 
