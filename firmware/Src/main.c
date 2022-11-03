@@ -43,7 +43,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 // sendout the can message about the ADC
-//  gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
+// gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
 #define CAN_ADC_RATE    1
 
 /* CAN Message IDs */
@@ -59,8 +59,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define ADC_BUFLEN 6
-uint32_t adcBuf[ADC_BUFLEN];              // store the ADC samples
+#define ADC_BUFLEN 6                            // 4 external inputs + T + Uint
+uint32_t adcBuf[ADC_BUFLEN];                    // store the ADC samples
+
 uint16_t avr_adcBuf_GAIN_0[ADC_BUFLEN] = {0};   // average the ADC samples with
                                                 // moving average
 uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN] = {0};
