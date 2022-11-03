@@ -47,8 +47,9 @@
 #define CAN_ADC_RATE    1
 
 /* CAN Message IDs */
-#define CAN_ADC_MSG_ID  0x123
-#define CAN_STATUS_ID   0x124
+#define CAN_ADC_MSG_ID_CH0  0x123
+#define CAN_ADC_MSG_ID_CH1  0x124
+#define CAN_STATUS_ID       0x120
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -239,6 +240,10 @@ int main(void)
       // sendout ADC data via CAN
       if( timer2_elapsed >= CAN_ADC_RATE){ 
         // convert 16bit ADC result into 2x 8bit for CAN message
+        // one CAN message can transport up to 8 bytes
+        
+        ////////////////////////////////////////////////////////////////////////
+        // CHANNEL 0
         // position 0 - 3 GAIN_0
         for(uint8_t i = 0; i<2; i++){
           data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
@@ -250,16 +255,32 @@ int main(void)
           data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);   // 8 bytes are maximum
+        CAN_send_data_frame(CAN_ADC_MSG_ID_CH0, 8, data);
         
+        ////////////////////////////////////////////////////////////////////////
+        // CHANNEL 1
+        for(uint8_t i = 0; i<2; i++){
+          data[2*i    ] = upper(avr_adcBuf_GAIN_0[i+2]);
+          data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i+2]);
+        }
+        // position 4 - 7 GAIN_1
+        for(uint8_t i = 0; i<2; i++){
+          data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i+2]);
+          data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
+        }
+        // sendout frame with data
+        CAN_send_data_frame(CAN_ADC_MSG_ID_CH1, 8, data);
+        
+        ////////////////////////////////////////////////////////////////////////
         // send internal data
         for(uint8_t i = 0; i<2; i++){
           data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 2]);
           data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_STATUS_ID, 4, data);   // 8 bytes are maximum        
+        CAN_send_data_frame(CAN_STATUS_ID, 4, data);
         
+        ////////////////////////////////////////////////////////////////////////
         // reset timer counter
         timer2_elapsed = 0;
         timer2_elapsed_old = 0;
