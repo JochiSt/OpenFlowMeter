@@ -25,7 +25,7 @@ void i2c_scan(I2C_HandleTypeDef* i2cHandle){
  	 * retries 2
  	 * timeout 2
  	 */
- 	result = HAL_I2C_IsDeviceReady(&i2cHandle, (uint16_t)(i<<1), 2, 2);
+ 	result = HAL_I2C_IsDeviceReady(i2cHandle, (uint16_t)(i<<1), 2, 2);
  	if (result != HAL_OK) // HAL_ERROR or HAL_BUSY or HAL_TIMEOUT
  	{
       printf("."); // No ACK received at that address
