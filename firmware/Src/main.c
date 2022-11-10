@@ -33,6 +33,7 @@
 #include "syscalls.h"
 #include "utils.h"
 #include "i2c_scanner.h"
+#include "i2c_utils.h"
 #include <stdbool.h>
 /* USER CODE END Includes */
 

@@ -37,6 +37,7 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 Src/i2c_scanner.c \
+Src/i2c_utils.c \
 Src/syscalls.c \
 Src/main.c \
 Src/gpio.c \
