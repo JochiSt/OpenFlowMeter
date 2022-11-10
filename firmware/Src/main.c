@@ -32,6 +32,7 @@
 /* USER CODE BEGIN Includes */
 #include "syscalls.h"
 #include "utils.h"
+#include "i2c_scanner.h"
 #include <stdbool.h>
 /* USER CODE END Includes */
 
@@ -143,6 +144,10 @@ int main(void)
   LED_STATUS(RESET);
 
   HAL_Delay(1000);
+  
+  // do an I2C scan of both I2C ports
+  i2c_scan(&hi2c1);   // PORT 1
+  i2c_scan(&hi2c2);   // PORT 2
 
   // all LEDs off  
   LED_ERROR(SET);
