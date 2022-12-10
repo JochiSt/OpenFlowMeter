@@ -8,13 +8,13 @@
  */
 void i2c_scan(I2C_HandleTypeDef* i2cHandle){
   // function for simple I2C scanner
-  
+
   if(i2cHandle->Instance==I2C1){
-    printf("I2C bus #1\r\n");    
+    printf("I2C bus #1\r\n");
   }else if(i2cHandle->Instance==I2C2){
     printf("I2C bus #2\r\n");
   }
-  
+
   printf("Scanning I2C bus:\r\n");
   HAL_StatusTypeDef result;
   uint8_t i;
