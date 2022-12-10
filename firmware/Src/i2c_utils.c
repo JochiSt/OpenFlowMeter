@@ -42,6 +42,7 @@ uint16_t i2c_read_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
   HAL_StatusTypeDef result;
   // Tell TMP100 that we want to read from the temperature register
   buf[0] = 0x00;
+
   result = HAL_I2C_Master_Transmit(i2cHandle, TMP100_addr, buf, 1, HAL_MAX_DELAY);
   if ( result == HAL_OK ) {
     // Read 2 bytes from the temperature register
@@ -63,10 +64,8 @@ uint16_t i2c_read_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
 
       // Convert temperature to decimal format
       temp_c *= 100;
-      printf((char*)buf,
-            "%u.%u C\r\n",
-            ((unsigned int)temp_c / 100),
-            ((unsigned int)temp_c % 100));
+      printf("%u.%u C\r\n", ((unsigned int)temp_c / 100),
+                                ((unsigned int)temp_c % 100));
     }
   }else{
     printf("Error TMP100 TX\r\n");
