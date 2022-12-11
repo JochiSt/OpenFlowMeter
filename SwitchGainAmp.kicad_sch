@@ -777,6 +777,11 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 95506af6-0f69-419a-97d6-eeef1edba922)
   )
+  (text "used LT1491, which should also match, \nbut leaves two pads free"
+    (at 172.72 36.83 0)
+    (effects (font (size 2 2) italic) (justify left bottom))
+    (uuid 98f8b9ec-131b-4fb0-9094-54f0bbaf5997)
+  )
   (text "Switch Gain between 1 and ..." (at 106.934 161.036 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid b5139dd4-8f6f-4f57-8d39-1ad706165b3b)
