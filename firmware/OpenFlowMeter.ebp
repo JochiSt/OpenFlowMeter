@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<EmBitz_project_file>
+	<EmBitzVersion release="2.50" revision="0" />
+	<FileVersion major="2" minor="0" />
+	<Project>
+		<Option title="OpenFlowMeter" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="armgcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin\Release\OpenFlowMeter.elf" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option compiler="armgcc" />
+				<Option projectDeviceOptionsRelation="0" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-g2" />
+					<Add option="-fdata-sections" />
+					<Add option="-ffunction-sections" />
+				</Compiler>
+				<Linker>
+					<Add option="-Wl,--gc-sections" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xb.h" />
+		<Unit filename="Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h" />
+		<Unit filename="Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h" />
+		<Unit filename="Drivers\CMSIS\Include\cmsis_armcc.h" />
+		<Unit filename="Drivers\CMSIS\Include\cmsis_armclang.h" />
+		<Unit filename="Drivers\CMSIS\Include\cmsis_compiler.h" />
+		<Unit filename="Drivers\CMSIS\Include\cmsis_gcc.h" />
+		<Unit filename="Drivers\CMSIS\Include\cmsis_iccarm.h" />
+		<Unit filename="Drivers\CMSIS\Include\cmsis_version.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_armv8mbl.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_armv8mml.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm0.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm0plus.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm1.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm23.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm3.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm33.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm4.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_cm7.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_sc000.h" />
+		<Unit filename="Drivers\CMSIS\Include\core_sc300.h" />
+		<Unit filename="Drivers\CMSIS\Include\mpu_armv7.h" />
+		<Unit filename="Drivers\CMSIS\Include\mpu_armv8.h" />
+		<Unit filename="Drivers\CMSIS\Include\tz_context.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_can.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h" />
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_adc_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_can.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_exti.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pwr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Inc\adc.h" />
+		<Unit filename="Inc\can.h" />
+		<Unit filename="Inc\dma.h" />
+		<Unit filename="Inc\eeprom_cfg.h" />
+		<Unit filename="Inc\gpio.h" />
+		<Unit filename="Inc\i2c.h" />
+		<Unit filename="Inc\i2c_scanner.h" />
+		<Unit filename="Inc\i2c_utils.h" />
+		<Unit filename="Inc\main.h" />
+		<Unit filename="Inc\spi.h" />
+		<Unit filename="Inc\stm32f1xx_hal_conf.h" />
+		<Unit filename="Inc\stm32f1xx_it.h" />
+		<Unit filename="Inc\syscalls.h" />
+		<Unit filename="Inc\tim.h" />
+		<Unit filename="Inc\usart.h" />
+		<Unit filename="Inc\utils.h" />
+		<Unit filename="Makefile" />
+		<Unit filename="Src\adc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\can.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\dma.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\gpio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\i2c.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\i2c_scanner.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\i2c_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\stm32f1xx_hal_msp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\stm32f1xx_it.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\syscalls.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\system_stm32f1xx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\tim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src\usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger>
+				<target_debugging_settings target="Release">
+					<debug_interface description="" options="0" reg_filter="0" probe="" device="" speed="" bus_address="" serial="" defines="" scripts="" flash_size="" ram_size="" vcc_voltage="" verbose="7792264" unwind="1641417720" rstType="285013100" use_jtag="false" disable_cache="false" enable_semi="false" close_eblink="false" gdb_reset="" gdb_reset_remote="" gdb_before_conn="" gdb_after_conn="" use_remote="false" ip_address="" ip_port="" path="" executable="" start_server="false" arguments="" flash_verify="false" flash_run="false" />
+				</target_debugging_settings>
+			</debugger>
+			<envvars />
+		</Extensions>
+	</Project>
+</EmBitz_project_file>
