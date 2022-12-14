@@ -23,10 +23,25 @@ uint8_t read16_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t i2c_addr, uint8_t ad
 /**
  * init the temperature sensor
  */
-void i2c_init_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t addr){
+void i2c_init_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
   printf("Init TMP100\r\n");
   // set the resolution of the TMP100
 
+  uint8_t buf[2] = {
+        0x01,   // point to configuration register
+        0x00    // configuration register content
+        };
+  // see Table 8 of TMP100 / TMP101 datasheet
+  // ignore other settings than resolution
+  // features like alert, thermostat and fault handling are not needed to be
+  // configured. We just want to have the best resolution (R1 = R0 = 1 - 12bit)
+  // R1 = D6, R0 = D5
+  buf[1] = (1<<6) | (1<<5);
+
+  result = HAL_I2C_Master_Transmit(i2cHandle, TMP100_addr, buf, 2, HAL_MAX_DELAY);
+  if ( result != HAL_OK ) {
+    printf("unable to set resolution of TMP100\r\n");
+  }
 }
 /**
  * read the I2C temperature sensor
