@@ -67,3 +67,4 @@ software/FlowMeasurement/*.png
 #!.vscode/extensions.json
 
 firmware/.project
+*.ebTemp
