@@ -134,7 +134,7 @@ int main(void)
   LED_CANRX(SET);    // yellow   -> RX
   LED_CANTX(SET);    // yellow   -> TX
   LED_STATUS(SET);   // green    -> TIM2
-  
+
   // all LEDs ON
   LED_ERROR(RESET);
   HAL_Delay(500);
@@ -145,12 +145,12 @@ int main(void)
   LED_STATUS(RESET);
 
   HAL_Delay(1000);
-  
+
   // do an I2C scan of both I2C ports
   i2c_scan(&hi2c1);   // PORT 1
   i2c_scan(&hi2c2);   // PORT 2
 
-  // all LEDs off  
+  // all LEDs off
   LED_ERROR(SET);
   HAL_Delay(500);
   LED_CANRX(SET);
@@ -159,7 +159,7 @@ int main(void)
   HAL_Delay(500);
   LED_STATUS(SET);
   /***************************************************************************/
-  
+
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
@@ -174,7 +174,7 @@ int main(void)
   }
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
 	  Error_Handler();
-  }  
+  }
   /***************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
@@ -182,20 +182,20 @@ int main(void)
   printf("starting TIM3 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
-  
+
   // initialise PWM outputs with 0
   TIM3->CCR1 = 0; // set channel 1 max. 1024
-  TIM3->CCR2 = 0; // set channel 2 max. 1024  
+  TIM3->CCR2 = 0; // set channel 2 max. 1024
   /***************************************************************************/
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
-  
+
   // set gain = 0
   bool gain_status = false;
   GAIN_I(RESET);
   GAIN_U(RESET);
-  
+
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
   // start first ADC conversion
@@ -210,13 +210,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  
+
   uint16_t timer2_elapsed_old = 0;
-  
+
   // variables for transmitting CAN messages
   uint8_t data[8] = {0};
   printf("successfully started everything\r\n");
-    
+
   uint16_t adc_result_cnt = 0;
   while (1)
   {
@@ -227,16 +227,16 @@ int main(void)
     if (can_message_received){
       can_message_received = 0;
     }
-    
+
     if( adc_result_cnt > 0 ){   // are there new ADC results?
       // check timer 2 for doing periodic tasks
       // one timer2_elapsed is equal to 500ms
       if( timer2_elapsed > timer2_elapsed_old){
         printf("collected ADC results %d\r\n", adc_result_cnt);
         adc_result_cnt = 0;
-        
+
         timer2_elapsed_old = timer2_elapsed;
-        
+
         // first 4 samples are from current sources
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_0[i]);
@@ -245,19 +245,19 @@ int main(void)
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_1[i]);
         }
-        
+
         uint32_t temperature = adcBuf[4];
         uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
-        
+
         printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
         printf("\r\n");
       }
-      
+
       // sendout ADC data via CAN
-      if( timer2_elapsed >= CAN_ADC_RATE){ 
+      if( timer2_elapsed >= CAN_ADC_RATE){
         // convert 16bit ADC result into 2x 8bit for CAN message
         // one CAN message can transport up to 8 bytes
-        
+
         ////////////////////////////////////////////////////////////////////////
         // CHANNEL 0
         // position 0 - 3 GAIN_0
@@ -272,7 +272,7 @@ int main(void)
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_ADC_MSG_ID_CH0, 8, data);
-        
+
         ////////////////////////////////////////////////////////////////////////
         // CHANNEL 1
         for(uint8_t i = 0; i<2; i++){
@@ -286,7 +286,7 @@ int main(void)
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_ADC_MSG_ID_CH1, 8, data);
-        
+
         ////////////////////////////////////////////////////////////////////////
         // send internal data
         for(uint8_t i = 0; i<2; i++){
@@ -295,7 +295,7 @@ int main(void)
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_STATUS_ID, 4, data);
-        
+
         ////////////////////////////////////////////////////////////////////////
         // reset timer counter
         timer2_elapsed = 0;
@@ -308,7 +308,7 @@ int main(void)
        * if we have a new ADC result, toggle the GAIN selection and start the next conversion
        */
       adc_result_cnt++;         // count how often the ADC is updating
-      if( !gain_status ){             
+      if( !gain_status ){
         for(uint8_t i = 0; i<ADC_BUFLEN; i++){
           // moving average
           avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
@@ -325,7 +325,7 @@ int main(void)
         GAIN_I(RESET);
         GAIN_U(RESET);
       }
-      
+
       has_new_adc_result = 0;   // reset new result flag
       // start new ADC conversion
       HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
