@@ -37,7 +37,7 @@ void i2c_init_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
   // configured. We just want to have the best resolution (R1 = R0 = 1 - 12bit)
   // R1 = D6, R0 = D5
   buf[1] = (1<<6) | (1<<5);
-
+  HAL_StatusTypeDef result;
   result = HAL_I2C_Master_Transmit(i2cHandle, TMP100_addr, buf, 2, HAL_MAX_DELAY);
   if ( result != HAL_OK ) {
     printf("unable to set resolution of TMP100\r\n");
