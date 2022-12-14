@@ -200,7 +200,11 @@ int main(void)
   printf("starting ADC DMA...\r\n");
   // start first ADC conversion
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
-  
+
+  /***************************************************************************/
+  // Test of TMP100 / TMP101
+  i2c_init_TMP100(&hi2c1, 0x48);
+  i2c_read_TMP100(&hi2c1, 0x48);
   /***************************************************************************/
   /* USER CODE END 2 */
 
