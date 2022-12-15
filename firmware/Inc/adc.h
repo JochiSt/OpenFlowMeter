@@ -34,7 +34,7 @@ extern "C" {
 extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
-uint8_t has_new_adc_result;
+volatile uint8_t has_new_adc_result;
 /* USER CODE END Private defines */
 
 void MX_ADC1_Init(void);
