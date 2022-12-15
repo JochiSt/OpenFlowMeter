@@ -21,6 +21,7 @@
 #include "adc.h"
 
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
 #include "utils.h"
 
 /* USER CODE END 0 */
@@ -173,6 +174,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 
 /* USER CODE BEGIN 1 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+  if (hadc->ErrorCode != HAL_OK){
+	  printf("ADC Error\r\n");
+  }
   // raise flag, that we have a new ADC result
   has_new_adc_result ++;
 }
