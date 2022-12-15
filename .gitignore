@@ -66,5 +66,9 @@ software/FlowMeasurement/*.png
 #!.vscode/launch.json
 #!.vscode/extensions.json
 
+# STM32CubeIDE
 firmware/.project
+firmware/Debug/*
+
+# EmBitz
 *.ebTemp
