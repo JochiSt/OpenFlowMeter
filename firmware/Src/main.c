@@ -124,11 +124,11 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  /***************************************************************************/
+  /****************************************************************************/
   printf("\r\n\r\n");
   printf("Compiled at "__DATE__" - "__TIME__"\r\n");
   printf("Compiled with GCC Version "__VERSION__"\r\n");
-  /***************************************************************************/
+  /****************************************************************************/
   // all OFF
   LED_ERROR(SET);    // red      -> failure
   LED_CANRX(SET);    // yellow   -> RX
@@ -158,7 +158,7 @@ int main(void)
   LED_CANTX(SET);
   HAL_Delay(500);
   LED_STATUS(SET);
-  /***************************************************************************/
+  /****************************************************************************/
 
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
@@ -175,7 +175,7 @@ int main(void)
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
 	  Error_Handler();
   }
-  /***************************************************************************/
+  /****************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
 
@@ -186,7 +186,7 @@ int main(void)
   // initialise PWM outputs with 0
   TIM3->CCR1 = 0; // set channel 1 max. 1024
   TIM3->CCR2 = 0; // set channel 2 max. 1024
-  /***************************************************************************/
+  /****************************************************************************/
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
@@ -201,11 +201,11 @@ int main(void)
   // start first ADC conversion
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
 
-  /***************************************************************************/
+  /****************************************************************************/
   // Test of TMP100 / TMP101
   i2c_init_TMP100(&hi2c1, 0x48);
   i2c_read_TMP100(&hi2c1, 0x48);
-  /***************************************************************************/
+  /****************************************************************************/
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -241,7 +241,7 @@ int main(void)
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_0[i]);
         }
-        printf("\t");
+        printf("\t\t");
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_1[i]);
         }
@@ -302,11 +302,11 @@ int main(void)
         timer2_elapsed_old = 0;
       }
     }
+
     // we have a new ADC result -> do calculations
     if(has_new_adc_result >= 1){
-      /*
-       * if we have a new ADC result, toggle the GAIN selection and start the next conversion
-       */
+       // if we have a new ADC result, toggle the GAIN selection and start the
+       // next conversion
       adc_result_cnt++;         // count how often the ADC is updating
       if( !gain_status ){
         for(uint8_t i = 0; i<ADC_BUFLEN; i++){
@@ -332,8 +332,8 @@ int main(void)
     }
   }
   /* USER CODE END 3 */
+  /****************************************************************************/
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None
