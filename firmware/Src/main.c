@@ -260,16 +260,13 @@ int main(void)
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_0[i]);
         }
-        printf("\t\t");
+        printf("\r\n");
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_1[i]);
         }
-
-        uint32_t temperature = adcBuf[4];
-        uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
-
-        printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
         printf("\r\n");
+
+        printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
 
         /**********************************************************************/
         // handle the gain switching
