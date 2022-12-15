@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include "utils.h"
 
+uint8_t has_new_adc_result;
+
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;

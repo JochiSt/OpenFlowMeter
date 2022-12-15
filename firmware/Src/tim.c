@@ -23,6 +23,8 @@
 /* USER CODE BEGIN 0 */
 #include "syscalls.h"
 #include "utils.h"
+
+uint8_t timer2_elapsed;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
