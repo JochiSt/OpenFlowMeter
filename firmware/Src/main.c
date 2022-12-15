@@ -161,7 +161,10 @@ int main(void)
   HAL_Delay(500);
   LED_STATUS(SET);
   /****************************************************************************/
+  // read all configuration values from I2C EEPROM, or use default ones
 
+
+  /****************************************************************************/
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
@@ -251,7 +254,7 @@ int main(void)
 
         // check the ADC results
         printf("collected ADC results %d\r\n", adc_result_cnt);
-        // reset adc result counter
+        // reset ADC result counter
         adc_result_cnt = 0;
 
         /**********************************************************************/
