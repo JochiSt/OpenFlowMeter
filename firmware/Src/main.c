@@ -44,7 +44,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-// sendout the can message about the ADC
+// send out the can message about the ADC
 // gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
 #define CAN_ADC_RATE    1
 
@@ -216,27 +216,38 @@ int main(void)
   // variables for transmitting CAN messages
   uint8_t data[8] = {0};
   printf("successfully started everything\r\n");
-
+  /****************************************************************************/
   uint16_t adc_result_cnt = 0;
+  uint8_t can_timer_cnt = 0;
+
+  // Main loop
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+    /**************************************************************************/
+    // CAN message handling is done in CAN_parse_message in can.c
     if (can_message_received){
       can_message_received = 0;
     }
 
-    if( adc_result_cnt > 0 ){   // are there new ADC results?
-      // check timer 2 for doing periodic tasks
-      // one timer2_elapsed is equal to 500ms
-      if( timer2_elapsed > timer2_elapsed_old){
+    /***************************************************************************
+     * check timer 2 for doing periodic tasks
+     * one timer2_elapsed is equal to 500ms
+     **************************************************************************/
+    if( timer2_elapsed > timer2_elapsed_old){
+        timer2_elapsed_old = timer2_elapsed;
+
+        // increase the CAN timer counter every time this counter is evaluated
+        can_timer_cnt++;
+
+        // check the ADC results
         printf("collected ADC results %d\r\n", adc_result_cnt);
         adc_result_cnt = 0;
 
-        timer2_elapsed_old = timer2_elapsed;
-
+        /**********************************************************************/
+        // printout collected data
         // first 4 samples are from current sources
         for(uint8_t i = 0; i<4; i++){
           printf("%d\t", avr_adcBuf_GAIN_0[i]);
@@ -251,88 +262,95 @@ int main(void)
 
         printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
         printf("\r\n");
-      }
 
-      // sendout ADC data via CAN
-      if( timer2_elapsed >= CAN_ADC_RATE){
+        /**********************************************************************/
+        // handle the gain switching
+        if (!gain_status){
+            gain_status = true;
+            GAIN_I(SET);
+            GAIN_U(SET);
+        }else{
+            gain_status = false;
+            GAIN_I(RESET);
+            GAIN_U(RESET);
+        }
+    }
+
+    /***************************************************************************
+     * Send out periodic CAN messages
+     **************************************************************************/
+    if( can_timer_cnt >= CAN_ADC_RATE) {
         // convert 16bit ADC result into 2x 8bit for CAN message
         // one CAN message can transport up to 8 bytes
-
-        ////////////////////////////////////////////////////////////////////////
+        /**********************************************************************/
         // CHANNEL 0
         // position 0 - 3 GAIN_0
-        for(uint8_t i = 0; i<2; i++){
-          data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
-          data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
         }
         // position 4 - 7 GAIN_1
-        for(uint8_t i = 0; i<2; i++){
-          data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i]);
-          data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i]);
+            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_ADC_MSG_ID_CH0, 8, data);
 
-        ////////////////////////////////////////////////////////////////////////
+        /**********************************************************************/
         // CHANNEL 1
-        for(uint8_t i = 0; i<2; i++){
-          data[2*i    ] = upper(avr_adcBuf_GAIN_0[i+2]);
-          data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i+2]);
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i+2]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i+2]);
         }
         // position 4 - 7 GAIN_1
-        for(uint8_t i = 0; i<2; i++){
-          data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i+2]);
-          data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i+2]);
+            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_ADC_MSG_ID_CH1, 8, data);
 
-        ////////////////////////////////////////////////////////////////////////
+        /**********************************************************************/
         // send internal data
-        for(uint8_t i = 0; i<2; i++){
-          data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 2]);
-          data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 2]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_STATUS_ID, 4, data);
 
-        ////////////////////////////////////////////////////////////////////////
-        // reset timer counter
-        timer2_elapsed = 0;
-        timer2_elapsed_old = 0;
-      }
+        /**********************************************************************/
+        // reset CAN timer counter
+        can_timer_cnt = 0;
     }
 
-    // we have a new ADC result -> do calculations
+    /***************************************************************************
+     * Do calculations, if we have a new ADC result
+     **************************************************************************/
     if(has_new_adc_result >= 1){
-       // if we have a new ADC result, toggle the GAIN selection and start the
-       // next conversion
+
       adc_result_cnt++;         // count how often the ADC is updating
+
+      // fill the values according to the gain settings
       if( !gain_status ){
         for(uint8_t i = 0; i<ADC_BUFLEN; i++){
           // moving average
           avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
         }
-        gain_status = true;
-        GAIN_I(SET);
-        GAIN_U(SET);
       }else{
         for(uint8_t i = 0; i<ADC_BUFLEN; i++){
           // moving average
           avr_adcBuf_GAIN_1[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_1[i]*SMOO) / SMOO_MAX;
         }
-        gain_status = false;
-        GAIN_I(RESET);
-        GAIN_U(RESET);
       }
-
       has_new_adc_result = 0;   // reset new result flag
+
       // start new ADC conversion
       HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
     }
   }
   /* USER CODE END 3 */
-  /****************************************************************************/
 }
 /**
   * @brief System Clock Configuration
