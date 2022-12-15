@@ -277,10 +277,12 @@ int main(void)
             gain_status = true;
             GAIN_I(SET);
             GAIN_U(SET);
+            HAL_Delay(5);   // wait 5ms until everything is setup
         }else{
             gain_status = false;
             GAIN_I(RESET);
             GAIN_U(RESET);
+            HAL_Delay(5);   // wait 5ms until everything is setup
         }
     }
 
