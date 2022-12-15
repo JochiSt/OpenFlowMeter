@@ -32,7 +32,7 @@ def main():
             print(dac)
             ofm.setDAC(dac, dac)
 
-            time.sleep(1)
+            ofm.waitForNewMessage()
 
             voltage0 = np.array([ ofm.voltage(0,0), ofm.voltage(0,1) ])
             voltage1 = np.array([ ofm.voltage(1,0), ofm.voltage(1,1) ])
