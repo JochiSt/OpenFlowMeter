@@ -67,6 +67,7 @@ software/FlowMeasurement/*.png
 #!.vscode/extensions.json
 
 # STM32CubeIDE
+firmware/.settings/*.prefs
 firmware/.project
 firmware/Debug/*
 firmware/Release/*
