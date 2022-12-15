@@ -47,11 +47,13 @@
 // send out the can message about the ADC
 // gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
 #define CAN_ADC_RATE    1
+#define CAN_I2C_RATE    8
 
 /* CAN Message IDs */
 #define CAN_ADC_MSG_ID_CH0  0x123
 #define CAN_ADC_MSG_ID_CH1  0x124
 #define CAN_STATUS_ID       0x120
+#define CAN_I2C_MSG_TMP100  0x121
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -211,15 +213,19 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+  /// store the old timer2 value
   uint16_t timer2_elapsed_old = 0;
+  uint16_t adc_result_cnt = 0;  ///< count the received ADC results
 
   // variables for transmitting CAN messages
-  uint8_t data[8] = {0};
-  printf("successfully started everything\r\n");
-  /****************************************************************************/
-  uint16_t adc_result_cnt = 0;
-  uint8_t can_timer_cnt = 0;
+  uint8_t cnt_can_adc = 0;      ///< counter for the CAN ADC message rate
+  uint8_t cnt_can_i2c = 0;      ///< counter for the CAN I2C message rate
 
+  uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
+
+
+  /****************************************************************************/
+  printf("successfully started everything\r\n");
   // Main loop
   while (1)
   {
@@ -239,11 +245,13 @@ int main(void)
     if( timer2_elapsed > timer2_elapsed_old){
         timer2_elapsed_old = timer2_elapsed;
 
-        // increase the CAN timer counter every time this counter is evaluated
-        can_timer_cnt++;
+        // increase the CAN counter every time this counter is evaluated
+        cnt_can_adc++;
+        cnt_can_i2c++;
 
         // check the ADC results
         printf("collected ADC results %d\r\n", adc_result_cnt);
+        // reset adc result counter
         adc_result_cnt = 0;
 
         /**********************************************************************/
@@ -277,11 +285,17 @@ int main(void)
     }
 
     /***************************************************************************
-     * Send out periodic CAN messages
+     * Send out periodic CAN messages for ADC
      **************************************************************************/
-    if( can_timer_cnt >= CAN_ADC_RATE) {
+    // ADC CAN message
+    if( cnt_can_adc >= CAN_ADC_RATE) {
+        // reset CAN timer counter
+        cnt_can_adc = 0;
+
+        /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
         // one CAN message can transport up to 8 bytes
+
         /**********************************************************************/
         // CHANNEL 0
         // position 0 - 3 GAIN_0
@@ -319,17 +333,24 @@ int main(void)
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_STATUS_ID, 4, data);
+    }
 
-        /**********************************************************************/
-        // reset CAN timer counter
-        can_timer_cnt = 0;
+    /***************************************************************************
+     * Send out periodic CAN messages for I2C bus
+     **************************************************************************/
+    // I2C sensors
+    if( cnt_can_i2c >= CAN_I2C_RATE){
+        cnt_can_i2c = 0;
+        uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
+        data[0] = upper(tmp100);
+        data[1] = lower(tmp100);
+        CAN_send_data_frame(CAN_I2C_MSG_TMP100, 2, data);
     }
 
     /***************************************************************************
      * Do calculations, if we have a new ADC result
      **************************************************************************/
     if(has_new_adc_result >= 1){
-
       adc_result_cnt++;         // count how often the ADC is updating
 
       // fill the values according to the gain settings
