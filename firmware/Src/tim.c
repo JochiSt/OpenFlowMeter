@@ -197,11 +197,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
     // check for TIM2, this is our periodic timer
     // every 500ms
-    if(htim->Instance==TIM2){
+    if( htim -> Instance == TIM2){
       LED_STATUS_TOGGLE;
       timer2_elapsed++;
     }
-/*    
+/*
     // for debugging
     if(htim->Instance==TIM4){
         printf("TIM4 elapsed\r\n");
