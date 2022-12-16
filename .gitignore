@@ -74,3 +74,4 @@ firmware/Release/*
 
 # EmBitz
 *.ebTemp
+*.launch
