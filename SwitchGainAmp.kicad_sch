@@ -764,6 +764,10 @@
     (uuid fd3e7328-638a-40d0-ad18-b3901c7157fc)
   )
 
+  (text "Gain setting resistors:\nR50, R51, R52, R53" (at 142.24 67.31 0)
+    (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
+    (uuid 013ffad1-d336-424e-a02b-5e4b8e8be5a3)
+  )
   (text "Switch Gain between 1 and ..." (at 106.68 88.9 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 1f210d07-dd6f-4b37-b542-3fde0ff4f57e)
@@ -784,6 +788,15 @@
   (text "Switch Gain between 1 and ..." (at 107.188 125.222 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid c3396041-d9c9-4110-922d-28e36c1aa2d4)
+  )
+  (text "R51:\n27k - 3.07\n22k - 3.54\n18k - 4.11\n12k - 5.66\n10k - 6.60\n5k6 - 11"
+    (at 148.59 59.69 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid c947d3cf-7339-464e-8b7e-0e602db3f6b1)
+  )
+  (text "Gain = 1 + R47/R51" (at 142.24 44.45 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid ea4123c3-1a25-4010-86b2-82ee0af850d0)
   )
   (text "resistor to decouple filter \ncap from amplifier output"
     (at 102.87 36.195 0)
