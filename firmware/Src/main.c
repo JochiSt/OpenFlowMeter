@@ -45,9 +45,10 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 // send out the can message about the ADC
-// gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
-#define CAN_ADC_RATE    1
-#define CAN_I2C_RATE    8
+// gives the number of triggered interrupts in 125ms steps
+#define CAN_ADC_RATE    (500/125)
+#define CAN_I2C_RATE    (2000/125)
+#define PRINT_UART_RATE (1000/125)
 
 /* CAN Message IDs */
 #define CAN_ADC_MSG_ID_CH0  0x123
@@ -243,7 +244,7 @@ int main(void)
 
     /***************************************************************************
      * check timer 2 for doing periodic tasks
-     * one timer2_elapsed is equal to 500ms
+     * one timer2_elapsed is equal to 125ms
      **************************************************************************/
     if( timer2_elapsed >= timer2_elapsed_old){
         timer2_elapsed_old = timer2_elapsed + 1;	// important to add +1, in
@@ -278,12 +279,10 @@ int main(void)
             gain_status = true;
             GAIN_I(SET);
             GAIN_U(SET);
-            HAL_Delay(5);   // wait 5ms until everything is setup
         }else{
             gain_status = false;
             GAIN_I(RESET);
             GAIN_U(RESET);
-            HAL_Delay(5);   // wait 5ms until everything is setup
         }
     }
 
