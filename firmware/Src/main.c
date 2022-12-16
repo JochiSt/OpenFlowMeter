@@ -230,7 +230,7 @@ int main(void)
 
     if (adc_result_received){
       adc_result_received = 0;
-      HAL_Delay(5);
+      HAL_Delay(2);
       HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
     }
 
