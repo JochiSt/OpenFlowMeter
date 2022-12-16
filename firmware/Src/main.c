@@ -225,6 +225,8 @@ int main(void)
   uint8_t cnt_can_adc = 0;      ///< counter for the CAN ADC message rate
   uint8_t cnt_can_i2c = 0;      ///< counter for the CAN I2C message rate
 
+  uint8_t cnt_print_uart = 0;   ///< counter for UART output
+
   uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
 
 
@@ -253,27 +255,10 @@ int main(void)
         // increase the CAN counter every time this counter is evaluated
         cnt_can_adc++;
         cnt_can_i2c++;
-
-        // check the ADC results
-        printf("collected ADC results %d\r\n", adc_result_cnt);
-        // reset ADC result counter
-        adc_result_cnt = 0;
+        cnt_print_uart++;
 
         /**********************************************************************/
-        // printout collected data
-        // first 4 samples are from current sources
-        for(uint8_t i = 0; i<4; i++){
-          printf("%d\t", avr_adcBuf_GAIN_0[i]);
-        }
-        printf("\r\n");
-        for(uint8_t i = 0; i<4; i++){
-          printf("%d\t", avr_adcBuf_GAIN_1[i]);
-        }
-        printf("\r\n");
 
-        printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
-
-        /**********************************************************************/
         // handle the gain switching
         if (!gain_status){
             gain_status = true;
@@ -284,6 +269,32 @@ int main(void)
             GAIN_I(RESET);
             GAIN_U(RESET);
         }
+        HAL_Delay(5);   // wait 5ms until everything is setup
+    }
+
+    /*************************************************************************
+     * Print some variables via UART
+     ************************************************************************/
+    if( cnt_print_uart >= PRINT_UART_RATE){
+      cnt_print_uart = 0;
+
+      printf("collected ADC results %d\r\n", adc_result_cnt);
+      // reset ADC result counter
+      adc_result_cnt = 0;
+
+      /**********************************************************************/
+      // printout collected data
+      // first 4 samples are from current sources
+      for(uint8_t i = 0; i<4; i++){
+        printf("%d\t", avr_adcBuf_GAIN_0[i]);
+      }
+      printf("\r\n");
+      for(uint8_t i = 0; i<4; i++){
+        printf("%d\t", avr_adcBuf_GAIN_1[i]);
+      }
+      printf("\r\n");
+
+      printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
     }
 
     /***************************************************************************
