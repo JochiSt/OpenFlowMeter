@@ -9,11 +9,13 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def main():
 
-    repetitions = 100            	# repeat how many times
-    dac_steps = [10, 32, 64, 128, 256]
+    repetitions = 2            	# repeat how many times
+    DAC_START = 16
+    DAC_STOP  = 1024
+    DAC_STEP  = 64
+    dac_steps = np.linspace(DAC_START, DAC_STOP, int( (DAC_STOP - DAC_START)/DAC_STEP +1) )
     channel = 0                     # which channel to look at
 
     try:
@@ -23,24 +25,24 @@ def main():
         # initialise OFM
         ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
 
-        fig, ax1 = plt.subplots(1, 1)
+        fig, (ax1, ax2) = plt.subplots(1, 2)
+
+        voltage0 = np.array([])
+        voltage1 = np.array([])
+
+        current0 = np.array([])
+        current1 = np.array([])
+
+        dacs = np.array([])
 
         for dac in dac_steps:
             print(dac)
-            ofm.hasNewMessage = False
 
-            ofm.setDAC(dac, dac)
+            ofm.setDAC(int(dac), int(dac) )
+
             time.sleep(2)
-
+            ofm.hasNewMessage = False
             ofm.waitForNewMessage()
-
-            voltage0 = np.array([])
-            voltage1 = np.array([])
-
-            current0 = np.array([])
-            current1 = np.array([])
-
-            dacs = np.array([])
 
             for i in range(repetitions):
                 ofm.waitForNewMessage()
@@ -55,22 +57,39 @@ def main():
 
                 ofm.hasNewMessage = False
 
-            ax1.plot( dacs, voltage1 / voltage0, label="DAC %d"%(dac), marker=".", linestyle = "")
-            ax1.plot( dacs, current1 / current0, label="DAC %d"%(dac), marker=".", linestyle = "")
-
-            voltage0 = voltage0 * 3.3/4095
-            voltage1 = voltage1 * 3.3/4095
-
-            current0 = current0 * 3.3/4095 * 10e-3
-            current1 = current1 * 3.3/4095 * 10e-3
-
         ofm.setDAC(0, 0)
 
-        ax1.set_xlabel("measurement point")
-        ax1.set_ylabel("voltage / current / LSB / LSB")
-        #ax1.legend()
+        ax1.plot( dacs, voltage1 / voltage0, label="voltage", marker=".", linestyle = "-")
+        ax1.plot( dacs, current1 / current0, label="curent", marker=".", linestyle = "-")
 
-    except:
+
+        ax2.plot(dacs, voltage0, label="voltage 0", marker=".", linestyle = "-")
+        ax2.plot(dacs, voltage1, label="voltage 1", marker=".", linestyle = "-")
+        ax2.plot(dacs, current0, label="current 0", marker=".", linestyle = "-")
+        ax2.plot(dacs, current1, label="current 1", marker=".", linestyle = "-")
+
+        voltage0 = voltage0 * 3.3/4095
+        voltage1 = voltage1 * 3.3/4095
+
+        current0 = current0 * 3.3/4095 * 10e-3
+        current1 = current1 * 3.3/4095 * 10e-3
+
+        ax1.set_title("voltage & current gain")
+        ax1.set_xlabel("DAC setpoint LSB")
+        ax1.set_ylabel("LSB gain")
+        ax1.legend()
+
+        ax2.set_title("voltage & current response")
+        ax2.set_xlabel("DAC setpoint LSB")
+        ax2.set_ylabel("current / voltage / LSB")
+        ax2.legend()
+
+        plt.title("Channel %d"%(channel))
+        fig.tight_layout()  # otherwise the right y-label is slightly clipped
+        plt.show()
+
+    except Exception as e:
+        print(e)
         pass
 
     finally:
