@@ -31,7 +31,7 @@ def main():
     dac_steps = np.append(dac_steps,
                           np.linspace(DAC_START, DAC_STOP, int( (DAC_STOP - DAC_START)/DAC_STEP +1) ))
 
-    channel = 1                     # which channel to look at
+    channel = 1  # which channel to look at
 
     try:
         # initialise USBtin
@@ -82,11 +82,13 @@ def main():
         ax2.plot(dacs, current0, label="current 0", marker=".", linestyle = "-")
         ax2.plot(dacs, current1, label="current 1", marker=".", linestyle = "-")
 
+        """
         voltage0 = voltage0 * 3.3/4095 # 1 LSB = 0,8 mV
         voltage1 = voltage1 * 3.3/4095
 
         current0 = current0 * 3.3/4095 * 10e-3 # 1 LSB = 8 uA
         current1 = current1 * 3.3/4095 * 10e-3
+        """
 
         ax1.set_title("voltage & current gain")
         ax1.set_xlabel("DAC setpoint LSB")
@@ -102,8 +104,8 @@ def main():
         plt.show()
 
         fig, (ax1) = plt.subplots(1, 1)
-        ax1.plot(dacs, voltage0 / current0, label="resistance 0", marker=".", linestyle = "-" )
-        ax1.plot(dacs, voltage1 / current1, label="resistance 1", marker=".", linestyle = "-" )
+        ax1.plot(dacs, voltage0 / current0, label="gain 0", marker=".", linestyle = "-" )
+        ax1.plot(dacs, voltage1 / current1, label="gain 1", marker=".", linestyle = "-" )
         ax1.legend()
 
         fig.tight_layout()  # otherwise the right y-label is slightly clipped
@@ -112,7 +114,7 @@ def main():
         np.savez("stability_v2_%s_CH%d_%d.npz"%(time.strftime("%Y%m%d_%H%M%S"), channel, repetitions),
                         voltage0 = voltage0, current0=current0,
                         voltage1 = voltage1, current1=current1,
-                        dac_steps=dac_steps)
+                        dacs=dacs)
 
     except Exception as e:
         print(e)
