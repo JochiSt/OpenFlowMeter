@@ -71,7 +71,8 @@ firmware/.settings/*.prefs
 firmware/.project
 firmware/Debug/*
 firmware/Release/*
+*.launch
 
 # EmBitz
 *.ebTemp
-*.launch
+
