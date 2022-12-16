@@ -64,18 +64,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define ADC_BUFLEN 6                            // 4 external inputs + T + Uint
-uint32_t adcBuf[ADC_BUFLEN];                    // store the ADC samples
 
-uint16_t avr_adcBuf_GAIN_0[ADC_BUFLEN] = {0};   // average the ADC samples with
-                                                // moving average
-uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN] = {0};
 
-const uint16_t SMOO = 15;     // averaging factor
-                              // gives the number of old samples
-                              // SMOO_MAX - SMOO is number of new samples
-                              // VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
-const uint16_t SMOO_MAX = 16; // Maximal value of SMOO
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -197,20 +187,15 @@ int main(void)
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
 
-  // set gain = 0
-  bool gain_status = false;
-  GAIN_I(RESET);
-  GAIN_U(RESET);
+  /****************************************************************************/
+  // Test of TMP100 / TMP101
+  i2c_init_TMP100(&hi2c1, 0x48);
+  i2c_read_TMP100(&hi2c1, 0x48);
 
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
   // start first ADC conversion
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
-
-  /****************************************************************************/
-  // Test of TMP100 / TMP101
-  i2c_init_TMP100(&hi2c1, 0x48);
-  i2c_read_TMP100(&hi2c1, 0x48);
   /****************************************************************************/
   /* USER CODE END 2 */
 
@@ -219,7 +204,6 @@ int main(void)
 
   /// store the old timer2 value
   uint8_t timer2_elapsed_old = 0;
-  uint16_t adc_result_cnt = 0;  ///< count the received ADC results
 
   // variables for transmitting CAN messages
   uint8_t cnt_can_adc = 0;      ///< counter for the CAN ADC message rate
@@ -244,6 +228,12 @@ int main(void)
       can_message_received = 0;
     }
 
+    if (adc_result_received){
+      adc_result_received = 0;
+      HAL_Delay(5);
+      HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
+    }
+
     /***************************************************************************
      * check timer 2 for doing periodic tasks
      * one timer2_elapsed is equal to 125ms
@@ -259,17 +249,6 @@ int main(void)
 
         /**********************************************************************/
 
-        // handle the gain switching
-        if (!gain_status){
-            gain_status = true;
-            GAIN_I(SET);
-            GAIN_U(SET);
-        }else{
-            gain_status = false;
-            GAIN_I(RESET);
-            GAIN_U(RESET);
-        }
-        HAL_Delay(5);   // wait 5ms until everything is setup
     }
 
     /*************************************************************************
@@ -358,30 +337,6 @@ int main(void)
         data[0] = upper(tmp100);
         data[1] = lower(tmp100);
         CAN_send_data_frame(CAN_I2C_MSG_TMP100, 2, data);
-    }
-
-    /***************************************************************************
-     * Do calculations, if we have a new ADC result
-     **************************************************************************/
-    if(has_new_adc_result >= 1){
-      adc_result_cnt++;         // count how often the ADC is updating
-
-      // fill the values according to the gain settings
-      if( !gain_status ){
-        for(uint8_t i = 0; i<ADC_BUFLEN; i++){
-          // moving average
-          avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
-        }
-      }else{
-        for(uint8_t i = 0; i<ADC_BUFLEN; i++){
-          // moving average
-          avr_adcBuf_GAIN_1[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_1[i]*SMOO) / SMOO_MAX;
-        }
-      }
-      has_new_adc_result = 0;   // reset new result flag
-
-      // start new ADC conversion
-      HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
     }
   }
   /* USER CODE END 3 */

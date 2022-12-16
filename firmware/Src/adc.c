@@ -22,10 +22,19 @@
 
 /* USER CODE BEGIN 0 */
 #include <stdio.h>
+#include <stdbool.h>
 #include "utils.h"
+#include "config.h"
 
-uint8_t has_new_adc_result;
+uint32_t adcBuf[ADC_BUFLEN];                    // store the ADC samples
+uint16_t avr_adcBuf_GAIN_0[ADC_BUFLEN] = {0};   // average the ADC samples with
+                                                // moving average
+uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN] = {0};
 
+bool gain_status = false;
+
+uint16_t adc_result_cnt = 0;  ///< count the received ADC results
+uint8_t adc_result_received = 0;
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -142,7 +151,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     __HAL_LINKDMA(adcHandle,DMA_Handle,hdma_adc1);
 
   /* USER CODE BEGIN ADC1_MspInit 1 */
-  has_new_adc_result = 0;
+  // set gain = 0
+  gain_status = false;
+  GAIN_I(RESET);
+  GAIN_U(RESET);
   /* USER CODE END ADC1_MspInit 1 */
   }
 }
@@ -179,8 +191,33 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
   if (hadc->ErrorCode != HAL_OK){
 	  printf("ADC Error\r\n");
   }
-  // raise flag, that we have a new ADC result
-  has_new_adc_result ++;
+
+  adc_result_cnt++;         // count how often the ADC is updating
+
+  // fill the values according to the gain settings
+  if( !gain_status ){
+      for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+        // moving average
+        avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
+      }
+  }else{
+    for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+      // moving average
+      avr_adcBuf_GAIN_1[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_1[i]*SMOO) / SMOO_MAX;
+    }
+  }
+
+  // handle the gain switching
+  if (!gain_status){
+      gain_status = true;
+      GAIN_I(SET);
+      GAIN_U(SET);
+  }else{
+      gain_status = false;
+      GAIN_I(RESET);
+      GAIN_U(RESET);
+  }
+  adc_result_received ++;
 }
 
 /* USER CODE END 1 */
