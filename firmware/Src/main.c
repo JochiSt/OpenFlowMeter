@@ -217,7 +217,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   /// store the old timer2 value
-  uint16_t timer2_elapsed_old = 0;
+  uint8_t timer2_elapsed_old = 0;
   uint16_t adc_result_cnt = 0;  ///< count the received ADC results
 
   // variables for transmitting CAN messages
@@ -245,8 +245,9 @@ int main(void)
      * check timer 2 for doing periodic tasks
      * one timer2_elapsed is equal to 500ms
      **************************************************************************/
-    if( timer2_elapsed > timer2_elapsed_old){
-        timer2_elapsed_old = timer2_elapsed;
+    if( timer2_elapsed >= timer2_elapsed_old){
+        timer2_elapsed_old = timer2_elapsed + 1;	// important to add +1, in
+                                                  // order to catch overflow
 
         // increase the CAN counter every time this counter is evaluated
         cnt_can_adc++;
@@ -375,6 +376,7 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+
 /**
   * @brief System Clock Configuration
   * @retval None
