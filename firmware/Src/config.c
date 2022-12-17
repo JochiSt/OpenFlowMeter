@@ -1,10 +1,41 @@
 
+#include "eeprom_cfg.h"
 #include "config.h"
 
-const uint8_t SMOO = 15;      // averaging factor
-                              // gives the number of old samples
-                              // SMOO_MAX - SMOO is number of new samples
-                              // VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
-const uint8_t SMOO_MAX = 16;  // Maximal value of SMOO
+eeprom_cfg default_cfg;
+eeprom_cfg cfg;
+
+void generateDefaultCFG(){
+
+  // set the board ID
+  default_cfg.board_ID = 1;
+
+  // set the rates
+  default_cfg.interval_OFM_report = 4;
+  default_cfg.interval_OFM_PID = 2;
+
+  default_cfg.interval_TMP100 = 8;
+  default_cfg.interval_BME680 = 255;
+
+  // set the smoothing
+  default_cfg.SMOO = 15;
+  default_cfg.SMOO_MAX = 16;
+
+  // set the PID
+  default_cfg.PID0.PID_T = 40;
+  default_cfg.PID0.PID_P = 0;
+  default_cfg.PID0.PID_I = 0;
+  default_cfg.PID0.PID_D = 0;
+
+  default_cfg.PID1.PID_T = 40;
+  default_cfg.PID1.PID_P = 0;
+  default_cfg.PID1.PID_I = 0;
+  default_cfg.PID1.PID_D = 0;
+
+  default_cfg.PID_flags.PID0_active = 0;
+  default_cfg.PID_flags.PID1_active = 0;
+
+}
+
 
 

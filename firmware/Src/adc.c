@@ -198,12 +198,12 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
   if( !gain_status ){
       for(uint8_t i = 0; i<ADC_BUFLEN; i++){
         // moving average
-        avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_0[i]*SMOO) / SMOO_MAX;
+        avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( cfg.SMOO_MAX - cfg.SMOO ) + avr_adcBuf_GAIN_0[i]*cfg.SMOO) / cfg.SMOO_MAX;
       }
   }else{
     for(uint8_t i = 0; i<ADC_BUFLEN; i++){
       // moving average
-      avr_adcBuf_GAIN_1[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf_GAIN_1[i]*SMOO) / SMOO_MAX;
+      avr_adcBuf_GAIN_1[i] = (adcBuf[i]*( cfg.SMOO_MAX - cfg.SMOO ) + avr_adcBuf_GAIN_1[i]*cfg.SMOO) / cfg.SMOO_MAX;
     }
   }
 

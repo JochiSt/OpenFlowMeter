@@ -34,6 +34,7 @@
 #include "utils.h"
 #include "i2c_scanner.h"
 #include "i2c_utils.h"
+#include "config.h"
 #include <stdbool.h>
 /* USER CODE END Includes */
 
@@ -153,7 +154,8 @@ int main(void)
   LED_STATUS(SET);
   /****************************************************************************/
   // read all configuration values from I2C EEPROM, or use default ones
-
+  generateDefaultCFG();
+  cfg = default_cfg;
 
   /****************************************************************************/
   // START CAN Bus (required for transmission of messages)

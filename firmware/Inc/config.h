@@ -5,10 +5,12 @@
 extern "C" {
 #endif
 
-#include "stdint.h"
+#include "eeprom_cfg.h"
 
-extern const uint8_t SMOO;
-extern const uint8_t SMOO_MAX;
+extern eeprom_cfg default_cfg;
+extern eeprom_cfg cfg;
+
+void generateDefaultCFG();
 
 #ifdef __cplusplus
 }
