@@ -18,7 +18,7 @@ typedef struct  {
     /** @defgroup OFM_cfg configuration of the Open Flow Meter
      *  @{
      */
-    uint8_t board_ID;           ///< Board ID
+    uint8_t board_ID;             ///< Board ID
     ////////////////////////////////////////////////////////////////////////////
     /** @defgroup intervals
      *  @ingroup OFM_cfg
@@ -74,7 +74,7 @@ typedef struct  {
 extern config_t default_cfg;
 extern config_t cfg;
 
-void generateDefaultCFG();
+void generateDefaultCFG(config_t *cfg);
 void printCfg(config_t *cfg);
 
 #ifdef __cplusplus
