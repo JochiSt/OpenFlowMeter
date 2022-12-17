@@ -1,4 +1,3 @@
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __EEPROM_CFG_H__
 #define __EEPROM_CFG_H__
 
@@ -54,5 +53,3 @@ struct eeprom_cfg {
 #endif
 
 #endif /* __EEPROM_CFG_H__ */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
