@@ -25,15 +25,16 @@ typedef struct  {
      *  The intervals, the OFM reports different things. The larger the interval
      *  the longer the time between two updates.
      *
-     *  Intervals are counted in TIM2 cycles.
+     *  Intervals are counted in TIM2 cycles (125ms).
      *  If the interval is 0xFF, this function is deactivated
+     *
      *  @{
      */
-    uint8_t interval_OFM_PID;   ///< interval, the PID loop is triggered
-    uint8_t interval_OFM_report;///< interval, the OFM reports via CANbus
+    uint8_t interval_CAN_ADC;       ///< interval, the data is reported to CAN
+    uint8_t interval_PRINT_UART;    ///< interval, the data is printed on UART
 
-    uint8_t interval_TMP100;    ///< interval, the TMP100 should be read
-    uint8_t interval_BME680;    ///< internal, the BME680 should be read
+    uint8_t interval_I2C_TMP100;    ///< interval, the TMP100 should be read
+    uint8_t interval_I2C_BME680;    ///< internal, the BME680 should be read
 
     /** @}*/
     ////////////////////////////////////////////////////////////////////////////
