@@ -49,10 +49,11 @@
 /* USER CODE BEGIN PD */
 
 /* CAN Message IDs */
-#define CAN_ADC_MSG_ID_CH0  0x123
-#define CAN_ADC_MSG_ID_CH1  0x124
-#define CAN_STATUS_ID       0x120
-#define CAN_I2C_MSG_TMP100  0x121
+#define CAN_ADC_MSG_ID_CH0  0x103
+#define CAN_ADC_MSG_ID_CH1  0x104
+#define CAN_STATUS_ID       0x100
+#define CAN_I2C_MSG_TMP100  0x101
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -312,7 +313,7 @@ int main(void)
             data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID_CH0, 8, data);
+        CAN_send_data_frame(CAN_ADC_MSG_ID_CH0 | (cfg.board_ID << 4), 8, data);
 
         /**********************************************************************/
         // CHANNEL 1
@@ -326,7 +327,7 @@ int main(void)
             data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID_CH1, 8, data);
+        CAN_send_data_frame(CAN_ADC_MSG_ID_CH1 | (cfg.board_ID << 4), 8, data);
 
         /**********************************************************************/
         // send internal data
@@ -335,7 +336,7 @@ int main(void)
             data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_STATUS_ID, 4, data);
+        CAN_send_data_frame(CAN_STATUS_ID | (cfg.board_ID << 4), 4, data);
     }
 
     /***************************************************************************
@@ -347,7 +348,7 @@ int main(void)
       uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
       data[0] = upper(tmp100);
       data[1] = lower(tmp100);
-      CAN_send_data_frame(CAN_I2C_MSG_TMP100, 2, data);
+      CAN_send_data_frame(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 2, data);
     }
     if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680 && cfg.interval_I2C_BME680 < 255){
       //TODO to be implemented
