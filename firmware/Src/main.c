@@ -228,6 +228,10 @@ int main(void)
       can_message_received = 0;
     }
 
+    /***************************************************************************
+     * check whether a new ADC result has been taken, wait a short time for
+     * everything to settle and trigger a new conversion
+     **************************************************************************/
     if (adc_result_received){
       adc_result_received = 0;
       HAL_Delay(2);
@@ -247,7 +251,11 @@ int main(void)
         cnt_can_i2c++;
         cnt_print_uart++;
 
-        /**********************************************************************/
+        /***********************************************************************
+         * PID handling
+         * for the PID, it is important, that it is triggered with a constant
+         * frequency.
+         */
 
     }
 
