@@ -5,9 +5,11 @@
 extern "C" {
 #endif
 
+#include "stm32f1xx_hal.h"
 #include "config.h"
 
-void read_EEPROM_cfg(config_t *cfg, const config_t *default_cfg);
+void read_EEPROM_cfg(I2C_HandleTypeDef* i2cHandle, config_t *cfg, const config_t *default_cfg);
+void write_EEPROM_cfg(I2C_HandleTypeDef* i2cHandle, config_t *cfg);
 
 #ifdef __cplusplus
 }
