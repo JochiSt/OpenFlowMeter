@@ -75,6 +75,7 @@ extern config_t default_cfg;
 extern config_t cfg;
 
 void generateDefaultCFG();
+void printCfg(config_t *cfg);
 
 #ifdef __cplusplus
 }

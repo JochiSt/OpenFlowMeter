@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 #include "eeprom_cfg.h"
 #include "config.h"
 
@@ -36,5 +38,37 @@ void generateDefaultCFG(config_t *cfg){
 
 }
 
+/**
+ * print the configuration to UART
+ */
+void printCfg(config_t *cfg){
 
+  printf("BoardID %d\r\n", cfg->board_ID);
 
+  printf("Intervals:\r\n");
+  printf("CANADC   %d\r\n", cfg->interval_CAN_ADC);
+  printf("UART     %d\r\n", cfg->interval_PRINT_UART);
+  printf("I2C:\r\n");
+  printf("  TMP100 %d\r\n",cfg->interval_I2C_TMP100);
+  printf("  BME680 %d\r\n",cfg->interval_I2C_BME680);
+
+  printf("\r\n");
+  printf("SMOO:    %d\r\n", cfg->SMOO);
+  printf("SMOOMAX: %d\r\n", cfg->SMOO_MAX);
+
+  /*
+  // set the PID
+  cfg->PID0.PID_T
+  cfg->PID0.PID_P
+  cfg->PID0.PID_I
+  cfg->PID0.PID_D
+
+  cfg->PID1.PID_T
+  cfg->PID1.PID_P
+  cfg->PID1.PID_I
+  cfg->PID1.PID_D
+
+  cfg->PID_flags.PID0_active
+  cfg->PID_flags.PID1_active
+  */
+}
