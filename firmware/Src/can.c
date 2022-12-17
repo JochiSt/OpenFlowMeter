@@ -178,8 +178,11 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK){
     Error_Handler();
   }
-  CAN_parse_message(RxHeader, RxData);
+  LED_CANRX_TOGGLE;
+  //CAN_parse_message(RxHeader, RxData);
+  can_message_received++;
 }
+
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData) != HAL_OK){
     Error_Handler();
