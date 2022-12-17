@@ -35,6 +35,8 @@
 #include "i2c_scanner.h"
 #include "i2c_utils.h"
 #include "config.h"
+#include "eeprom_cfg.h"
+
 #include <stdbool.h>
 /* USER CODE END Includes */
 
@@ -45,11 +47,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-// send out the can message about the ADC
-// gives the number of triggered interrupts in 125ms steps
-#define CAN_ADC_RATE    (500/125)
-#define CAN_I2C_RATE    (2000/125)
-#define PRINT_UART_RATE (1000/125)
 
 /* CAN Message IDs */
 #define CAN_ADC_MSG_ID_CH0  0x123
@@ -154,8 +151,10 @@ int main(void)
   LED_STATUS(SET);
   /****************************************************************************/
   // read all configuration values from I2C EEPROM, or use default ones
-  generateDefaultCFG();
-  cfg = default_cfg;
+  generateDefaultCFG(&cfg);
+  generateDefaultCFG(&default_cfg);
+
+  read_EEPROM_cfg(&cfg, &default_cfg);
 
   /****************************************************************************/
   // START CAN Bus (required for transmission of messages)
@@ -208,10 +207,10 @@ int main(void)
   uint8_t timer2_elapsed_old = 0;
 
   // variables for transmitting CAN messages
-  uint8_t cnt_can_adc = 0;      ///< counter for the CAN ADC message rate
-  uint8_t cnt_can_i2c = 0;      ///< counter for the CAN I2C message rate
-
-  uint8_t cnt_print_uart = 0;   ///< counter for UART output
+  uint8_t cnt_can_adc = 0;        ///< counter for the CAN ADC message rate
+  uint8_t cnt_can_i2c_tmp100 = 0; ///< counter for the CAN I2C TMP100 rate
+  uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
+  uint8_t cnt_print_uart = 0;     ///< counter for UART output
 
   uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
 
@@ -251,8 +250,9 @@ int main(void)
 
         // increase the CAN counter every time this counter is evaluated
         cnt_can_adc++;
-        cnt_can_i2c++;
         cnt_print_uart++;
+        cnt_can_i2c_tmp100++;
+        cnt_can_i2c_bme680++;
 
         /***********************************************************************
          * PID handling
@@ -265,7 +265,7 @@ int main(void)
     /*************************************************************************
      * Print some variables via UART
      ************************************************************************/
-    if( cnt_print_uart >= PRINT_UART_RATE){
+    if( cnt_print_uart >= cfg.interval_PRINT_UART && cfg.interval_PRINT_UART < 255 ){
       cnt_print_uart = 0;
 
       printf("collected ADC results %d\r\n", adc_result_cnt);
@@ -291,7 +291,7 @@ int main(void)
      * Send out periodic CAN messages for ADC
      **************************************************************************/
     // ADC CAN message
-    if( cnt_can_adc >= CAN_ADC_RATE) {
+    if( cnt_can_adc >= cfg.interval_CAN_ADC && cfg.interval_CAN_ADC < 255) {
         // reset CAN timer counter
         cnt_can_adc = 0;
 
@@ -342,12 +342,15 @@ int main(void)
      * Send out periodic CAN messages for I2C bus
      **************************************************************************/
     // I2C sensors
-    if( cnt_can_i2c >= CAN_I2C_RATE){
-        cnt_can_i2c = 0;
-        uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
-        data[0] = upper(tmp100);
-        data[1] = lower(tmp100);
-        CAN_send_data_frame(CAN_I2C_MSG_TMP100, 2, data);
+    if( cnt_can_i2c_tmp100 >= cfg.interval_I2C_TMP100 && cfg.interval_I2C_TMP100 < 255){
+      cnt_can_i2c_tmp100 = 0;
+      uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
+      data[0] = upper(tmp100);
+      data[1] = lower(tmp100);
+      CAN_send_data_frame(CAN_I2C_MSG_TMP100, 2, data);
+    }
+    if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680 && cfg.interval_I2C_BME680 < 255){
+      //TODO to be implemented
     }
   }
   /* USER CODE END 3 */
