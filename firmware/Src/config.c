@@ -5,35 +5,34 @@
 config_t default_cfg;
 config_t cfg;
 
-void generateDefaultCFG(){
-
+void generateDefaultCFG(config_t *cfg){
   // set the board ID
-  default_cfg.board_ID = 1;
+  cfg->board_ID = 1;
 
   // set the rates
-  default_cfg.interval_OFM_report = 4;
-  default_cfg.interval_OFM_PID = 2;
+  cfg->interval_CAN_ADC = (500/125);
+  cfg->interval_PRINT_UART = (1000/125);
 
-  default_cfg.interval_TMP100 = 8;
-  default_cfg.interval_BME680 = 255;
+  cfg->interval_I2C_TMP100 = (2000/125);
+  cfg->interval_I2C_BME680 = 255;
 
   // set the smoothing
-  default_cfg.SMOO = 15;
-  default_cfg.SMOO_MAX = 16;
+  cfg->SMOO = 15;
+  cfg->SMOO_MAX = 16;
 
   // set the PID
-  default_cfg.PID0.PID_T = 40;
-  default_cfg.PID0.PID_P = 0;
-  default_cfg.PID0.PID_I = 0;
-  default_cfg.PID0.PID_D = 0;
+  cfg->PID0.PID_T = 40;
+  cfg->PID0.PID_P = 0;
+  cfg->PID0.PID_I = 0;
+  cfg->PID0.PID_D = 0;
 
-  default_cfg.PID1.PID_T = 40;
-  default_cfg.PID1.PID_P = 0;
-  default_cfg.PID1.PID_I = 0;
-  default_cfg.PID1.PID_D = 0;
+  cfg->PID1.PID_T = 40;
+  cfg->PID1.PID_P = 0;
+  cfg->PID1.PID_I = 0;
+  cfg->PID1.PID_D = 0;
 
-  default_cfg.PID_flags.PID0_active = 0;
-  default_cfg.PID_flags.PID1_active = 0;
+  cfg->PID_flags.PID0_active = 0;
+  cfg->PID_flags.PID1_active = 0;
 
 }
 
