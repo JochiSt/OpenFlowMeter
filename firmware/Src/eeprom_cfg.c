@@ -5,7 +5,7 @@
 
 
 
-eeprom_cfg config;
+config_t config;
 
 
 void read_EEPROM_cfg(){

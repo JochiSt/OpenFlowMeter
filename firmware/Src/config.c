@@ -2,8 +2,8 @@
 #include "eeprom_cfg.h"
 #include "config.h"
 
-eeprom_cfg default_cfg;
-eeprom_cfg cfg;
+config_t default_cfg;
+config_t cfg;
 
 void generateDefaultCFG(){
 
