@@ -55,6 +55,7 @@ firmware/OpenFlowMeter.pdf
 */.spyproject/*
 *.pyc
 *.npz
+.spyproject/*
 
 software/FlowMeasurement/*.png
 *.png
