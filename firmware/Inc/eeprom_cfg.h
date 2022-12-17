@@ -7,7 +7,7 @@ extern "C" {
 
 #include "config.h"
 
-extern config_t config;
+void read_EEPROM_cfg(config_t *cfg, const config_t *default_cfg);
 
 #ifdef __cplusplus
 }
