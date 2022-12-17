@@ -5,17 +5,16 @@
 /**
  *
  */
-uint8_t write16_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t addr, uint16_t value){
-  // store a 16 bit number in the EEPROM
-  uint8_t buf[3] = {0x00};
+uint8_t write8_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t addr, uint8_t value){
+  // store a 8bit number in the EEPROM
+  uint8_t buf[2] = {0x00};
   buf[0] = addr;
-  buf[1] = upper(value);
-  buf[2] = lower(value);
+  buf[1] = value;
   HAL_StatusTypeDef result;
   result = HAL_I2C_Master_Transmit(i2cHandle, EEPROM_addr<<1, buf, 3, HAL_MAX_DELAY);
   if ( result != HAL_OK ) {
-	printf("unable to set address of EEPROM\r\n");
-	return 1;
+    printf("unable to set address of EEPROM\r\n");
+    return 1;
   }
   return 0;
 }
@@ -23,23 +22,22 @@ uint8_t write16_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_
 /**
  *
  */
-uint8_t read16_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t addr){
-  // read a 16 bit number from the EEPROM
-
-  uint8_t buf[2] = {0x00};
+uint8_t read8_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t addr){
+  // read a 8bit number from the EEPROM
+  uint8_t buf[1] = {0x00};
   buf[0] = addr;
   HAL_StatusTypeDef result;
   result = HAL_I2C_Master_Transmit(i2cHandle, EEPROM_addr<<1, buf, 1, HAL_MAX_DELAY);
   if ( result != HAL_OK ) {
-	printf("unable to set address of EEPROM\r\n");
-	return 0xFF;
+    printf("unable to set address of EEPROM\r\n");
+    return 0xFF;
   }
-  result = HAL_I2C_Master_Receive(i2cHandle, EEPROM_addr<<1, buf, 2, HAL_MAX_DELAY);
+  result = HAL_I2C_Master_Receive(i2cHandle, EEPROM_addr<<1, buf, 1, HAL_MAX_DELAY);
   if ( result != HAL_OK ) {
     printf("Error TMP100 RX\r\n");
     return 0xFF;
   }
-  return buf[0] << 8 | buf[1];
+  return buf[0];
 }
 
 
