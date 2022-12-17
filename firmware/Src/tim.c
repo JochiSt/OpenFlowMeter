@@ -198,7 +198,6 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 // timer interrupt for periodic tasks
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
     // check for TIM2, this is our periodic timer
-    // every 500ms
     if( htim -> Instance == TIM2){
       LED_STATUS_TOGGLE;
       timer2_elapsed++;
