@@ -225,6 +225,7 @@ int main(void)
     /**************************************************************************/
     // CAN message handling is done in CAN_parse_message in can.c
     if (can_message_received){
+      CAN_parse_message(RxHeader, RxData);
       can_message_received = 0;
     }
 

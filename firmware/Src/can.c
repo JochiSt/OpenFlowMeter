@@ -169,7 +169,6 @@ void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   }
 }
 
-
 CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               RxData[8];
 /**
@@ -185,14 +184,14 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData) != HAL_OK){
     Error_Handler();
   }
-  CAN_parse_message(RxHeader, RxData);
-}
-void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   LED_CANRX_TOGGLE;
+  //CAN_parse_message(RxHeader, RxData);
+  can_message_received++;
+}
+
+void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
   if ((RxHeader.StdId == 0x123)) {
-	  can_message_received = 1;
-      
       // set PWM values
       uint16_t pwm1 = RxData[0] <<8 | RxData[1];
       uint16_t pwm2 = RxData[2] <<8 | RxData[3];
