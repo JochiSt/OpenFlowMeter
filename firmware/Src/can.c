@@ -23,6 +23,8 @@
 /* USER CODE BEGIN 0 */
 #include "syscalls.h"
 #include "utils.h"
+#include "eeprom_cfg.h"
+#include "i2c.h"          // needed for the pointer to the I2C bus
 #include "config.h"
 
 /// store the current used filter bank
@@ -251,6 +253,19 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
       }
     }else if(RxHeader.DLC == 8){
       // write config to EEPROM
+      // to ensure, that we really want to write to EEPROM, double check the
+      // data (it's a special word)
+      if(    RxData[0] == 0x12
+          && RxData[1] == 0x34
+          && RxData[2] == 0x56
+          && RxData[3] == 0x78
+          && RxData[4] == 0x90
+          && RxData[5] == 0x12
+          && RxData[6] == 0x34
+          && RxData[7] == 0x56
+          ){
+        write_EEPROM_cfg(&hi2c1, &cfg);
+      }
 
     }
   // 0x1?1 DAC settings
