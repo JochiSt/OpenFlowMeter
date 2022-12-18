@@ -5,6 +5,13 @@
 #include <stdint.h>
 
 typedef struct {
+    uint8_t PID_T;  ///< temperature setpoint
+    uint8_t PID_P;  ///< proportional part
+    uint8_t PID_I;  ///< integral part
+    uint8_t PID_D;  ///< differential part
+} PID_config_t;
+
+typedef struct {
     bool active;
     PID_config_t* PIDcfg;
     float* input;
