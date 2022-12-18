@@ -37,6 +37,8 @@
 #include "config.h"
 #include "eeprom_cfg.h"
 
+#include "pid.h"
+
 #include <stdbool.h>
 /* USER CODE END Includes */
 
@@ -162,6 +164,10 @@ int main(void)
 
   printf("\r\n\r\nEEPROM config:\r\n");
   printCfg(&cfg);
+
+  // link configuration to PID controllers
+  pid0.PIDcfg = &cfg.PID0;
+  pid1.PIDcfg = &cfg.PID1;
 
   printf("\r\n\r\n");
   /****************************************************************************/
