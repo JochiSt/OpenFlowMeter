@@ -12,6 +12,7 @@ uint8_t write8_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t
   buf[1] = value;
   HAL_StatusTypeDef result;
   result = HAL_I2C_Master_Transmit(i2cHandle, EEPROM_addr<<1, buf, 2, HAL_MAX_DELAY);
+  HAL_Delay(10);
   if ( result != HAL_OK ) {
     printf("unable to set address of EEPROM\r\n");
     return 1;
