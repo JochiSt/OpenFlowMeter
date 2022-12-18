@@ -267,7 +267,12 @@ int main(void)
          * for the PID, it is important, that it is triggered with a constant
          * frequency.
          */
+        if(cfg.PID_flags.PID0_active){
 
+        }
+        if(cfg.PID_flags.PID1_active){
+
+        }
     }
 
     /*************************************************************************
