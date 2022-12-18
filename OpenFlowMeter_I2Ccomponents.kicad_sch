@@ -848,6 +848,15 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6ca4eb5b-0e78-4dbf-9c03-2938d388a7e1)
   )
+  (text "BME688" (at 246.38 129.54 0)
+    (effects (font (size 1.27 1.27) italic) (justify left bottom))
+    (uuid 7bf9a66a-ccf5-47e5-9642-5a9d174c650f)
+  )
+  (text "TMP101\nthe alarm output is open drain, so pulling this to GND\nshould not harm."
+    (at 228.6 118.11 0)
+    (effects (font (size 1.27 1.27) italic) (justify left bottom))
+    (uuid bec12643-1304-4692-8340-4d0a3eda4798)
+  )
 
   (label "SCL" (at 219.71 142.24 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
