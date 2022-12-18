@@ -256,7 +256,7 @@ int main(void)
         timer2_elapsed_old = timer2_elapsed + 1;	// important to add +1, in
                                                   // order to catch overflow
 
-        // increase the CAN counter every time this counter is evaluated
+        // increase the interval counters every time this counter is evaluated
         cnt_can_adc++;
         cnt_print_uart++;
         cnt_can_i2c_tmp100++;
