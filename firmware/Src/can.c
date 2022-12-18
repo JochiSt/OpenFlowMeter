@@ -23,6 +23,7 @@
 /* USER CODE BEGIN 0 */
 #include "syscalls.h"
 #include "utils.h"
+#include "config.h"
 
 /// store the current used filter bank
 uint8_t can_filter_bank = 0;
@@ -237,10 +238,23 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
 
   // 0x1?0 HANDLE CONFIGURATION
-  if ( RxHeader.StdId == (0x100 | (cfg.board_ID << 4))) {
+  if ( RxHeader.StdId == (uint32_t)(0x100 | (cfg.board_ID << 4))) {
+    //RxHeader.DLC <- data length
+    if (RxHeader.DLC == 2){
+      // RxData[0] <- byte ID
+      // RXData[1] <- value
+      uint8_t *ptr = (uint8_t*)&cfg;
+      if(RxData[0] <= sizeof(config_t) ){
+        ptr[RxData[0]] = RxData[1];
+      }else{
+        // pointer is out of allowed range
+      }
+    }else if(RxHeader.DLC == 8){
+      // write config to EEPROM
 
+    }
   // 0x1?1 DAC settings
-  }else if ( RxHeader.StdId == (0x101 | (cfg.board_ID << 4))) {
+  }else if ( RxHeader.StdId == (uint32_t)(0x101 | (cfg.board_ID << 4))) {
     // set PWM values
     uint16_t pwm1 = RxData[0] <<8 | RxData[1];
     uint16_t pwm2 = RxData[2] <<8 | RxData[3];
