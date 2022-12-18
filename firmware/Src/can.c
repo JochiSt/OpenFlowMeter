@@ -169,6 +169,47 @@ void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   }
 }
 
+void CAN_prepare_filter(uint16_t maskID0, uint16_t canID0, uint16_t maskID1, uint16_t canID1, uint8_t can_fifo){
+  if(can_filter_bank < 14){
+    CAN_FilterTypeDef canfilterconfig;
+    canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
+    canfilterconfig.FilterBank            = can_filter_bank++;  // increment filter bank by one
+
+    // choose FIFO for filter (each FiFo holds 3 messages)
+    if(can_fifo == 0){
+      // use FIFO0
+      canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;
+    }else if(can_fifo == 1){
+      // use FIFO1
+      canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO1;
+    }else{
+      // automatic assignment of FIFO
+      if ( can_filter_bank % 2 == 0){
+        canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO1;
+      }else{
+        canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;
+      }
+    }
+
+    canfilterconfig.FilterIdHigh          = canID0<<5;
+    canfilterconfig.FilterMaskIdHigh      = maskID0<<5;
+
+    canfilterconfig.FilterIdLow           = canID1<<5;
+    canfilterconfig.FilterMaskIdLow       = maskID1<<5;
+
+    canfilterconfig.FilterMode            = CAN_FILTERMODE_IDMASK;  // or IDLIST for double amount of IDs (but no mask)
+    canfilterconfig.FilterScale           = CAN_FILTERSCALE_16BIT;  // for usage with 2x standard ID
+
+    canfilterconfig.SlaveStartFilterBank  = 14;   // how many filters do we want to set for CAN1
+                                                  // irrelevant for single CAN types
+                                                  // STM32F103 -> single CAN 14 filter (0-13)
+
+    HAL_CAN_ConfigFilter(&hcan, &canfilterconfig);// set filter in CAN module
+  }else{
+    printf("No free CAN filter bank!\r\n");
+  }
+}
+
 CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               RxData[8];
 /**
