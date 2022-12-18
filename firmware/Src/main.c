@@ -155,8 +155,15 @@ int main(void)
   generateDefaultCFG(&cfg);
   generateDefaultCFG(&default_cfg);
 
-  read_EEPROM_cfg(&cfg, &default_cfg);
+  printf("\r\n\r\nDEFAULT config:\r\n");
+  printCfg(&default_cfg);
 
+  read_EEPROM_cfg(&hi2c1, &cfg, &default_cfg);
+
+  printf("\r\n\r\nEEPROM config:\r\n");
+  printCfg(&cfg);
+
+  printf("\r\n\r\n");
   /****************************************************************************/
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
