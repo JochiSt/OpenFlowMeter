@@ -170,8 +170,8 @@ int main(void)
   HAL_CAN_Start(&hcan);
 
   // prepare CAN filter for receiving messages
-  CAN_prepare_filter(0x100 | (cfg.board_ID << 4), 0x103 | (cfg.board_ID << 4), 0);
-  CAN_prepare_filter(0x125, 0x126, 1);
+  CAN_prepare_filter_id(0x100 | (cfg.board_ID << 4), 0x103 | (cfg.board_ID << 4), 0);
+  CAN_prepare_filter_id(0x125, 0x126, 1);
 
   // activate notifications
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){

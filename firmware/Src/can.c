@@ -128,7 +128,7 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
  * https://schulz-m.github.io/2017/03/23/stm32-can-id-filter/
  *
 */
-void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
+void CAN_prepare_filter_id(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   if(can_filter_bank < 14){
     CAN_FilterTypeDef canfilterconfig;
     canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
@@ -169,7 +169,7 @@ void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   }
 }
 
-void CAN_prepare_filter(uint16_t maskID0, uint16_t canID0, uint16_t maskID1, uint16_t canID1, uint8_t can_fifo){
+void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1, uint16_t canID1, uint8_t can_fifo){
   if(can_filter_bank < 14){
     CAN_FilterTypeDef canfilterconfig;
     canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
