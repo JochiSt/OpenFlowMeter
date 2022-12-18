@@ -239,6 +239,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
 
+  /****************************************************************************/
   // 0x1?0 HANDLE CONFIGURATION
   if ( RxHeader.StdId == (uint32_t)(0x100 | (cfg.board_ID << 4))) {
     //RxHeader.DLC <- data length
@@ -260,14 +261,25 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
           && RxData[2] == 0x56
           && RxData[3] == 0x78
           && RxData[4] == 0x90
-          && RxData[5] == 0x12
-          && RxData[6] == 0x34
-          && RxData[7] == 0x56
+          && RxData[5] == 0x00
+          && RxData[6] == 0x00
+          && RxData[7] == 0x00
           ){
         write_EEPROM_cfg(&hi2c1, &cfg);
+      }else if(  RxData[0] == 0x12
+              && RxData[1] == 0x34
+              && RxData[2] == 0x56
+              && RxData[3] == 0x78
+              && RxData[4] == 0x90
+              && RxData[5] == 0x00
+              && RxData[6] == 0x00
+              && RxData[7] == 0x01
+          ){
+        write_EEPROM_cfg(&hi2c1, &default_cfg);
       }
 
     }
+  /****************************************************************************/
   // 0x1?1 DAC settings
   }else if ( RxHeader.StdId == (uint32_t)(0x101 | (cfg.board_ID << 4))) {
     // set PWM values
@@ -278,6 +290,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
 
     TIM3->CCR1 = pwm1; // set channel 1 max. 1024
     TIM3->CCR2 = pwm2; // set channel 2 max. 1024
+  /****************************************************************************/
   }else{
     printf("message not parsed\r\n");
   }
