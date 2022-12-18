@@ -8,15 +8,16 @@
 uint8_t write8_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t addr, uint8_t value){
   // store a 8bit number in the EEPROM
   uint8_t buf[2] = {0x00};
-  buf[0] = addr;
-  buf[1] = value;
+  buf[0] = addr;  // first byte to write the the memory address
+  buf[1] = value; // second byte is the actual data / content
   HAL_StatusTypeDef result;
   result = HAL_I2C_Master_Transmit(i2cHandle, EEPROM_addr<<1, buf, 2, HAL_MAX_DELAY);
-  HAL_Delay(10);
   if ( result != HAL_OK ) {
     printf("unable to set address of EEPROM\r\n");
     return 1;
   }
+  // give the EEPROM some time to write the data into the memory
+  HAL_Delay(10);
   return 0;
 }
 
