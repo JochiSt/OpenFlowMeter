@@ -101,7 +101,7 @@ class OpenFlowMeter(object):
             self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
 
         else:
-            print("Message IDs not implemented")
+            print("%ld Message ID 0x%x not implemented"%(time.time(), msg.mid))
             return
 
         self.hasNewMessage = True

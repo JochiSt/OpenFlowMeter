@@ -34,7 +34,15 @@ extern "C" {
 extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
-uint8_t has_new_adc_result;
+
+#define ADC_BUFLEN 6                            // 4 external inputs + T + Uint
+extern uint32_t adcBuf[ADC_BUFLEN];             // store the ADC samples
+extern uint16_t avr_adcBuf_GAIN_0[ADC_BUFLEN];  // average the ADC samples with
+                                                // moving average
+extern uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN];
+extern uint16_t adc_result_cnt;  ///< count the received ADC results
+
+extern uint8_t adc_result_received;
 /* USER CODE END Private defines */
 
 void MX_ADC1_Init(void);

@@ -35,13 +35,18 @@ extern CAN_HandleTypeDef hcan;
 
 /* USER CODE BEGIN Private defines */
 extern uint8_t can_message_received;
+
+extern CAN_RxHeaderTypeDef   RxHeader;
+extern uint8_t               RxData[8];
+
 /* USER CODE END Private defines */
 
 void MX_CAN_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data);
-void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo);
+void CAN_prepare_filter_id(uint16_t canID0, uint16_t canID1, uint8_t can_fifo);
+void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1, uint16_t canID1, uint8_t can_fifo);
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData);
 /* USER CODE END Prototypes */
 

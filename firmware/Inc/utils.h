@@ -1,6 +1,8 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <stdio.h>
+
 // red 		-> failure
 #define LED_ERROR(Op)  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_##Op)
 // yellow   -> RX
@@ -19,11 +21,7 @@
 #define LED_CANTX_TOGGLE	HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
 #define LED_STATUS_TOGGLE	HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
 
-inline uint8_t upper(uint16_t val){
-	return (val >> 8) & 0xFF;
-};
-inline uint8_t lower(uint16_t val){
-	return (val & 0xFF);
-};
+uint8_t upper(uint16_t val);
+uint8_t lower(uint16_t val);
 
 #endif //__UTILS_H__

@@ -23,6 +23,8 @@
 /* USER CODE BEGIN 0 */
 #include "syscalls.h"
 #include "utils.h"
+
+uint8_t timer2_elapsed;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -35,9 +37,9 @@ void MX_TIM2_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 5000-1;
+  htim2.Init.Prescaler = 5400-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 5400-1;
+  htim2.Init.Period = 1250-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -196,12 +198,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 // timer interrupt for periodic tasks
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
     // check for TIM2, this is our periodic timer
-    // every 500ms
-    if(htim->Instance==TIM2){
+    if( htim -> Instance == TIM2){
       LED_STATUS_TOGGLE;
       timer2_elapsed++;
     }
-/*    
+/*
     // for debugging
     if(htim->Instance==TIM4){
         printf("TIM4 elapsed\r\n");

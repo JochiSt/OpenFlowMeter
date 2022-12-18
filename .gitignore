@@ -55,6 +55,7 @@ firmware/OpenFlowMeter.pdf
 */.spyproject/*
 *.pyc
 *.npz
+.spyproject/*
 
 software/FlowMeasurement/*.png
 *.png
@@ -66,4 +67,13 @@ software/FlowMeasurement/*.png
 #!.vscode/launch.json
 #!.vscode/extensions.json
 
+# STM32CubeIDE
+firmware/.settings/*.prefs
 firmware/.project
+firmware/Debug/*
+firmware/Release/*
+*.launch
+
+# EmBitz
+*.ebTemp
+
