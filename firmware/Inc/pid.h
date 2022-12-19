@@ -5,10 +5,10 @@
 #include <stdint.h>
 
 typedef struct {
-    uint8_t PID_T;  ///< temperature setpoint
-    uint8_t PID_P;  ///< proportional part
-    uint8_t PID_I;  ///< integral part
-    uint8_t PID_D;  ///< differential part
+    float PID_T;  ///< temperature setpoint
+    float PID_P;  ///< proportional part
+    float PID_I;  ///< integral part
+    float PID_D;  ///< differential part
 } PID_config_t;
 
 typedef struct {
