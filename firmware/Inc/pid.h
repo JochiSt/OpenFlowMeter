@@ -13,9 +13,14 @@ typedef struct {
 
 typedef struct {
     bool active;
+
     PID_config_t* PIDcfg;
+
     float* input;
-    float* setpoint;
+    uint16_t* output;
+
+    float errorInt;
+    float lastError;
 } PID;
 
 extern PID pid0;
