@@ -23,7 +23,6 @@ void read_EEPROM_cfg(I2C_HandleTypeDef* i2cHandle, config_t *cfg, const config_t
     eeprom_content = read8_EEPROM(i2cHandle, 0x50, addr);
     if( eeprom_content == 0xFF){
       ptr[addr] = dptr[addr];
-      //ptr[addr] = eeprom_content; //TODO just for debug
     }else{
       ptr[addr] = eeprom_content;
     }
