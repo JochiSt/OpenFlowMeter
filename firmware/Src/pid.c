@@ -17,6 +17,8 @@ void runPID(PID* pid){
     output += pid->PIDcfg->PID_I * pid->errorInt;
     output += pid->PIDcfg->PID_D * (error - pid->lastError);
 
+    output += (float)*pid->output;
+
     pid->lastError = error;
 
     if( output > MAX_PID_OUTPUT){
@@ -27,6 +29,8 @@ void runPID(PID* pid){
     }
 
     *pid->output = (uint16_t) output;
-
+  }else{
+    // TODO implement some default output, which is used, when the PIC is not
+    // operating
   }
 }
