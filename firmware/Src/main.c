@@ -174,6 +174,8 @@ int main(void)
   // link configuration to PID controllers
   pid0.PIDcfg = &cfg.PID0;
   pid1.PIDcfg = &cfg.PID1;
+  pid0.input = &temperature0;
+  pid1.input = &temperature1;
 
   printf("\r\n\r\n");
   /****************************************************************************/
