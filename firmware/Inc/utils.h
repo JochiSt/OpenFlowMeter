@@ -24,4 +24,6 @@
 uint8_t upper(uint16_t val);
 uint8_t lower(uint16_t val);
 
+float convertPT100_R2T(float resistance);
+
 #endif //__UTILS_H__
