@@ -295,6 +295,18 @@ int main(void)
         temperature1 = convertPT100_R2T( voltage1 / current1 );
         runPID(&pid0);
         runPID(&pid1);
+
+        // update outputs
+        TIM3->CCR1 = PIDout0;
+        TIM3->CCR2 = PIDout1;
+
+        // TODO remove debug CAN message transmission
+        data[0] = upper(PIDout0);
+        data[1] = lower(PIDout0);
+        data[2] = upper(PIDout1);
+        data[3] = lower(PIDout1);
+
+        CAN_send_data_frame( 0x101 | (cfg.board_ID << 4), 4, data);
     }
 
     /*************************************************************************
