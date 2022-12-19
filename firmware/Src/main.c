@@ -279,12 +279,6 @@ int main(void)
          * for the PID, it is important, that it is triggered with a constant
          * frequency.
          */
-        if(cfg.PID_flags.PID0_active){
-
-        }
-        if(cfg.PID_flags.PID1_active){
-
-        }
         // calculate current and voltage of each channel
         current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
         voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
@@ -293,6 +287,8 @@ int main(void)
         // calculate temperatures
         temperature0 = convertPT100_R2T( voltage0 / current0 );
         temperature1 = convertPT100_R2T( voltage1 / current1 );
+        runPID(&pid0);
+        runPID(&pid1);
     }
 
     /*************************************************************************
