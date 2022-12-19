@@ -21,4 +21,6 @@ typedef struct {
 extern PID pid0;
 extern PID pid1;
 
+void runPID(PID* pid);
+
 #endif //__PID_H__
