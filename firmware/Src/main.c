@@ -65,7 +65,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+/* at the moment, just for one gain */
+/// current
+float current0, current1;
+/// voltage
+float voltage0, voltage1;
+/// temperature
+float temperature0, temperature1;
 
 /* USER CODE END PV */
 
@@ -279,6 +285,14 @@ int main(void)
         if(cfg.PID_flags.PID1_active){
 
         }
+        // calculate current and voltage of each channel
+        current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
+        voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
+        current1 = avr_adcBuf_GAIN_1[2] * 3.3 / 4096 * 10e-3;
+        voltage1 = avr_adcBuf_GAIN_1[3] * 3.3 / 4096;
+        // calculate temperatures
+        temperature0 = convertPT100_R2T( voltage0 / current0 );
+        temperature1 = convertPT100_R2T( voltage1 / current1 );
     }
 
     /*************************************************************************
@@ -304,6 +318,10 @@ int main(void)
       printf("\r\n");
 
       printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
+
+      printf("Temperatures:\r\n");
+      printf("CH0: %f\r\n", temperature0);
+      printf("CH1: %f\r\n", temperature1);
     }
 
     /***************************************************************************
