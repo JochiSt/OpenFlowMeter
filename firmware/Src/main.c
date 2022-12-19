@@ -73,6 +73,8 @@ float voltage0, voltage1;
 /// temperature
 float temperature0, temperature1;
 
+uint16_t PIDout0, PIDout1;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -174,8 +176,10 @@ int main(void)
   // link configuration to PID controllers
   pid0.PIDcfg = &cfg.PID0;
   pid1.PIDcfg = &cfg.PID1;
-  pid0.input = &temperature0;
-  pid1.input = &temperature1;
+  pid0.input  = &temperature0;
+  pid1.input  = &temperature1;
+  pid0.output = &PIDout0;
+  pid1.output = &PIDout1;
 
   printf("\r\n\r\n");
   /****************************************************************************/
