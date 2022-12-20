@@ -286,14 +286,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
               && RxData[6] == 0xFF
               && RxData[7] == 0xFD
           ){
-          uint8_t *ptr = (uint8_t*)&cfg;
-          uint8_t addr; // address inside the EEPROM
-          for(addr=0; addr<sizeof(config_t); addr++){
-            data[0] = addr;
-            data[1] = ptr[addr];
-            CAN_send_data_frame( CAN_CONFIG_ID | (cfg.board_ID << 4), 2, data);
-            HAL_Delay(10);
-          }
+        CAN_send_Configuration();
      }else if(  RxData[0] == 0x12
           && RxData[1] == 0x34
           && RxData[2] == 0x56
@@ -321,6 +314,8 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
 
     TIM3->CCR1 = pwm1; // set channel 1 max. 1024
     TIM3->CCR2 = pwm2; // set channel 2 max. 1024
+
+    CAN_send_DAC_readback();
   /****************************************************************************/
   }else{
     printf("message not parsed\r\n");
@@ -358,6 +353,28 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
     LED_ERROR_TOGGLE;
   }
 }
+
+void CAN_send_DAC_readback(void){
+  data[0] = upper(TIM3->CCR1);
+  data[1] = lower(TIM3->CCR1);
+  data[2] = upper(TIM3->CCR2);
+  data[3] = lower(TIM3->CCR2);
+
+  CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
+}
+
+void CAN_send_Configuration(void){
+  uint8_t *ptr = (uint8_t*)&cfg;
+  uint8_t addr; // address inside the EEPROM
+  for(addr=0; addr<sizeof(config_t); addr++){
+    data[0] = addr;
+    data[1] = ptr[addr];
+    CAN_send_data_frame( CAN_CONFIG_ID | (cfg.board_ID << 4), 2, data);
+    HAL_Delay(10);
+  }
+}
+
+
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

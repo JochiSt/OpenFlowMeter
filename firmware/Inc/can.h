@@ -37,7 +37,7 @@ extern CAN_HandleTypeDef hcan;
 /* CAN Message IDs */
 // The format is 0xX?Y, where ? is replaced by the board ID
 #define CAN_CONFIG_ID       0x100
-#define CAN_UC_STATUS       0y101
+#define CAN_UC_STATUS       0x101
 #define CAN_DAC_ID          0x102
 
 #define CAN_ADC_MSG_ID_CH0  0x103
@@ -61,6 +61,9 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data);
 void CAN_prepare_filter_id(uint16_t canID0, uint16_t canID1, uint8_t can_fifo);
 void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1, uint16_t canID1, uint8_t can_fifo);
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData);
+
+void CAN_send_DAC_readback();
+void CAN_send_Configuration();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
