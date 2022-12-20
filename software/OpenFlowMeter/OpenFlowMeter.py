@@ -28,7 +28,19 @@ class OpenFlowMeter(object):
 
     def __init__(self, usbtin, boardID):
         """
-            init function
+
+
+        Parameters
+        ----------
+        usbtin : usbtin
+            USB CAN interface
+        boardID : int
+            Board ID of the connected OpenFlowMeter.
+
+        Returns
+        -------
+        None.
+
         """
         self.usbtin = usbtin
         self.DACsettings = [0]*4
@@ -51,12 +63,46 @@ class OpenFlowMeter(object):
         self.usbtin.add_message_listener(self.handleCANmessage)
 
     def voltage(self, channel, gain=0):
+        """
+            returns the measured voltage across the PT100 resistor
+
+        Parameters
+        ----------
+        channel : int
+            selects channel 0 or channel 1.
+        gain : int, optional
+            gain setting of the switchable gain amplifier.
+            The default is 0.
+
+        Returns
+        -------
+        int
+            raw voltage output.
+
+        """
         if gain == 0:
             return self._voltage_0[channel]
         else:
             return self._voltage_1[channel]
 
     def current(self, channel, gain=0):
+        """
+            returns the measured current via the PT100 resistor
+
+        Parameters
+        ----------
+        channel : int
+            selects channel 0 or channel 1.
+        gain : int, optional
+            gain setting of the switchable gain amplifier.
+            The default is 0.
+
+        Returns
+        -------
+        int
+            raw current output.
+
+        """
         if gain == 0:
             return self._current_0[channel]
         else:
