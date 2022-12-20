@@ -105,6 +105,19 @@ class OpenFlowMeter(object):
             self.uCtemperature = (msg[0] << 8)  + msg[1]
             self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
 
+        elif msg.mid == 0x100 | (self.config.boardID << 4):
+            if msg.dlc == 2:
+                cfgbytes = self.config.toBytes()
+
+                print(msg[0], msg[1], end="", flush=True)
+                if (msg[0] < len(cfgbytes)):
+                    cfgbytes[msg[0]] = msg[1]
+                else:
+                    print(" <- ", end="", flush=True)
+                print()
+                self.config.fromBytes(cfgbytes)
+            else:
+                print(msg)
         else:
             print("%ld Message ID 0x%x not implemented"%(time.time(), msg.mid))
             return
