@@ -184,7 +184,7 @@ int main(void)
   HAL_CAN_Start(&hcan);
 
   // prepare CAN filter for receiving messages
-  CAN_prepare_filter_id(0x100 | (cfg.board_ID << 4), 0x103 | (cfg.board_ID << 4), 0);
+  CAN_prepare_filter_id(CAN_CONFIG_ID | (cfg.board_ID << 4), CAN_DAC_ID | (cfg.board_ID << 4), 0);
   CAN_prepare_filter_id(0x125, 0x126, 1);
 
   // activate notifications
@@ -301,7 +301,7 @@ int main(void)
         data[2] = upper(TIM3->CCR2);
         data[3] = lower(TIM3->CCR2);
 
-        CAN_send_data_frame( 0x101 | (cfg.board_ID << 4), 4, data);
+        CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
     }
 
     /*************************************************************************

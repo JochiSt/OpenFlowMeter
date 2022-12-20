@@ -242,7 +242,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
 
   /****************************************************************************/
   // 0x1?0 HANDLE CONFIGURATION
-  if ( RxHeader.StdId == (uint32_t)(0x100 | (cfg.board_ID << 4))) {
+  if ( RxHeader.StdId == (uint32_t)(CAN_CONFIG_ID | (cfg.board_ID << 4))) {
     //RxHeader.DLC <- data length
     if (RxHeader.DLC == 2){
       // RxData[0] <- byte ID
@@ -291,7 +291,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
           for(addr=0; addr<sizeof(config_t); addr++){
             data[0] = addr;
             data[1] = ptr[addr];
-            CAN_send_data_frame( 0x100 | (cfg.board_ID << 4), 2, data);
+            CAN_send_data_frame( CAN_CONFIG_ID | (cfg.board_ID << 4), 2, data);
             HAL_Delay(10);
           }
      }else if(  RxData[0] == 0x12
@@ -312,7 +312,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
     }
   /****************************************************************************/
   // 0x1?1 DAC settings
-  }else if ( RxHeader.StdId == (uint32_t)(0x101 | (cfg.board_ID << 4))) {
+  }else if ( RxHeader.StdId == (uint32_t)(CAN_DAC_ID | (cfg.board_ID << 4))) {
     // set PWM values
     uint16_t pwm1 = RxData[0] <<8 | RxData[1];
     uint16_t pwm2 = RxData[2] <<8 | RxData[3];
