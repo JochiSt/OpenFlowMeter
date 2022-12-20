@@ -144,6 +144,7 @@ class OpenFlowMeter(object):
                 self.DACsettings[2 * chan      ] = ( DACset[chan] >> 8)
                 self.DACsettings[2 * chan +1 ] = ( DACset[chan] & 0xFF )
 
-            canmessage = CANMessage(mid=0x123, dlc=4, data=self.DACsettings.copy() )
+            canmessage = CANMessage(mid=0x101 | (self.config.boardID << 4),
+                                    dlc=4, data=self.DACsettings.copy() )
             # print(canmessage)
             self.usbtin.send(canmessage)
