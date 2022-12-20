@@ -17,6 +17,15 @@ class OpenFlowMeter(object):
         Class for handling the OpenFlowMeter using USBTIN with python
     """
 
+    # message IDs (have to match those in can.h)
+    CAN_CONFIG_ID       = 0x100     # handling of the configuration register
+    CAN_UC_STATUS       = 0x101     # microcontroller status
+    CAN_DAC_ID          = 0x102     # DAC setpoints
+    CAN_ADC_MSG_ID_CH0  = 0x103     # ADC channel 0
+    CAN_ADC_MSG_ID_CH1  = 0x104     # ADC channel 1
+    CAN_I2C_MSG_TMP100  = 0x108     # on board TMP100
+    CAN_I2C_MSG_BME680  = 0x109     # on board BME680
+
     def __init__(self, usbtin, boardID):
         """
             init function
@@ -84,7 +93,7 @@ class OpenFlowMeter(object):
             #define CAN_STATUS_ID       0x120
         """
 
-        if msg.mid == 0x123:    # channel 0
+        if msg.mid == OpenFlowMeter.CAN_ADC_MSG_ID_CH0 | (self.config.boardID << 4):    # channel 0
             if msg.dlc < 8:
                 return
             self._current_0[0] = (msg[0] << 8)  + msg[1]
@@ -92,7 +101,7 @@ class OpenFlowMeter(object):
             self._current_1[0] = (msg[4] << 8)  + msg[5]
             self._voltage_1[0] = (msg[6] << 8)  + msg[7]
 
-        elif msg.mid == 0x124:  # channel 1
+        elif msg.mid == OpenFlowMeter.CAN_ADC_MSG_ID_CH1 | (self.config.boardID << 4):  # channel 1
             if msg.dlc < 8:
                 return
             self._current_0[1] = (msg[0] << 8)  + msg[1]
@@ -100,13 +109,13 @@ class OpenFlowMeter(object):
             self._current_1[1] = (msg[4] << 8)  + msg[5]
             self._voltage_1[1] = (msg[6] << 8)  + msg[7]
 
-        elif msg.mid == 0x120:  # uC status
+        elif msg.mid == OpenFlowMeter.CAN_UC_STATUS | (self.config.boardID << 4):  # uC status
             if msg.dlc < 4:
                 return
             self.uCtemperature = (msg[0] << 8)  + msg[1]
             self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
 
-        elif msg.mid == 0x100 | (self.config.boardID << 4):
+        elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
                 cfgbytes = self.config.toBytes()
 
@@ -122,8 +131,6 @@ class OpenFlowMeter(object):
         else:
             #print("%ld Message ID 0x%x not implemented"%(time.time(), msg.mid))
             return
-
-
 
         self.hasNewMessage = True
 
@@ -144,7 +151,7 @@ class OpenFlowMeter(object):
                 self.DACsettings[2 * chan      ] = ( DACset[chan] >> 8)
                 self.DACsettings[2 * chan +1 ] = ( DACset[chan] & 0xFF )
 
-            canmessage = CANMessage(mid=0x101 | (self.config.boardID << 4),
+            canmessage = CANMessage(mid=OpenFlowMeter.CAN_DAC_ID | (self.config.boardID << 4),
                                     dlc=4, data=self.DACsettings.copy() )
             # print(canmessage)
             self.usbtin.send(canmessage)
@@ -166,7 +173,7 @@ class OpenFlowMeter(object):
 
         """
 
-        canmessage = CANMessage( mid = 0x100 | (self.config.boardID << 4),
+        canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
                                 dlc=8,
                                 data=[0x12,0x34,0x56,0x78,0x90,0x01,0xFF, 0xFE + default])
         self.usbtin.send(canmessage)
@@ -174,14 +181,14 @@ class OpenFlowMeter(object):
 
     def requestConfigFromDevice(self):
         # trigger sending the current configuration
-        canmessage = CANMessage( mid = 0x100 | (self.config.boardID << 4),
+        canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
                                 dlc=8,
                                 data=[0x12,0x34,0x56,0x78,0x90,0x01,0xFF,0xFD])
         self.usbtin.send(canmessage)
 
     def changeConfig(self):
         for i, byte in enumerate(self.config.toBytes()):
-            canmessage = CANMessage( mid = 0x100 | (self.config.boardID << 4),
+            canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
                                     dlc=8,
                                     data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
             self.usbtin.send(canmessage)
