@@ -376,7 +376,7 @@ int main(void)
             data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
         }
         // sendout frame with data
-        CAN_send_data_frame(CAN_STATUS_ID | (cfg.board_ID << 4), 4, data);
+        CAN_send_data_frame(CAN_UC_STATUS | (cfg.board_ID << 4), 4, data);
     }
 
     /***************************************************************************
