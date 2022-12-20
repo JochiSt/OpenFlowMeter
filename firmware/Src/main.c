@@ -50,12 +50,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-/* CAN Message IDs */
-#define CAN_ADC_MSG_ID_CH0  0x103
-#define CAN_ADC_MSG_ID_CH1  0x104
-#define CAN_STATUS_ID       0x102
-#define CAN_I2C_MSG_TMP100  0x101
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/

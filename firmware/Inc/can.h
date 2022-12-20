@@ -34,11 +34,22 @@ extern "C" {
 extern CAN_HandleTypeDef hcan;
 
 /* USER CODE BEGIN Private defines */
-extern uint8_t can_message_received;
+/* CAN Message IDs */
+// The format is 0xX?Y, where ? is replaced by the board ID
+#define CAN_CONFIG_ID       0x100
+#define CAN_UC_STATUS       0y101
+#define CAN_DAC_ID          0x102
 
+#define CAN_ADC_MSG_ID_CH0  0x103
+#define CAN_ADC_MSG_ID_CH1  0x104
+
+#define CAN_I2C_MSG_TMP100  0x108
+#define CAN_I2C_MSG_BME680  0x109
+
+
+extern uint8_t can_message_received;
 extern CAN_RxHeaderTypeDef   RxHeader;
 extern uint8_t               RxData[8];
-
 extern uint8_t data[8];
 
 /* USER CODE END Private defines */
