@@ -55,6 +55,8 @@ class OpenFlowMeter(object):
         self.uCtemperature = 0
         self.uCrefvoltage  = 0
 
+        self.TMP100_T = 0
+
         self.hasNewMessage = False
 
         self.config = OpenFlowMeter_Config()
@@ -154,6 +156,11 @@ class OpenFlowMeter(object):
                 return
             self.uCtemperature = (msg[0] << 8)  + msg[1]
             self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
+
+        elif msg.mid == OpenFlowMeter.CAN_I2C_MSG_TMP100 |  (self.config.boardID << 4):
+            if msg.dlc > 2:
+                return
+            self.TMP100_T =  ((msg[0] << 8)  + msg[1] ) * 0.0625;
 
         elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
