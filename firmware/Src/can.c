@@ -262,9 +262,9 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
           && RxData[2] == 0x56
           && RxData[3] == 0x78
           && RxData[4] == 0x90
-          && RxData[5] == 0x00
-          && RxData[6] == 0x00
-          && RxData[7] == 0x00
+          && RxData[5] == 0x01
+          && RxData[6] == 0xFF
+          && RxData[7] == 0xFE
           ){
         write_EEPROM_cfg(&hi2c1, &cfg);
       }else if(  RxData[0] == 0x12
@@ -272,12 +272,42 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
               && RxData[2] == 0x56
               && RxData[3] == 0x78
               && RxData[4] == 0x90
-              && RxData[5] == 0x00
-              && RxData[6] == 0x00
-              && RxData[7] == 0x01
+              && RxData[5] == 0x01
+              && RxData[6] == 0xFF
+              && RxData[7] == 0xFF
           ){
         write_EEPROM_cfg(&hi2c1, &default_cfg);
+      }else if(  RxData[0] == 0x12
+              && RxData[1] == 0x34
+              && RxData[2] == 0x56
+              && RxData[3] == 0x78
+              && RxData[4] == 0x90
+              && RxData[5] == 0x01
+              && RxData[6] == 0xFF
+              && RxData[7] == 0xFD
+          ){
+          uint8_t *ptr = (uint8_t*)&cfg;
+          uint8_t addr; // address inside the EEPROM
+          for(addr=0; addr<sizeof(config_t); addr++){
+            data[0] = addr;
+            data[1] = ptr[addr];
+            CAN_send_data_frame( 0x100 | (cfg.board_ID << 4), 2, data);
+            HAL_Delay(10);
+          }
+     }else if(  RxData[0] == 0x12
+          && RxData[1] == 0x34
+          && RxData[2] == 0x56
+          && RxData[3] == 0x78
+          && RxData[4] == 0x90
+          && RxData[5] == 0x01
+      ){
+      uint8_t *ptr = (uint8_t*)&cfg;
+
+      uint8_t addr = RxData[6]; // address inside the EEPROM
+      if( addr<sizeof(config_t) ){
+        ptr[addr] = RxData[7];
       }
+  }
 
     }
   /****************************************************************************/
