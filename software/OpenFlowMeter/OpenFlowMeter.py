@@ -43,7 +43,8 @@ class OpenFlowMeter(object):
 
         """
         self.usbtin = usbtin
-        self.DACsettings = [0]*4
+        self.DACsetting  = [0]*2
+        self.DACreadback = [None]*2
 
         self._current_0 = [0]*2
         self._voltage_0 = [0]*2
@@ -177,23 +178,49 @@ class OpenFlowMeter(object):
         #for i in [0, 1]:
         #   print(self._current_0[i], self._voltage_0[i])
 
-    def setDAC(self, channel1, channel2):
-            """
-                set values for both DACs
-            """
-            # set channel and send out via CAN
-            # inside STM32
-            #       uint16_t pwm1 = RxData[0] <<8 | RxData[1];
-            #       uint16_t pwm2 = RxData[2] <<8 | RxData[3];
-            DACset = [channel1, channel2]
-            for chan in [0,1]:
-                self.DACsettings[2 * chan      ] = ( DACset[chan] >> 8)
-                self.DACsettings[2 * chan +1 ] = ( DACset[chan] & 0xFF )
+    def setDAC(self, channel0, channel1):
+        """
+        Set the values for both DACs
 
-            canmessage = CANMessage(mid=OpenFlowMeter.CAN_DAC_ID | (self.config.boardID << 4),
-                                    dlc=4, data=self.DACsettings.copy() )
-            # print(canmessage)
-            self.usbtin.send(canmessage)
+        Parameters
+        ----------
+        channel1 : int
+            DESCRIPTION.
+        channel2 : int
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+        # inside STM32
+        #       uint16_t pwm1 = RxData[0] <<8 | RxData[1];
+        #       uint16_t pwm2 = RxData[2] <<8 | RxData[3];
+        if channel0 is not None:
+            self.DACsetting[0] = channel0
+        else:
+            if self.DACreadback[0] is not None:
+                self.DACsetting[0] = self.DACreadback[0]
+            else:
+                self.DACsetting[0] = 0
+        if channel1 is not None:
+            self.DACsetting[1] = channel1
+        else:
+            if self.DACreadback[1] is not None:
+                self.DACsetting[1] = self.DACreadback[1]
+            else:
+                self.DACsetting[1] = 0
+
+        DACsettings = [0]*4
+        for chan in [0,1]:
+            DACsettings[2 * chan    ] = ( self.DACsetting[chan] >> 8)
+            DACsettings[2 * chan +1 ] = ( self.DACsetting[chan] & 0xFF )
+
+        canmessage = CANMessage(mid=OpenFlowMeter.CAN_DAC_ID | (self.config.boardID << 4),
+                                dlc=4, data=DACsettings.copy() )
+        # print(canmessage)
+        self.usbtin.send(canmessage)
 
     def saveCofig2EEPROM(self, default=0):
         """
