@@ -296,12 +296,7 @@ int main(void)
         TIM3->CCR2 = PIDout1;
 
         // TODO remove debug CAN message transmission
-        data[0] = upper(TIM3->CCR1);
-        data[1] = lower(TIM3->CCR1);
-        data[2] = upper(TIM3->CCR2);
-        data[3] = lower(TIM3->CCR2);
-
-        CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
+        CAN_send_DAC_readback();
     }
 
     /*************************************************************************
