@@ -132,13 +132,6 @@ class OpenFlowMeter(object):
         #  data[2*i + 1] = lower(adcBuf[i]);
         # }
 
-        """
-            CAN message IDs from firmware
-            #define CAN_ADC_MSG_ID_CH0  0x123
-            #define CAN_ADC_MSG_ID_CH1  0x124
-            #define CAN_STATUS_ID       0x120
-        """
-
         if msg.mid == OpenFlowMeter.CAN_ADC_MSG_ID_CH0 | (self.config.boardID << 4):    # channel 0
             if msg.dlc < 8:
                 return
