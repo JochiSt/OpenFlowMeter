@@ -163,3 +163,7 @@ if __name__ == "__main__":
     print()
 
     OFMcfg.printout()
+
+    OFMcfg.fromBytes(cfgbytes)
+
+    OFMcfg.printout()
