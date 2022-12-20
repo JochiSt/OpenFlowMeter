@@ -215,6 +215,7 @@ void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1
 
 CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               RxData[8];
+uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
 /**
  * CAN RX interrupt callback
  */

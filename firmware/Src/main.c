@@ -238,7 +238,6 @@ int main(void)
   uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
   uint8_t cnt_print_uart = 0;     ///< counter for UART output
 
-  uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
 
 
   /****************************************************************************/

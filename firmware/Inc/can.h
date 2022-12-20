@@ -39,6 +39,8 @@ extern uint8_t can_message_received;
 extern CAN_RxHeaderTypeDef   RxHeader;
 extern uint8_t               RxData[8];
 
+extern uint8_t data[8];
+
 /* USER CODE END Private defines */
 
 void MX_CAN_Init(void);
