@@ -148,3 +148,40 @@ class OpenFlowMeter(object):
                                     dlc=4, data=self.DACsettings.copy() )
             # print(canmessage)
             self.usbtin.send(canmessage)
+
+    def saveCofig2EEPROM(self, default=0):
+        """
+        Tell the OFM to save the current configuration inside the EEPROM
+
+
+        Parameters
+        ----------
+        default : int, optional
+            If this is 1 the default config is written into the EEPROM.
+            The default is 0.
+
+        Returns
+        -------
+        None.
+
+        """
+
+        canmessage = CANMessage( mid = 0x100 | (self.config.boardID << 4),
+                                dlc=8,
+                                data=[0x12,0x34,0x56,0x78,0x90,0x01,0xFF, 0xFE + default])
+        self.usbtin.send(canmessage)
+
+
+    def requestConfigFromDevice(self):
+        # trigger sending the current configuration
+        canmessage = CANMessage( mid = 0x100 | (self.config.boardID << 4),
+                                dlc=8,
+                                data=[0x12,0x34,0x56,0x78,0x90,0x01,0xFF,0xFD])
+        self.usbtin.send(canmessage)
+
+    def changeConfig(self):
+        for i, byte in enumerate(self.config.toBytes()):
+            canmessage = CANMessage( mid = 0x100 | (self.config.boardID << 4),
+                                    dlc=8,
+                                    data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
+            self.usbtin.send(canmessage)
