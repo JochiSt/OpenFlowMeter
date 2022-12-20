@@ -22,7 +22,6 @@ class OpenFlowMeter(object):
             init function
         """
         self.usbtin = usbtin
-        self.boardID = boardID
         self.DACsettings = [0]*4
 
         self._current_0 = [0]*2
@@ -37,6 +36,8 @@ class OpenFlowMeter(object):
         self.hasNewMessage = False
 
         self.config = OpenFlowMeter_Config()
+        self.config.boardID = boardID
+
         # register this module to the USBtin interface
         self.usbtin.add_message_listener(self.handleCANmessage)
 
