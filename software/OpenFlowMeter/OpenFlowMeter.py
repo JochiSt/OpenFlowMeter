@@ -4,6 +4,9 @@
 """
 
 import sys,os
+
+from .OpenFlowMeter_Config import OpenFlowMeter_Config
+
 sys.path.append( os.path.dirname(os.path.realpath(__file__)) + "../pyUSBtin")
 sys.path.append("../pyUSBtin")
 from pyusbtin.canmessage import CANMessage
@@ -33,6 +36,7 @@ class OpenFlowMeter(object):
 
         self.hasNewMessage = False
 
+        self.config = OpenFlowMeter_Config()
         # register this module to the USBtin interface
         self.usbtin.add_message_listener(self.handleCANmessage)
 
