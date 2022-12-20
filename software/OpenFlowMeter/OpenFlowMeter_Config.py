@@ -78,7 +78,7 @@ class OpenFlowMeter_Config(object):
         print("\tD: %f"%(self.PID_D[1]))
 
         print()
-        print("Smooting:")
+        print("Smoothing:")
         print("\tSMOO     %d"%(self.SMOO))
         print("\tSMOO_MAX %d"%(self.SMOO_MAX))
 
