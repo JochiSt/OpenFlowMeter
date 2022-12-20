@@ -159,12 +159,13 @@ class OpenFlowMeter(object):
             if msg.dlc == 2:
                 cfgbytes = self.config.toBytes()
 
-                print(msg[0], msg[1], end="", flush=True)
+                #print(msg[0], msg[1], end="", flush=True)
                 if (msg[0] < len(cfgbytes)):
                     cfgbytes[msg[0]] = msg[1]
                 else:
-                    print(" <- ", end="", flush=True)
-                print()
+                    #print(" <- ", end="", flush=True)
+                    pass
+                #print()
                 self.config.fromBytes(cfgbytes)
             else:
                 print(msg)
@@ -270,7 +271,6 @@ class OpenFlowMeter(object):
         None.
 
         """
-
         for i, byte in enumerate(self.config.toBytes()):
             canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
                                     dlc=8,
