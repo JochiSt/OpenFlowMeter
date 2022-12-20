@@ -41,17 +41,17 @@ class OpenFlowMeter_Config(object):
         """
         self.boardID = 1
 
-        self.interval_CAN_ADC = 0
-        self.interval_PRINT_UART = 0
-        self.interval_I2C_TMP100 = 0
+        self.interval_CAN_ADC = 255
+        self.interval_PRINT_UART = 255
+        self.interval_I2C_TMP100 = 255
         self.interval_I2C_BME680 = 255
 
         self.PID_flags  = 0
 
-        self.PID_T = [40   , 40  ]
-        self.PID_P = [0.9  , 0.9 ]
-        self.PID_I = [0.06 , 0.06]
-        self.PID_D = [0.0  , 0.0 ]
+        self.PID_T = [0.0 , 0.0]
+        self.PID_P = [0.0 , 0.0]
+        self.PID_I = [0.0 , 0.0]
+        self.PID_D = [0.0 , 0.0]
 
         self.SMOO = 15
         self.SMOO_MAX = 16
@@ -157,10 +157,6 @@ class OpenFlowMeter_Config(object):
         self.PID_P[1] = floats[5]
         self.PID_I[1] = floats[6]
         self.PID_D[1] = floats[7]
-
-
-
-
 
 if __name__ == "__main__":
     OFMcfg = OpenFlowMeter_Config()
