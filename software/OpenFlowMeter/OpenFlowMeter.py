@@ -83,6 +83,7 @@ class OpenFlowMeter(object):
             #define CAN_ADC_MSG_ID_CH1  0x124
             #define CAN_STATUS_ID       0x120
         """
+
         if msg.mid == 0x123:    # channel 0
             if msg.dlc < 8:
                 return
@@ -119,8 +120,10 @@ class OpenFlowMeter(object):
             else:
                 print(msg)
         else:
-            print("%ld Message ID 0x%x not implemented"%(time.time(), msg.mid))
+            #print("%ld Message ID 0x%x not implemented"%(time.time(), msg.mid))
             return
+
+
 
         self.hasNewMessage = True
 
