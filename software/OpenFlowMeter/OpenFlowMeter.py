@@ -246,6 +246,14 @@ class OpenFlowMeter(object):
 
 
     def requestConfigFromDevice(self):
+        """
+        request transmission of the full configuration
+
+        Returns
+        -------
+        None.
+
+        """
         # trigger sending the current configuration
         canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
                                 dlc=8,
@@ -253,6 +261,16 @@ class OpenFlowMeter(object):
         self.usbtin.send(canmessage)
 
     def changeConfig(self):
+        """
+        send the full configuration to the OpenFlowMeter. This is not stored
+        inside the EEPROM unless the OFM is told to do so.
+
+        Returns
+        -------
+        None.
+
+        """
+
         for i, byte in enumerate(self.config.toBytes()):
             canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
                                     dlc=8,
