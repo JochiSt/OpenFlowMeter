@@ -168,6 +168,8 @@ int main(void)
   printf("\r\n\r\nDEFAULT config:\r\n");
   printCfg(&default_cfg);
 
+  //write_EEPROM_cfg(&hi2c1, &default_cfg);
+
   read_EEPROM_cfg(&hi2c1, &cfg, &default_cfg);
 
   printf("\r\n\r\nEEPROM config:\r\n");
