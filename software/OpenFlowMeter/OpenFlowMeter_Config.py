@@ -64,6 +64,7 @@ class OpenFlowMeter_Config(object):
         print("\t\tI2C TMP100 %d"%(self.interval_I2C_TMP100))
         print("\t\tI2C BME680 %d"%(self.interval_I2C_BME680))
         print()
+        print("PIDflags 0x%X"%(self.PID_flags))
         print("PID 0")
         print("\tT: %f"%(self.PID_T[0]))
         print("\tP: %f"%(self.PID_P[0]))
@@ -97,7 +98,7 @@ class OpenFlowMeter_Config(object):
         PIDs = np.array([
             self.PID_T[0], self.PID_P[0], self.PID_I[0], self.PID_D[0],
             self.PID_T[1], self.PID_P[1], self.PID_I[1], self.PID_D[1]
-            ], dtype=np.float16)
+            ], dtype=np.float32)
 
 
         ret = bytearray([
@@ -105,16 +106,19 @@ class OpenFlowMeter_Config(object):
             self.interval_CAN_ADC,      # 1
             self.interval_PRINT_UART,   # 2
             self.interval_I2C_TMP100,   # 3
+
             self.interval_I2C_BME680,   # 4
-            self.PID_flags              # 5
+            ])
+        ret += bytearray([
+            self.SMOO,                  # 5
+            self.SMOO_MAX               # 6
+            ])
+
+        ret += bytearray([
+            self.PID_flags              # 7
             ])
 
         ret += bytearray(PIDs.tobytes())
-
-        ret += bytearray([
-            self.SMOO,
-            self.SMOO_MAX
-            ])
 
         return ret
 
@@ -135,20 +139,27 @@ class OpenFlowMeter_Config(object):
         self.interval_CAN_ADC    = bytesin[1]
         self.interval_PRINT_UART = bytesin[2]
         self.interval_I2C_TMP100 = bytesin[3]
+
         self.interval_I2C_BME680 = bytesin[4]
-        self.PID_flags           = bytesin[5]
+        self.SMOO                = bytesin[5]
+        self.SMOO_MAX            = bytesin[6]
+        self.PID_flags           = bytesin[7]
 
-        self.PID_T[0] = np.frombuffer(bytesin[ 6: 8], dtype=np.float16)[0]
-        self.PID_P[0] = np.frombuffer(bytesin[ 8:10], dtype=np.float16)[0]
-        self.PID_I[0] = np.frombuffer(bytesin[10:12], dtype=np.float16)[0]
-        self.PID_D[0] = np.frombuffer(bytesin[12:14], dtype=np.float16)[0]
-        self.PID_T[1] = np.frombuffer(bytesin[14:16], dtype=np.float16)[0]
-        self.PID_P[1] = np.frombuffer(bytesin[16:18], dtype=np.float16)[0]
-        self.PID_I[1] = np.frombuffer(bytesin[18:20], dtype=np.float16)[0]
-        self.PID_D[1] = np.frombuffer(bytesin[20:22], dtype=np.float16)[0]
+        nfloat = 8
+        floatstart = 8
+        floats = np.frombuffer(bytesin[ floatstart :  floatstart + nfloat*4], dtype=np.float32)
 
-        self.SMOO                = bytesin[22]
-        self.SMOO_MAX            = bytesin[23]
+        self.PID_T[0] = floats[0]
+        self.PID_P[0] = floats[1]
+        self.PID_I[0] = floats[2]
+        self.PID_D[0] = floats[3]
+        self.PID_T[1] = floats[4]
+        self.PID_P[1] = floats[5]
+        self.PID_I[1] = floats[6]
+        self.PID_D[1] = floats[7]
+
+
+
 
 
 if __name__ == "__main__":
@@ -167,3 +178,8 @@ if __name__ == "__main__":
     OFMcfg.fromBytes(cfgbytes)
 
     OFMcfg.printout()
+
+    print()
+    print()
+    for i, byte in enumerate(OFMcfg.toBytes()):
+        print(i, byte)
