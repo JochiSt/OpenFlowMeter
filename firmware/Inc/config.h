@@ -27,11 +27,23 @@ typedef struct  {
      */
     uint8_t interval_CAN_ADC;       ///< interval, the data is reported to CAN
     uint8_t interval_PRINT_UART;    ///< interval, the data is printed on UART
-
     uint8_t interval_I2C_TMP100;    ///< interval, the TMP100 should be read
+
     uint8_t interval_I2C_BME680;    ///< internal, the BME680 should be read
 
     /** @}*/
+
+    ////////////////////////////////////////////////////////////////////////////
+    /** @defgroup SMOO parameters
+     *  @ingroup OFM_cfg
+     *  parameters of the ADC smootings (moving average)
+     *  VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
+     *  @{
+     */
+    uint8_t SMOO;     ///< smoothing value
+    uint8_t SMOO_MAX; ///< maximal smoothing
+    /** @}*/
+
     ////////////////////////////////////////////////////////////////////////////
     /** @defgroup PID parameter
      *  @ingroup OFM_cfg
@@ -50,17 +62,6 @@ typedef struct  {
     PID_config_t PID0; ///< configuration of PID channel 0
     PID_config_t PID1; ///< configuration of PID channel 1
 
-    /** @}*/
-
-    ////////////////////////////////////////////////////////////////////////////
-    /** @defgroup SMOO parameters
-     *  @ingroup OFM_cfg
-     *  parameters of the ADC smootings (moving average)
-     *  VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
-     *  @{
-     */
-    uint8_t SMOO;     ///< smoothing value
-    uint8_t SMOO_MAX; ///< maximal smoothing
     /** @}*/
 
     /** @}*/
