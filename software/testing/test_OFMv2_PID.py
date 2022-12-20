@@ -52,8 +52,7 @@ def main():
         timestamp = np.array([])
         t_tmp100 = np.array([])
 
-        print(ofm.TMP100_T)
-
+        print("Use CTRL-C to stop datataking...")
         try:
             while True:
                 ofm.waitForNewMessage()
