@@ -355,12 +355,10 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
     return;
   }else{
     // there is a free mailbox
-    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
-      if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
-        Error_Handler();
-      }else{
-        LED_CANTX_TOGGLE;
-      }
+    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
+      Error_Handler();
+    }else{
+      LED_CANTX_TOGGLE;
     }
   }
 }
