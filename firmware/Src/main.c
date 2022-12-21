@@ -297,9 +297,6 @@ int main(void)
           TIM3->CCR1 = PIDout1;
         }
 
-        // TODO remove debug CAN message transmission
-        CAN_send_DAC_readback();
-
         // link the PID active to the configuration active
         pid0.active = cfg.PID_flags.PID0_active;
         pid1.active = cfg.PID_flags.PID1_active;
@@ -367,6 +364,9 @@ int main(void)
     if( cnt_can_adc >= cfg.interval_CAN_ADC && cfg.interval_CAN_ADC < 255) {
         // reset CAN timer counter
         cnt_can_adc = 0;
+
+        // TODO remove debug CAN message transmission
+        //CAN_send_DAC_readback();
 
         /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
