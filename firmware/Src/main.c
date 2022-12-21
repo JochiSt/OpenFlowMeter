@@ -49,7 +49,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+// select, what should be printed via UART
+#define PRINT_UART_PID          // print PID performance
+//#define PRINT_UART_ADC        // print the ADC data
+//#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -328,7 +331,6 @@ int main(void)
       printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
 
 #endif
-#define PRINT_UART_PID
 #ifdef PRINT_UART_PID
       printf("PID0 %d\r\n",  pid0.active);
       printf(" - I   %f\r\n",  current0);
