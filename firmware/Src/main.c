@@ -187,14 +187,19 @@ int main(void)
   HAL_CAN_Start(&hcan);
 
   // prepare CAN filter for receiving messages
-  CAN_prepare_filter_id(CAN_CONFIG_ID | (cfg.board_ID << 4), CAN_DAC_ID | (cfg.board_ID << 4), 0);
+  // FIFO 0
+  CAN_prepare_filter_id(
+      CAN_CONFIG_ID | (cfg.board_ID << 4),
+      CAN_DAC_ID    | (cfg.board_ID << 4),
+      0);
+  // FIFO 1
   CAN_prepare_filter_id(0x125, 0x126, 1);
 
   // activate notifications
-  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING)!= HAL_OK){
 	  Error_Handler();
   }
-  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING)!= HAL_OK){
 	  Error_Handler();
   }
   /****************************************************************************/
@@ -324,7 +329,9 @@ int main(void)
     /*************************************************************************
      * Print some variables via UART
      ************************************************************************/
-    if( cnt_print_uart >= cfg.interval_PRINT_UART && cfg.interval_PRINT_UART < 255 ){
+    if( cnt_print_uart >= cfg.interval_PRINT_UART
+        && cfg.interval_PRINT_UART < 255
+        ){
       cnt_print_uart = 0;
 
 #ifdef PRINT_UART_ADC
@@ -432,14 +439,16 @@ int main(void)
      * Send out periodic CAN messages for I2C bus
      **************************************************************************/
     // I2C sensors
-    if( cnt_can_i2c_tmp100 >= cfg.interval_I2C_TMP100 && cfg.interval_I2C_TMP100 < 255){
+    if( cnt_can_i2c_tmp100 >= cfg.interval_I2C_TMP100
+        && cfg.interval_I2C_TMP100 < 255){
       cnt_can_i2c_tmp100 = 0;
       uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
       data[0] = upper(tmp100);
       data[1] = lower(tmp100);
       CAN_send_data_frame(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 2, data);
     }
-    if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680 && cfg.interval_I2C_BME680 < 255){
+    if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680
+        && cfg.interval_I2C_BME680 < 255){
       //TODO to be implemented
     }
   }
