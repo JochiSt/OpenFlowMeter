@@ -299,6 +299,10 @@ int main(void)
 
         // TODO remove debug CAN message transmission
         CAN_send_DAC_readback();
+
+        // link the PID active to the configuration active
+        pid0.active = cfg.PID_flags.PID0_active;
+        pid1.active = cfg.PID_flags.PID1_active;
     }
 
     /*************************************************************************
