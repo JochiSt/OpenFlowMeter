@@ -282,11 +282,25 @@ int main(void)
          * frequency.
          */
         // calculate current and voltage of each channel
-        current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
-        voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
-        current1 = avr_adcBuf_GAIN_0[2] * 3.3 / 4096 * 10e-3;
-        voltage1 = avr_adcBuf_GAIN_0[3] * 3.3 / 4096;
-        // calculate temperatures
+        // use the highest possible gain
+        /** CHANNEL 0 *********************************************************/
+        if( avr_adcBuf_GAIN_0[0] < 4040 && avr_adcBuf_GAIN_0[1] < 4040 ){
+          current0 = avr_adcBuf_GAIN_1[0] * 3.3 / 4096 * 10e-3;
+          voltage0 = avr_adcBuf_GAIN_1[1] * 3.3 / 4096;
+        }else{
+          current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
+          voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
+        }
+        /** CHANNEL 1 *********************************************************/
+        if( avr_adcBuf_GAIN_0[2] < 4040 && avr_adcBuf_GAIN_0[3] < 4040 ){
+          current1 = avr_adcBuf_GAIN_1[2] * 3.3 / 4096 * 10e-3;
+          voltage1 = avr_adcBuf_GAIN_1[3] * 3.3 / 4096;
+        }else{
+          current1 = avr_adcBuf_GAIN_0[2] * 3.3 / 4096 * 10e-3;
+          voltage1 = avr_adcBuf_GAIN_0[3] * 3.3 / 4096;
+        }
+
+        /** calculate temperatures ********************************************/
         temperature0 = convertPT100_R2T( voltage0 / current0 );
         temperature1 = convertPT100_R2T( voltage1 / current1 );
         runPID(&pid0);
