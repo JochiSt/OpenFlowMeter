@@ -3,6 +3,7 @@
 import sys
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
+from OpenFlowMeter import PT100
 from CANsetup import CANsetup
 
 import matplotlib.pyplot as plt
@@ -21,11 +22,8 @@ def main():
 
         # initialise OFM
         ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
-        #ofm.saveCofig2EEPROM(default=1)     # save the default config in EEPROM
-
         ofm.requestConfigFromDevice()
         time.sleep(1)
-        ofm.config.printout()
 
         ofm.config.interval_I2C_TMP100 = 1
 
@@ -42,35 +40,99 @@ def main():
         ofm.config.PID_D[0] = 0
 
         ofm.changeConfig()
+        time.sleep(1)
 
         print('\n'+'#'*70+'\n')
 
+        ofm.requestConfigFromDevice()
         time.sleep(1)
         ofm.config.printout()
 
+        ofm.setDAC(10, 10)
+
         time0 = time.time()
         timestamp = np.array([])
+
         t_tmp100 = np.array([])
+        dac_0 = np.array([])
+        dac_1 = np.array([])
+
+        r_0 = [np.array([]), np.array([])]
+        r_1 = [np.array([]), np.array([])]
 
         print("Use CTRL-C to stop datataking...")
+
+        dac_on = False
+
         try:
             while True:
                 ofm.waitForNewMessage()
                 ofm.hasNewMessage = False
-                timestamp = np.append(timestamp, time.time()-time0)
+
+                runtime = time.time()-time0
+
+                if runtime > 20 and runtime < 120 and not dac_on:
+                    dac_on = True
+                    ofm.setDAC(1023, 1023)
+
+                if runtime > 120 and dac_on:
+                    dac_on = False
+                    ofm.setDAC(10,10)
+
+                if runtime > 240:   # exit after 4 minutes
+                    break
+
+                timestamp = np.append(timestamp, runtime)
                 t_tmp100 = np.append(t_tmp100, ofm.TMP100_T)
+
+                dac_0 = np.append(dac_0, ofm.DACreadback[0])
+                dac_1 = np.append(dac_1, ofm.DACreadback[1])
+
+                for gain in [0,1]:
+                    # prevent division by zero
+                    i_0 = max(ofm.current(0,gain), 0.00001)
+                    i_1 = max(ofm.current(1,gain), 0.00001)
+
+                    r_0[gain] = np.append(r_0[gain], ofm.voltage(0,gain) / i_0)
+                    r_1[gain] = np.append(r_1[gain], ofm.voltage(1,gain) / i_1)
 
         except KeyboardInterrupt:
             pass
 
+        except Exception as e:
+            print(e)
+
+        ofm.setDAC(10,10)
+
         fig, (ax1) = plt.subplots(1, 1)
 
-        ax1.plot( timestamp, t_tmp100, label="temperature TMP100", marker=".", linestyle = "-")
-
-        ax1.set_title("Temperatures")
-        ax1.set_xlabel("measurement time / s")
+        ax1.plot( timestamp, t_tmp100, label="T TMP100", marker="", linestyle = "-")
         ax1.set_ylabel("Temperature / degC")
+
+        for gain in [0,1]:
+            ax1.plot( timestamp, PT100.convertPT100_T(r_0[gain]), label="T CH0 gain %d"%(gain))
+            ax1.plot( timestamp, PT100.convertPT100_T(r_1[gain]), label="T CH1 gain %d"%(gain))
+
+        ax2 = ax1.twinx()
+        ax2.set_ylabel("DAC setpoint / LSB")
+        ax2.plot( timestamp, dac_0, label="DAC CH0")
+        ax2.plot( timestamp, dac_1, label="DAC CH1")
+
+        ax3 = ax1.twinx()
+        ax3.set_ylabel("resistance / Ohm")
+        ax3.spines['right'].set_position(('outward', 60))
+        for gain in [0,1]:
+            ax3.plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain))
+            ax3.plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain))
+
+
+        ax1.set_title("OFM PID test / evaluation")
+        ax1.set_xlabel("measurement time / s")
+
         ax1.legend()
+
+        fig.tight_layout()
+        plt.show()
 
     except Exception as e:
         print(e)
