@@ -25,8 +25,9 @@ def main():
         ofm.config.printout()
 
         ofm.config.interval_I2C_TMP100 = 64
-
         ofm.changeConfig()
+
+        #ofm.saveCofig2EEPROM(default=0)     # save the default config in EEPROM
 
         ofm.requestConfigFromDevice()
         time.sleep(5)
