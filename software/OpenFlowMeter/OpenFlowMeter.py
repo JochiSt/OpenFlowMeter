@@ -157,6 +157,12 @@ class OpenFlowMeter(object):
             self.uCtemperature = (msg[0] << 8)  + msg[1]
             self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
 
+        elif msg.mid == OpenFlowMeter.CAN_DAC_ID | (self.config.boardID << 4):  # DAC readback
+            if msg.dlc < 4:
+                return
+            self.DACreadback[0] = (msg[0] << 8)  + msg[1]
+            self.DACreadback[1]  = (msg[2] << 8)  + msg[3]
+
         elif msg.mid == OpenFlowMeter.CAN_I2C_MSG_TMP100 |  (self.config.boardID << 4):
             if msg.dlc > 2:
                 return
