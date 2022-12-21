@@ -294,14 +294,13 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
           && RxData[4] == 0x90
           && RxData[5] == 0x01
       ){
-      uint8_t *ptr = (uint8_t*)&cfg;
+       uint8_t *ptr = (uint8_t*)&cfg;
 
-      uint8_t addr = RxData[6]; // address inside the EEPROM
-      if( addr<sizeof(config_t) ){
-        ptr[addr] = RxData[7];
-      }
-  }
-
+       uint8_t addr = RxData[6]; // address inside the EEPROM
+       if( addr<sizeof(config_t) ){
+         ptr[addr] = RxData[7];
+       }
+     }
     }
   /****************************************************************************/
   // 0x1?1 DAC settings
