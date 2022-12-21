@@ -3,7 +3,7 @@
 PID pid0;
 PID pid1;
 
-const uint16_t MAX_PID_OUTPUT = 1023;
+const uint16_t MAX_PID_OUTPUT = 512;  //TODO just for debugging purpose can be increased to 1023
 const uint16_t MIN_PID_OUTPUT = 0;
 
 void runPID(PID* pid){
