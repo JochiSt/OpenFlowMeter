@@ -26,7 +26,9 @@ void runPID(PID* pid){
 
 #define PID_DEBUG_PRINTF
 #ifdef PID_DEBUG_PRINTF
-    printf("%f %f %f %f", P_term, I_term, D_term, output);
+    printf("%f\r\n", error);
+    printf("%f %f %f\r\n", P_term, I_term, D_term);
+    printf("%f\r\n", output);
 #endif
 
     pid->lastError = error;
