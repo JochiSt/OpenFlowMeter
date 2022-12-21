@@ -311,6 +311,7 @@ int main(void)
     if( cnt_print_uart >= cfg.interval_PRINT_UART && cfg.interval_PRINT_UART < 255 ){
       cnt_print_uart = 0;
 
+#ifdef PRINT_UART_ADC
       printf("collected ADC results %d\r\n", adc_result_cnt);
       // reset ADC result counter
       adc_result_cnt = 0;
@@ -329,9 +330,34 @@ int main(void)
 
       printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
 
+#endif
+#define PRINT_UART_PID
+#ifdef PRINT_UART_PID
+      printf("PID0 %d\r\n",  pid0.active);
+      printf(" - I   %f\r\n",  current0);
+      printf(" - U   %f\r\n",  voltage0);
+      printf(" - PWM %ld\r\n", TIM3->CCR2);
+      printf(" - Tm  %f\r\n",  temperature0);
+      printf(" - Ts  %f\r\n",  pid0.PIDcfg->PID_T );
+      printf(" - P   %f\r\n",  pid0.PIDcfg->PID_P );
+      printf(" - I   %f\r\n",  pid0.PIDcfg->PID_I );
+      printf(" - D   %f\r\n",  pid0.PIDcfg->PID_D );
+
+      printf("PID1 %d\r\n", pid1.active);
+      printf(" - I   %f\r\n",  current1);
+      printf(" - U   %f\r\n",  voltage1);
+      printf(" - PWM %ld\r\n", TIM3->CCR1);
+      printf(" - Tm  %f\r\n",  temperature1);
+      printf(" - Ts  %f\r\n",  pid1.PIDcfg->PID_T );
+      printf(" - P   %f\r\n",  pid1.PIDcfg->PID_P );
+      printf(" - I   %f\r\n",  pid1.PIDcfg->PID_I );
+      printf(" - D   %f\r\n",  pid1.PIDcfg->PID_D );
+#endif
+#ifdef PRINT_UART_CALC_TEMP
       printf("Temperatures:\r\n");
       printf("CH0: %f\r\n", temperature0);
       printf("CH1: %f\r\n", temperature1);
+#endif
     }
 
     /***************************************************************************
