@@ -121,7 +121,7 @@ def main():
 
         ofm.setDAC(10,10)
 
-        fig, ax = plt.subplots(2, 1)
+        fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
         color = 'tab:blue'
         for i in [0,1]:
