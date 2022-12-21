@@ -8,6 +8,8 @@ const uint16_t MAX_PID_OUTPUT = 512;  //TODO just for debugging purpose can be i
 const uint16_t MIN_PID_OUTPUT = 0x0A; // a minimal current is needed to measure
                                       // the resistance.
 
+#define PID_DEBUG_PRINTF
+
 void runPID(PID* pid){
   if(pid->active){
     float error = pid->PIDcfg->PID_T - *pid->input;
@@ -24,7 +26,6 @@ void runPID(PID* pid){
     output += D_term;
     output += (float)*pid->output;
 
-#define PID_DEBUG_PRINTF
 #ifdef PID_DEBUG_PRINTF
     printf("%f\r\n", error);
     printf("%f %f %f\r\n", P_term, I_term, D_term);
