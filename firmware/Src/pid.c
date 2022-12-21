@@ -1,4 +1,5 @@
 #include "pid.h"
+#include <stdio.h>
 
 PID pid0;
 PID pid1;
@@ -21,6 +22,11 @@ void runPID(PID* pid){
     output += I_term;
     output += D_term;
     output += (float)*pid->output;
+
+#define PID_DEBUG_PRINTF
+#ifdef PID_DEBUG_PRINTF
+    printf("%f %f %f %f", P_term, I_term, D_term, output);
+#endif
 
     pid->lastError = error;
 
