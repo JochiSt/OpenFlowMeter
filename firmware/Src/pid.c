@@ -27,9 +27,9 @@ void runPID(PID* pid){
     output += (float)*pid->output;
 
 #ifdef PID_DEBUG_PRINTF
-    printf("%f\r\n", error);
-    printf("%f %f %f\r\n", P_term, I_term, D_term);
-    printf("%f\r\n", output);
+    printf("PID error  %f\r\n", error);
+    printf("    P %f - I %f - D %f\r\n", P_term, I_term, D_term);
+    printf("PID sum    %f\r\n", output);
 #endif
 
     pid->lastError = error;
@@ -40,6 +40,10 @@ void runPID(PID* pid){
     if( output < MIN_PID_OUTPUT){
       output = MIN_PID_OUTPUT;
     }
+
+#ifdef PID_DEBUG_PRINTF
+    printf("PID output %f\r\n", output);
+#endif
 
     *pid->output = (uint16_t) output;
   }else{
