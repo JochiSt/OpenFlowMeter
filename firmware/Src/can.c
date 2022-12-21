@@ -337,7 +337,7 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
     
   // check, whether we have a free mailbox or wait until we have one
   uint16_t timeout_ms = 100;
-  while( !CAN_txRdy(&hcan) ) {
+  while( HAL_CAN_GetTxMailboxesFreeLevel(&hcan) == 0 ) {
     if ( !timeout_ms ){ /*TODO ignore timeout in ISR */
       break;
     }else {
