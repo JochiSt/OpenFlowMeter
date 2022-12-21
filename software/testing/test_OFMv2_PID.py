@@ -4,6 +4,7 @@ import sys
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
 from OpenFlowMeter import PT100
+from OpenFlowMeter import convertVoltage, convertCurrent
 from CANsetup import CANsetup
 
 import matplotlib.pyplot as plt
@@ -90,11 +91,14 @@ def main():
 
                 for gain in [0,1]:
                     # prevent division by zero
-                    i_0 = max(ofm.current(0,gain), 0.00001)
-                    i_1 = max(ofm.current(1,gain), 0.00001)
+                    i_0 = convertCurrent(max(ofm.current(0,gain), 0.00001))
+                    i_1 = convertCurrent(max(ofm.current(1,gain), 0.00001))
 
-                    r_0[gain] = np.append(r_0[gain], ofm.voltage(0,gain) / i_0)
-                    r_1[gain] = np.append(r_1[gain], ofm.voltage(1,gain) / i_1)
+                    u_0 = convertVoltage(ofm.voltage(0,gain))
+                    u_1 = convertVoltage(ofm.voltage(1,gain))
+
+                    r_0[gain] = np.append(r_0[gain], u_0 / i_0)
+                    r_1[gain] = np.append(r_1[gain], u_1 / i_1)
 
         except KeyboardInterrupt:
             pass
