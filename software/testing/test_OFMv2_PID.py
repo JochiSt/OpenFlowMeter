@@ -31,14 +31,16 @@ def main():
         ofm.config.PID_flags = 0b00000000
 
         # PID settings channel 0
+        ofm.config.PID_T[0] = 40.0
         ofm.config.PID_P[0] = 0.9
         ofm.config.PID_I[0] = 0
         ofm.config.PID_D[0] = 0
 
         # PID settings channel 1
-        ofm.config.PID_P[0] = 0
-        ofm.config.PID_I[0] = 0
-        ofm.config.PID_D[0] = 0
+        ofm.config.PID_T[1] = 40.0
+        ofm.config.PID_P[1] = 0
+        ofm.config.PID_I[1] = 0
+        ofm.config.PID_D[1] = 0
 
         ofm.changeConfig()
         time.sleep(1)
