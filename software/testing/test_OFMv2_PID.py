@@ -77,10 +77,17 @@ def main():
 
                 if runtime > 20 and runtime < 120 and not dac_on:
                     dac_on = True
-                    ofm.setDAC(10, 512)
+                    #ofm.setDAC(10, 512)
+                    ofm.config.PID_flags = 0b00000010
+                    ofm.changeConfig()
+                    print("PID enabled")
 
                 if runtime > 120 and dac_on:
                     dac_on = False
+                    ofm.config.PID_flags = 0b00000000
+                    ofm.changeConfig()
+                    print("PID disabled")
+
                     ofm.setDAC(10,10)
 
                 if runtime > 240:   # exit after 4 minutes
@@ -122,6 +129,8 @@ def main():
             print(e)
 
         ofm.setDAC(10,10)
+        ofm.config.PID_flags = 0b00000000
+        ofm.changeConfig()
 
         fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
