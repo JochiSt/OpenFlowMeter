@@ -373,7 +373,21 @@ void CAN_send_Configuration(void){
   }
 }
 
-
+/*
+ * HAL style:
+ * Check whether there's at least one tx mailbox free
+ * from https://community.st.com/s/question/0D50X00009XkXEvSAN/how-can-i-send-more-than-3-can-messages-in-a-row-using-hal-library
+ */
+bool CAN_txRdy(CAN_HandleTypeDef* handle) {
+  if (
+      ((handle->Instance->TSR & CAN_TSR_TME0) == CAN_TSR_TME0) ||
+      ((handle->Instance->TSR & CAN_TSR_TME1) == CAN_TSR_TME1) ||
+      ((handle->Instance->TSR & CAN_TSR_TME2) == CAN_TSR_TME2) ) {
+    return true;
+  }else{
+    return false;
+  }
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
