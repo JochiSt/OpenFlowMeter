@@ -13,10 +13,13 @@ void runPID(PID* pid){
 
     // do the PID calculations
     float output = 0;
-    output += pid->PIDcfg->PID_P * error;
-    output += pid->PIDcfg->PID_I * pid->errorInt;
-    output += pid->PIDcfg->PID_D * (error - pid->lastError);
+    float P_term = pid->PIDcfg->PID_P * error;
+    float I_term = pid->PIDcfg->PID_I * pid->errorInt;
+    float D_term = pid->PIDcfg->PID_D * (error - pid->lastError);
 
+    output += P_term;
+    output += I_term;
+    output += D_term;
     output += (float)*pid->output;
 
     pid->lastError = error;
