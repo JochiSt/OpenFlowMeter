@@ -77,7 +77,7 @@ def main():
 
                 if runtime > 20 and runtime < 120 and not dac_on:
                     dac_on = True
-                    ofm.setDAC(1023, 1023)
+                    ofm.setDAC(10, 512)
 
                 if runtime > 120 and dac_on:
                     dac_on = False
