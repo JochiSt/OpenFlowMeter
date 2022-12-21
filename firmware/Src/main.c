@@ -205,7 +205,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
 
-  // initialise PWM outputs with 0
+  // Initialize PWM outputs with 0
   TIM3->CCR1 = 0; // set channel 1 max. 1024
   TIM3->CCR2 = 0; // set channel 2 max. 1024
   /****************************************************************************/
