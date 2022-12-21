@@ -131,6 +131,8 @@ def main():
             ax[i].set_ylabel("Temperature / degC", color=color)
             ax[i].tick_params(axis='y', labelcolor=color)
 
+            ax[i].axhline(ofm.config.PID_T[i])
+
         for gain in [0,1]:
             colors = ['mediumblue', 'cornflowerblue']
             ax[0].plot( timestamp, PT100.convertPT100_T(r_0[gain]),
