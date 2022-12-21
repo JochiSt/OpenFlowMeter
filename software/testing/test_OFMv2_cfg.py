@@ -25,6 +25,7 @@ def main():
         ofm.config.printout()
 
         ofm.config.interval_I2C_TMP100 = 64
+        ofm.config.PID_P[1] = 0.9
         ofm.changeConfig()
 
         #ofm.saveCofig2EEPROM(default=0)     # save the default config in EEPROM
