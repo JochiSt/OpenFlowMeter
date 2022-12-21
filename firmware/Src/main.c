@@ -234,8 +234,6 @@ int main(void)
   uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
   uint8_t cnt_print_uart = 0;     ///< counter for UART output
 
-
-
   /****************************************************************************/
   printf("successfully started everything\r\n");
   // Main loop
@@ -291,9 +289,13 @@ int main(void)
         runPID(&pid0);
         runPID(&pid1);
 
-        // update outputs
-        TIM3->CCR1 = PIDout0;
-        TIM3->CCR2 = PIDout1;
+        // update outputs when PID is active
+        if(pid0.active){
+          TIM3->CCR1 = PIDout0;
+        }
+        if(pid1.active){
+          TIM3->CCR2 = PIDout1;
+        }
 
         // TODO remove debug CAN message transmission
         CAN_send_DAC_readback();
