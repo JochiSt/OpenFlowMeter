@@ -289,3 +289,4 @@ class OpenFlowMeter(object):
                                     dlc=8,
                                     data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
             self.usbtin.send(canmessage)
+            time.sleep(0.05)
