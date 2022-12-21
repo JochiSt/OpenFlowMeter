@@ -108,32 +108,59 @@ def main():
 
         ofm.setDAC(10,10)
 
-        fig, (ax1) = plt.subplots(1, 1)
+        fig, ax = plt.subplots(2, 1)
 
-        ax1.plot( timestamp, t_tmp100, label="T TMP100", marker="", linestyle = "-")
-        ax1.set_ylabel("Temperature / degC")
+        color = 'tab:blue'
+        for i in [0,1]:
+            ax[i].plot( timestamp, t_tmp100, label="T TMP100", color='lightsteelblue')
+            ax[i].set_ylabel("Temperature / degC", color=color)
+            ax[i].tick_params(axis='y', labelcolor=color)
 
         for gain in [0,1]:
-            ax1.plot( timestamp, PT100.convertPT100_T(r_0[gain]), label="T CH0 gain %d"%(gain))
-            ax1.plot( timestamp, PT100.convertPT100_T(r_1[gain]), label="T CH1 gain %d"%(gain))
+            colors = ['mediumblue', 'cornflowerblue']
+            ax[0].plot( timestamp, PT100.convertPT100_T(r_0[gain]),
+                       label="T CH0 gain %d"%(gain), color=colors[gain])
+            ax[1].plot( timestamp, PT100.convertPT100_T(r_1[gain]),
+                       label="T CH1 gain %d"%(gain), color=colors[gain])
 
-        ax2 = ax1.twinx()
-        ax2.set_ylabel("DAC setpoint / LSB")
-        ax2.plot( timestamp, dac_0, label="DAC CH0")
-        ax2.plot( timestamp, dac_1, label="DAC CH1")
+        ax2 = [
+            ax[0].twinx(),
+            ax[1].twinx()
+            ]
 
-        ax3 = ax1.twinx()
-        ax3.set_ylabel("resistance / Ohm")
-        ax3.spines['right'].set_position(('outward', 60))
+        color = 'tab:orange'
+        for i in [0,1]:
+            ax2[i].set_ylabel("DAC setpoint / LSB", color=color)
+            ax2[i].tick_params(axis='y', labelcolor=color)
+
+        ax2[0].plot( timestamp, dac_0, label="DAC CH0", color=color)
+        ax2[1].plot( timestamp, dac_1, label="DAC CH1", color=color)
+
+        ax3 = [
+            ax[0].twinx(),
+            ax[1].twinx()
+            ]
+
+        color = 'tab:green'
+        for i in [0,1]:
+            ax3[i].set_ylabel("resistance / Ohm", color=color)
+            ax3[i].spines['right'].set_position(('outward', 60))
+            ax3[i].tick_params(axis='y', labelcolor=color)
+
         for gain in [0,1]:
-            ax3.plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain))
-            ax3.plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain))
+            colors = ['forestgreen', 'lime']
+
+            ax3[0].plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain),
+                        color=colors[gain])
+            ax3[1].plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain),
+                        color=colors[gain])
 
 
-        ax1.set_title("OFM PID test / evaluation")
-        ax1.set_xlabel("measurement time / s")
+        for i in [0,1]:
+            ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
+            ax[i].set_xlabel("measurement time / s")
 
-        ax1.legend()
+        #fig.legend()
 
         fig.tight_layout()
         plt.show()
