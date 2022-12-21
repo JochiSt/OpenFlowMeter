@@ -238,8 +238,6 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
 }
 
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
-  printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
-
   /****************************************************************************/
   // 0x1?0 HANDLE CONFIGURATION
   if ( RxHeader.StdId == (uint32_t)(CAN_CONFIG_ID | (cfg.board_ID << 4))) {
@@ -317,6 +315,7 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
     CAN_send_DAC_readback();
   /****************************************************************************/
   }else{
+    printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
     printf("message not parsed\r\n");
   }
 }
@@ -363,6 +362,7 @@ void CAN_send_DAC_readback(void){
 }
 
 void CAN_send_Configuration(void){
+
   uint8_t *ptr = (uint8_t*)&cfg;
   uint8_t addr; // address inside the EEPROM
   for(addr=0; addr<sizeof(config_t); addr++){
