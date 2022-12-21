@@ -383,7 +383,7 @@ int main(void)
         cnt_can_adc = 0;
 
         // TODO remove debug CAN message transmission
-        //CAN_send_DAC_readback();
+        CAN_send_DAC_readback();
 
         /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
