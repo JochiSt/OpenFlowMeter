@@ -92,14 +92,26 @@ def main():
 
                 for gain in [0,1]:
                     # prevent division by zero
-                    i_0 = convertCurrent(max(ofm.current(0,gain), 0.00001))
-                    i_1 = convertCurrent(max(ofm.current(1,gain), 0.00001))
+                    i_0 = ofm.current(0,gain)
+                    i_1 = ofm.current(1,gain)
 
-                    u_0 = convertVoltage(ofm.voltage(0,gain))
-                    u_1 = convertVoltage(ofm.voltage(1,gain))
+                    u_0 = ofm.voltage(0,gain)
+                    u_1 = ofm.voltage(1,gain)
 
-                    r_0[gain] = np.append(r_0[gain], u_0 / i_0)
-                    r_1[gain] = np.append(r_1[gain], u_1 / i_1)
+                    if i_0 < 4020 and u_1 < 4020:  # exclude the saturation points
+                        u_0 = convertVoltage(u_0)
+                        i_0 = convertCurrent(max(i_0, 0.00001))
+                        r_0[gain] = np.append(r_0[gain], u_0 / i_0)
+                    else:
+                        r_0[gain] = np.append(r_0[gain], np.nan)
+
+                    if i_1 < 4020 and u_1 < 4020:  # exclude the saturation points
+                        u_1 = convertVoltage(u_1)
+                        i_1 = convertCurrent(max(i_1, 0.00001))
+                        r_1[gain] = np.append(r_1[gain], u_1 / i_1)
+
+                    else:
+                        r_1[gain] = np.append(r_1[gain], np.nan)
 
         except KeyboardInterrupt:
             pass
