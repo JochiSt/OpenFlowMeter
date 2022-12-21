@@ -291,10 +291,10 @@ int main(void)
 
         // update outputs when PID is active
         if(pid0.active){
-          TIM3->CCR1 = PIDout0;
+          TIM3->CCR2 = PIDout0;
         }
         if(pid1.active){
-          TIM3->CCR2 = PIDout1;
+          TIM3->CCR1 = PIDout1;
         }
 
         // TODO remove debug CAN message transmission

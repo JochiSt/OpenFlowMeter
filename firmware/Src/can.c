@@ -312,8 +312,8 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
 
     printf("PWM1 %x PWM2 %x\r\n", pwm1, pwm2);
 
-    TIM3->CCR1 = pwm1; // set channel 1 max. 1024
-    TIM3->CCR2 = pwm2; // set channel 2 max. 1024
+    TIM3->CCR2 = pwm1; // set channel 1 max. 1024
+    TIM3->CCR1 = pwm2; // set channel 2 max. 1024
 
     CAN_send_DAC_readback();
   /****************************************************************************/
@@ -355,10 +355,10 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
 }
 
 void CAN_send_DAC_readback(void){
-  data[0] = upper(TIM3->CCR1);
-  data[1] = lower(TIM3->CCR1);
-  data[2] = upper(TIM3->CCR2);
-  data[3] = lower(TIM3->CCR2);
+  data[0] = upper(TIM3->CCR2);
+  data[1] = lower(TIM3->CCR2);
+  data[2] = upper(TIM3->CCR1);
+  data[3] = lower(TIM3->CCR1);
 
   CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
 }
