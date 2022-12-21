@@ -100,7 +100,7 @@ def main():
                     u_0 = ofm.voltage(0,gain)
                     u_1 = ofm.voltage(1,gain)
 
-                    if i_0 < 4020 and u_1 < 4020:  # exclude the saturation points
+                    if i_0 < 4020 and u_0 < 4020:  # exclude the saturation points
                         u_0 = convertVoltage(u_0)
                         i_0 = convertCurrent(max(i_0, 0.00001))
                         r_0[gain] = np.append(r_0[gain], u_0 / i_0)
