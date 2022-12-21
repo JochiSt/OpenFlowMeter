@@ -26,7 +26,7 @@ def main():
         ofm.requestConfigFromDevice()
         time.sleep(1)
 
-        ofm.config.interval_I2C_TMP100 = 1
+        ofm.config.interval_I2C_TMP100 = 64
 
         ofm.config.PID_flags = 0b00000000
 
@@ -42,6 +42,7 @@ def main():
         ofm.config.PID_I[1] = 0
         ofm.config.PID_D[1] = 0
 
+        time.sleep(1)
         ofm.changeConfig()
         time.sleep(1)
 
@@ -75,7 +76,7 @@ def main():
 
                 runtime = time.time()-time0
 
-                if runtime > 20 and runtime < 120 and not dac_on:
+                if runtime > 30 and runtime < 120 and not dac_on:
                     dac_on = True
                     #ofm.setDAC(10, 512)
                     ofm.config.PID_flags = 0b00000010
