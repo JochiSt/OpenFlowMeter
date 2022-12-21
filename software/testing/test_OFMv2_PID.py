@@ -50,6 +50,7 @@ def main():
         ofm.config.printout()
 
         ofm.setDAC(10, 10)
+        time.sleep(2)
 
         time0 = time.time()
         timestamp = np.array([])
