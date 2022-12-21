@@ -303,10 +303,12 @@ int main(void)
         /** calculate temperatures ********************************************/
         temperature0 = convertPT100_R2T( voltage0 / current0 );
         temperature1 = convertPT100_R2T( voltage1 / current1 );
+
+        /** run the PID controllers *******************************************/
         runPID(&pid0);
         runPID(&pid1);
 
-        // update outputs when PID is active
+        /** update the output, if the PID is active ***************************/
         if(pid0.active){
           TIM3->CCR2 = PIDout0;
         }
@@ -330,7 +332,6 @@ int main(void)
       // reset ADC result counter
       adc_result_cnt = 0;
 
-      /**********************************************************************/
       // printout collected data
       // first 4 samples are from current sources
       for(uint8_t i = 0; i<4; i++){
