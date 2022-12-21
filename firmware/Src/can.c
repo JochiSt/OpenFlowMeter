@@ -335,20 +335,33 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
   TxHeader.RTR = CAN_RTR_DATA;  // sending data frame
   TxHeader.DLC = size;          // length of data bytes
     
-  // check, whether we have a free mailbox
-  if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
-    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
-      Error_Handler();
-    }else{
-      LED_CANTX_TOGGLE;
+  // check, whether we have a free mailbox or wait until we have one
+  uint16_t timeout_ms = 100;
+  while( !CAN_txRdy(&hcan) ) {
+    if ( !timeout_ms ){ /*TODO ignore timeout in ISR */
+      break;
+    }else {
+      timeout_ms--;
+      HAL_Delay(1);
     }
-  }else{
+  }
+  if(timeout_ms == 0){
     // there is no free mailbox
     // reason might be, that there is no second participant on the CAN Bus
     // who acknowledges our messages.
     printf("No free CAN Mailbox\r\n");
     HAL_CAN_AbortTxRequest(&hcan, 4 | 2 | 1);   // clear all Mailboxes
     LED_ERROR_TOGGLE;
+    return;
+  }else{
+    // there is a free mailbox
+    if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
+      if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
+        Error_Handler();
+      }else{
+        LED_CANTX_TOGGLE;
+      }
+    }
   }
 }
 
