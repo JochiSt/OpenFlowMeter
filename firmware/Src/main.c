@@ -374,8 +374,8 @@ int main(void)
         /**********************************************************************/
         // send internal data
         for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 2]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 2]);
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 4]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 4]);
         }
         // sendout frame with data
         CAN_send_data_frame(CAN_UC_STATUS | (cfg.board_ID << 4), 4, data);
