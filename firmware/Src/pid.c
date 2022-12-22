@@ -14,6 +14,7 @@ const uint16_t MIN_PID_OUTPUT = 0x0A; // a minimal current is needed to measure
 void runPID(PID* pid){
   if(pid->active){
     float error = pid->PIDcfg->PID_T - *pid->input;
+    //pid->errorInt = pint->errorInt * 0.9 + 0.1 * error;
     pid->errorInt += error;
 
     // do the PID calculations
