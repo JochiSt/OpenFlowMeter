@@ -50,7 +50,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 // select, what should be printed via UART
-#define PRINT_UART_PID          // print PID performance
+//#define PRINT_UART_PID          // print PID performance
 //#define PRINT_UART_ADC        // print the ADC data
 //#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
 /* USER CODE END PD */
