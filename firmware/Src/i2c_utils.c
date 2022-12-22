@@ -2,6 +2,8 @@
 #include "i2c_utils.h"
 #include "utils.h"
 
+//#define TMP100_DEBUG
+
 /**
  *
  */
@@ -47,7 +49,9 @@ uint8_t read8_EEPROM(I2C_HandleTypeDef* i2cHandle, uint8_t EEPROM_addr, uint8_t 
  * init the temperature sensor
  */
 void i2c_init_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
+#ifdef TMP100_DEBUG
   printf("Init TMP100\r\n");
+#endif
   // set the resolution of the TMP100
 
   uint8_t buf[2] = {
@@ -73,7 +77,9 @@ void i2c_init_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
  * @return raw temperature
  */
 uint16_t i2c_read_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
+#ifdef TMP100_DEBUG
   printf("Reading TMP100\r\n");
+#endif
 
   uint8_t buf[2];  // buffer for sending and receiving I2C data
   int16_t val = 0xFFFF;
@@ -94,13 +100,15 @@ uint16_t i2c_read_TMP100(I2C_HandleTypeDef* i2cHandle, uint8_t TMP100_addr){
       if ( val > 0x7FF ) {
         val |= 0xF000;
       }
+
+#ifdef TMP100_DEBUG
       // Convert to float temperature value (Celsius)
       float temp_c = val * 0.0625;
-
       // Convert temperature to decimal format
       temp_c *= 100;
       printf("%u.%u C\r\n", ((unsigned int)temp_c / 100),
                                 ((unsigned int)temp_c % 100));
+#endif
     }
   }else{
     printf("Error TMP100 TX\r\n");
