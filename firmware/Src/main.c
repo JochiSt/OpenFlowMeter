@@ -289,7 +289,7 @@ int main(void)
         // calculate current and voltage of each channel
         // use the highest possible gain
         /** CHANNEL 0 *********************************************************/
-        if( avr_adcBuf_GAIN_0[0] < 4040 && avr_adcBuf_GAIN_0[1] < 4040 ){
+        if( avr_adcBuf_GAIN_1[0] < 4020 && avr_adcBuf_GAIN_1[1] < 4020 ){
           current0 = avr_adcBuf_GAIN_1[0] * 3.3 / 4096 * 10e-3;
           voltage0 = avr_adcBuf_GAIN_1[1] * 3.3 / 4096;
         }else{
@@ -297,7 +297,7 @@ int main(void)
           voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
         }
         /** CHANNEL 1 *********************************************************/
-        if( avr_adcBuf_GAIN_0[2] < 4040 && avr_adcBuf_GAIN_0[3] < 4040 ){
+        if( avr_adcBuf_GAIN_1[2] < 4020 && avr_adcBuf_GAIN_1[3] < 4020 ){
           current1 = avr_adcBuf_GAIN_1[2] * 3.3 / 4096 * 10e-3;
           voltage1 = avr_adcBuf_GAIN_1[3] * 3.3 / 4096;
         }else{
