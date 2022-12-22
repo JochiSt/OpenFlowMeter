@@ -72,8 +72,6 @@ float temperature0, temperature1;
 
 uint16_t PIDout0, PIDout1;
 
-
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

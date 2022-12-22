@@ -9,7 +9,7 @@ const uint16_t MAX_PID_OUTPUT = 512;  //TODO just for debugging purpose can be
 const uint16_t MIN_PID_OUTPUT = 0x0A; // a minimal current is needed to measure
                                       // the resistance.
 
-#define PID_DEBUG_PRINTF
+//#define PID_DEBUG_PRINTF
 
 void runPID(PID* pid){
   if(pid->active){
