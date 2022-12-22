@@ -49,11 +49,27 @@ class OFM_PID(object) :
 
 
 if __name__ == "__main__":
+    import numpy as np
+    import matplotlib.pyplot as plt
+
     # small test
-    pid = OFM_PID(dt=0.5, max=100, min=-100, kp=0.1, kd=0.00, ki=0.5)
+    pid = OFM_PID(dt=0.5, max=100, min=-100, kp=0.7, kd=0.00, ki=0.00)
+
+    value = np.array([])
+
+    TIMESTEPS = 50
 
     val = 20;
-    for i in range(100):
+    for i in range(TIMESTEPS):
         inc = pid.run(50, val)
-        print('val:','{:7.3f}'.format(val),' inc:','{:7.3f}'.format(inc) )
+        #print('val:','{:7.3f}'.format(val),' inc:','{:7.3f}'.format(inc) )
         val += inc
+        value = np.append(value, val)
+
+    plt.title("PID controller test")
+    plt.plot(range(TIMESTEPS), value, label="value")
+    plt.xlabel('iteration / timestep')
+    plt.ylabel('value')
+    plt.legend()
+    plt.show()
+

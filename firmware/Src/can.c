@@ -23,12 +23,18 @@
 /* USER CODE BEGIN 0 */
 #include "syscalls.h"
 #include "utils.h"
+#include "eeprom_cfg.h"
+#include "i2c.h"          // needed for the pointer to the I2C bus
+#include "config.h"
 
 /// store the current used filter bank
 uint8_t can_filter_bank = 0;
 /// is there a new message, which we have received?
 uint8_t can_message_received = 0;
 
+CAN_RxHeaderTypeDef   RxHeader;
+uint8_t               RxData[8];
+uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan;
@@ -128,7 +134,7 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
  * https://schulz-m.github.io/2017/03/23/stm32-can-id-filter/
  *
 */
-void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
+void CAN_prepare_filter_id(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   if(can_filter_bank < 14){
     CAN_FilterTypeDef canfilterconfig;
     canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
@@ -169,9 +175,47 @@ void CAN_prepare_filter(uint16_t canID0, uint16_t canID1, uint8_t can_fifo){
   }
 }
 
+void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1, uint16_t canID1, uint8_t can_fifo){
+  if(can_filter_bank < 14){
+    CAN_FilterTypeDef canfilterconfig;
+    canfilterconfig.FilterActivation      = CAN_FILTER_ENABLE;  // enable filter
+    canfilterconfig.FilterBank            = can_filter_bank++;  // increment filter bank by one
 
-CAN_RxHeaderTypeDef   RxHeader;
-uint8_t               RxData[8];
+    // choose FIFO for filter (each FiFo holds 3 messages)
+    if(can_fifo == 0){
+      // use FIFO0
+      canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;
+    }else if(can_fifo == 1){
+      // use FIFO1
+      canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO1;
+    }else{
+      // automatic assignment of FIFO
+      if ( can_filter_bank % 2 == 0){
+        canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO1;
+      }else{
+        canfilterconfig.FilterFIFOAssignment  = CAN_FILTER_FIFO0;
+      }
+    }
+
+    canfilterconfig.FilterIdHigh          = canID0<<5;
+    canfilterconfig.FilterMaskIdHigh      = maskID0<<5;
+
+    canfilterconfig.FilterIdLow           = canID1<<5;
+    canfilterconfig.FilterMaskIdLow       = maskID1<<5;
+
+    canfilterconfig.FilterMode            = CAN_FILTERMODE_IDMASK;  // or IDLIST for double amount of IDs (but no mask)
+    canfilterconfig.FilterScale           = CAN_FILTERSCALE_16BIT;  // for usage with 2x standard ID
+
+    canfilterconfig.SlaveStartFilterBank  = 14;   // how many filters do we want to set for CAN1
+                                                  // irrelevant for single CAN types
+                                                  // STM32F103 -> single CAN 14 filter (0-13)
+
+    HAL_CAN_ConfigFilter(&hcan, &canfilterconfig);// set filter in CAN module
+  }else{
+    printf("No free CAN filter bank!\r\n");
+  }
+}
+
 /**
  * CAN RX interrupt callback
  */
@@ -179,29 +223,99 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan){
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK){
     Error_Handler();
   }
-  CAN_parse_message(RxHeader, RxData);
+  LED_CANRX_TOGGLE;
+  //CAN_parse_message(RxHeader, RxData);
+  can_message_received++;
 }
+
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan){
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &RxHeader, RxData) != HAL_OK){
     Error_Handler();
   }
-  CAN_parse_message(RxHeader, RxData);
-}
-void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   LED_CANRX_TOGGLE;
-  printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
-  if ((RxHeader.StdId == 0x123)) {
-	  can_message_received = 1;
-      
-      // set PWM values
-      uint16_t pwm1 = RxData[0] <<8 | RxData[1];
-      uint16_t pwm2 = RxData[2] <<8 | RxData[3];
-      
-      printf("PWM1 %x PWM2 %x\r\n", pwm1, pwm2);
-      
-      TIM3->CCR1 = pwm1; // set channel 1 max. 1024
-      TIM3->CCR2 = pwm2; // set channel 2 max. 1024  
+  //CAN_parse_message(RxHeader, RxData);
+  can_message_received++;
+}
+
+void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
+  /****************************************************************************/
+  // 0x1?0 HANDLE CONFIGURATION
+  if ( RxHeader.StdId == (uint32_t)(CAN_CONFIG_ID | (cfg.board_ID << 4))) {
+    //RxHeader.DLC <- data length
+    if (RxHeader.DLC == 2){
+      // RxData[0] <- byte ID
+      // RXData[1] <- value
+      uint8_t *ptr = (uint8_t*)&cfg;
+      if(RxData[0] <= sizeof(config_t) ){
+        ptr[RxData[0]] = RxData[1];
+      }else{
+        // pointer is out of allowed range
+      }
+    }else if(RxHeader.DLC == 8){
+      // write config to EEPROM
+      // to ensure, that we really want to write to EEPROM, double check the
+      // data (it's a special word)
+      if(    RxData[0] == 0x12
+          && RxData[1] == 0x34
+          && RxData[2] == 0x56
+          && RxData[3] == 0x78
+          && RxData[4] == 0x90
+          && RxData[5] == 0x01
+          && RxData[6] == 0xFF
+          && RxData[7] == 0xFE
+          ){
+        write_EEPROM_cfg(&hi2c1, &cfg);
+      }else if(  RxData[0] == 0x12
+              && RxData[1] == 0x34
+              && RxData[2] == 0x56
+              && RxData[3] == 0x78
+              && RxData[4] == 0x90
+              && RxData[5] == 0x01
+              && RxData[6] == 0xFF
+              && RxData[7] == 0xFF
+          ){
+        write_EEPROM_cfg(&hi2c1, &default_cfg);
+      }else if(  RxData[0] == 0x12
+              && RxData[1] == 0x34
+              && RxData[2] == 0x56
+              && RxData[3] == 0x78
+              && RxData[4] == 0x90
+              && RxData[5] == 0x01
+              && RxData[6] == 0xFF
+              && RxData[7] == 0xFD
+          ){
+        CAN_send_Configuration();
+     }else if(  RxData[0] == 0x12
+          && RxData[1] == 0x34
+          && RxData[2] == 0x56
+          && RxData[3] == 0x78
+          && RxData[4] == 0x90
+          && RxData[5] == 0x01
+      ){
+       uint8_t *ptr = (uint8_t*)&cfg;
+
+       uint8_t addr = RxData[6]; // address inside the EEPROM
+       if( addr<sizeof(config_t) ){
+         ptr[addr] = RxData[7];
+       }
+     }
+    }
+  /****************************************************************************/
+  // 0x1?1 DAC settings
+  }else if ( RxHeader.StdId == (uint32_t)(CAN_DAC_ID | (cfg.board_ID << 4))) {
+    // set PWM values
+    uint16_t pwm1 = RxData[0] <<8 | RxData[1];
+    uint16_t pwm2 = RxData[2] <<8 | RxData[3];
+
+    printf("PWM1 %x PWM2 %x\r\n", pwm1, pwm2);
+
+    TIM3->CCR2 = pwm1; // set channel 1 max. 1024
+    TIM3->CCR1 = pwm2; // set channel 2 max. 1024
+
+    CAN_send_DAC_readback();
+  /****************************************************************************/
   }else{
+    printf("received message with ID: %x\r\n", (uint16_t) RxHeader.StdId);
     printf("message not parsed\r\n");
   }
 }
@@ -221,20 +335,68 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
   TxHeader.RTR = CAN_RTR_DATA;  // sending data frame
   TxHeader.DLC = size;          // length of data bytes
     
-  // check, whether we have a free mailbox
-  if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan) > 0){
-    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
-      Error_Handler();
-    }else{
-      LED_CANTX_TOGGLE;
+  // check, whether we have a free mailbox or wait until we have one
+  uint16_t timeout_ms = 100;
+  while( HAL_CAN_GetTxMailboxesFreeLevel(&hcan) == 0 ) {
+    if ( !timeout_ms ){ /*TODO ignore timeout in ISR */
+      break;
+    }else {
+      timeout_ms--;
+      HAL_Delay(1);
     }
-  }else{
+  }
+  if(timeout_ms == 0){
     // there is no free mailbox
     // reason might be, that there is no second participant on the CAN Bus
     // who acknowledges our messages.
     printf("No free CAN Mailbox\r\n");
     HAL_CAN_AbortTxRequest(&hcan, 4 | 2 | 1);   // clear all Mailboxes
     LED_ERROR_TOGGLE;
+    return;
+  }else{
+    // there is a free mailbox
+    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, data, &TxMailbox) != HAL_OK){
+      Error_Handler();
+    }else{
+      LED_CANTX_TOGGLE;
+    }
+  }
+}
+
+void CAN_send_DAC_readback(void){
+  data[0] = upper(TIM3->CCR2);
+  data[1] = lower(TIM3->CCR2);
+  data[2] = upper(TIM3->CCR1);
+  data[3] = lower(TIM3->CCR1);
+
+  CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
+}
+
+void CAN_send_Configuration(void){
+
+  uint8_t *ptr = (uint8_t*)&cfg;
+  uint8_t addr; // address inside the EEPROM
+  for(addr=0; addr<sizeof(config_t); addr++){
+    data[0] = addr;
+    data[1] = ptr[addr];
+    CAN_send_data_frame( CAN_CONFIG_ID | (cfg.board_ID << 4), 2, data);
+    HAL_Delay(10);
+  }
+}
+
+/*
+ * HAL style:
+ * Check whether there's at least one tx mailbox free
+ * from https://community.st.com/s/question/0D50X00009XkXEvSAN/how-can-i-send-more-than-3-can-messages-in-a-row-using-hal-library
+ */
+bool CAN_txRdy(CAN_HandleTypeDef* handle) {
+  if (
+      ((handle->Instance->TSR & CAN_TSR_TME0) == CAN_TSR_TME0) ||
+      ((handle->Instance->TSR & CAN_TSR_TME1) == CAN_TSR_TME1) ||
+      ((handle->Instance->TSR & CAN_TSR_TME2) == CAN_TSR_TME2) ) {
+    return true;
+  }else{
+    return false;
   }
 }
 /* USER CODE END 1 */

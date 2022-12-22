@@ -32,6 +32,14 @@
 /* USER CODE BEGIN Includes */
 #include "syscalls.h"
 #include "utils.h"
+#include "i2c_scanner.h"
+#include "i2c_utils.h"
+#include "config.h"
+#include "eeprom_cfg.h"
+
+#include "pid.h"
+
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,13 +49,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-// sendout the can message about the ADC
-//  gives the number of triggered interrupts 1 = 500ms / 2 = 1s / 4 = 2s
-#define CAN_ADC_RATE    1
-
-/* CAN Message IDs */
-#define CAN_ADC_MSG_ID  0x123
-#define CAN_STATUS_ID   0x124
+// select, what should be printed via UART
+//#define PRINT_UART_PID          // print PID performance
+//#define PRINT_UART_ADC        // print the ADC data
+//#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,15 +62,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define ADC_BUFLEN 6
-uint32_t adcBuf[ADC_BUFLEN];              // store the ADC samples
-uint16_t avr_adcBuf[ADC_BUFLEN] = {0};    // average the ADC samples with
-                                          // moving average
-const uint16_t SMOO = 15;     // averaging factor
-                              // gives the number of old samples
-                              // SMOO_MAX - SMOO is number of new samples
-                              // VAL = (val * (SMOO_MAX - SMOO) + Previous_value * SMOO) / SMOO_MAX
-const uint16_t SMOO_MAX = 16; // Maximal value of SMOO
+/* at the moment, just for one gain */
+/// current
+float current0, current1;
+/// voltage
+float voltage0, voltage1;
+/// temperature
+float temperature0, temperature1;
+
+uint16_t PIDout0, PIDout1;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -117,11 +123,11 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  /***************************************************************************/
+  /****************************************************************************/
   printf("\r\n\r\n");
   printf("Compiled at "__DATE__" - "__TIME__"\r\n");
   printf("Compiled with GCC Version "__VERSION__"\r\n");
-  /***************************************************************************/
+  /****************************************************************************/
   // all OFF
   LED_ERROR(SET);    // red      -> failure
   LED_CANRX(SET);    // yellow   -> RX
@@ -139,7 +145,11 @@ int main(void)
 
   HAL_Delay(1000);
 
-  // all LEDs off  
+  // do an I2C scan of both I2C ports
+  i2c_scan(&hi2c1);   // PORT 1
+  i2c_scan(&hi2c2);   // PORT 2
+
+  // all LEDs off
   LED_ERROR(SET);
   HAL_Delay(500);
   LED_CANRX(SET);
@@ -147,109 +157,299 @@ int main(void)
   LED_CANTX(SET);
   HAL_Delay(500);
   LED_STATUS(SET);
-  /***************************************************************************/
-  
+  /****************************************************************************/
+  // read all configuration values from I2C EEPROM, or use default ones
+  generateDefaultCFG(&cfg);
+  generateDefaultCFG(&default_cfg);
+
+  printf("\r\n\r\nDEFAULT config:\r\n");
+  printCfg(&default_cfg);
+
+  //write_EEPROM_cfg(&hi2c1, &default_cfg);
+
+  read_EEPROM_cfg(&hi2c1, &cfg, &default_cfg);
+
+  printf("\r\n\r\nEEPROM config:\r\n");
+  printCfg(&cfg);
+
+  // link configuration to PID controllers
+  pid0.PIDcfg = &cfg.PID0;
+  pid1.PIDcfg = &cfg.PID1;
+  pid0.input  = &temperature0;
+  pid1.input  = &temperature1;
+  pid0.output = &PIDout0;
+  pid1.output = &PIDout1;
+
+  printf("\r\n\r\n");
+  /****************************************************************************/
   // START CAN Bus (required for transmission of messages)
   printf("starting CAN Bus...\r\n");
   HAL_CAN_Start(&hcan);
 
   // prepare CAN filter for receiving messages
-  CAN_prepare_filter(0x123, 0x124, 0);
-  CAN_prepare_filter(0x125, 0x126, 1);
+  // FIFO 0
+  CAN_prepare_filter_id(
+      CAN_CONFIG_ID | (cfg.board_ID << 4),
+      CAN_DAC_ID    | (cfg.board_ID << 4),
+      0);
+  // FIFO 1
+  CAN_prepare_filter_id(0x125, 0x126, 1);
 
   // activate notifications
-  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK){
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING)!= HAL_OK){
 	  Error_Handler();
   }
-  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK){
+  if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING)!= HAL_OK){
 	  Error_Handler();
-  }  
-  /***************************************************************************/
+  }
+  /****************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
 
   printf("starting TIM3 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
-  
-  // initialise PWM outputs with 0
+
+  // Initialize PWM outputs with 0
   TIM3->CCR1 = 0; // set channel 1 max. 1024
-  TIM3->CCR2 = 0; // set channel 2 max. 1024  
-  /***************************************************************************/
+  TIM3->CCR2 = 0; // set channel 2 max. 1024
+  /****************************************************************************/
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
   HAL_ADCEx_Calibration_Start(&hadc1);
-  
+
+  /****************************************************************************/
+  // Test of TMP100 / TMP101
+  i2c_init_TMP100(&hi2c1, 0x48);
+  i2c_read_TMP100(&hi2c1, 0x48);
+
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
+  // start first ADC conversion
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
-  
-  /***************************************************************************/
+  /****************************************************************************/
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  
-  uint16_t timer2_elapsed_old = 0;
-  
+
+  /// store the old timer2 value
+  uint8_t timer2_elapsed_old = 0;
+
   // variables for transmitting CAN messages
-  uint8_t data[8] = {0};
+  uint8_t cnt_can_adc = 0;        ///< counter for the CAN ADC message rate
+  uint8_t cnt_can_i2c_tmp100 = 0; ///< counter for the CAN I2C TMP100 rate
+  uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
+  uint8_t cnt_print_uart = 0;     ///< counter for UART output
+
+  /****************************************************************************/
   printf("successfully started everything\r\n");
-    
-  uint16_t adc_result_cnt = 0;
+  // Main loop
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+    /**************************************************************************/
+    // CAN message handling is done in CAN_parse_message in can.c
     if (can_message_received){
+      CAN_parse_message(RxHeader, RxData);
       can_message_received = 0;
     }
-    
-    if( adc_result_cnt > 0 ){   // are there new ADC results?
-      // check timer 2 for doing periodic tasks
-      // one timer2_elapsed is equal to 500ms
-      if( timer2_elapsed > timer2_elapsed_old){
-        printf("collected ADC results %d\r\n", adc_result_cnt);
-        adc_result_cnt = 0;
-        
-        timer2_elapsed_old = timer2_elapsed;
-        
-        // first 4 samples are from current sources
-        for(uint8_t i = 0; i<4; i++){
-          printf("%d\t", avr_adcBuf[i]);
-        }
-        uint32_t temperature = adcBuf[4];
-        uint32_t refvoltage = adcBuf[5] * 3300 / 4096;
-        
-        printf("T= %ld (%ld)\tU= %ld (%ld)", temperature, adcBuf[4], refvoltage, adcBuf[5]);
-        printf("\r\n");
-      }
-      
-      // sendout ADC data via CAN
-      if( timer2_elapsed >= CAN_ADC_RATE){ 
-        // convert 16bit ADC result into 2x 8bit for CAN message
-        for(uint8_t i = 0; i<4; i++){
-          data[2*i    ] = upper(avr_adcBuf[i]);
-          data[2*i + 1] = lower(avr_adcBuf[i]);
-        }    
-        // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID, 8, data);
-        
-        // reset timer counter
-        timer2_elapsed = 0;
-        timer2_elapsed_old = 0;
-      }
+
+    /***************************************************************************
+     * check whether a new ADC result has been taken, wait a short time for
+     * everything to settle and trigger a new conversion
+     **************************************************************************/
+    if (adc_result_received){
+      adc_result_received = 0;
+      HAL_Delay(2);
+      HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN);
     }
-    // we have a new ADC result -> do calculations
-    if(has_new_adc_result >= 1){
-      adc_result_cnt++;         // count how often the ADC is updating
-      for(uint8_t i = 0; i<ADC_BUFLEN; i++){
-        // moving average
-        avr_adcBuf[i] = (adcBuf[i]*( SMOO_MAX - SMOO ) + avr_adcBuf[i]*SMOO) / SMOO_MAX;
+
+    /***************************************************************************
+     * check timer 2 for doing periodic tasks
+     * one timer2_elapsed is equal to 125ms
+     **************************************************************************/
+    if( timer2_elapsed >= timer2_elapsed_old){
+        timer2_elapsed_old = timer2_elapsed + 1;	// important to add +1, in
+                                                  // order to catch overflow
+
+        // increase the interval counters every time this counter is evaluated
+        cnt_can_adc++;
+        cnt_print_uart++;
+        cnt_can_i2c_tmp100++;
+        cnt_can_i2c_bme680++;
+
+        /***********************************************************************
+         * PID handling
+         * for the PID, it is important, that it is triggered with a constant
+         * frequency.
+         */
+        // calculate current and voltage of each channel
+        // use the highest possible gain
+        /** CHANNEL 0 *********************************************************/
+        if( avr_adcBuf_GAIN_1[0] < 4020 && avr_adcBuf_GAIN_1[1] < 4020 ){
+          current0 = avr_adcBuf_GAIN_1[0] * 3.3 / 4096 * 10e-3;
+          voltage0 = avr_adcBuf_GAIN_1[1] * 3.3 / 4096;
+        }else{
+          current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
+          voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
+        }
+        /** CHANNEL 1 *********************************************************/
+        if( avr_adcBuf_GAIN_1[2] < 4020 && avr_adcBuf_GAIN_1[3] < 4020 ){
+          current1 = avr_adcBuf_GAIN_1[2] * 3.3 / 4096 * 10e-3;
+          voltage1 = avr_adcBuf_GAIN_1[3] * 3.3 / 4096;
+        }else{
+          current1 = avr_adcBuf_GAIN_0[2] * 3.3 / 4096 * 10e-3;
+          voltage1 = avr_adcBuf_GAIN_0[3] * 3.3 / 4096;
+        }
+
+        /** calculate temperatures ********************************************/
+        temperature0 = convertPT100_R2T( voltage0 / current0 );
+        temperature1 = convertPT100_R2T( voltage1 / current1 );
+
+        /** run the PID controllers *******************************************/
+        runPID(&pid0);
+        runPID(&pid1);
+
+        /** update the output, if the PID is active ***************************/
+        if(pid0.active){
+          TIM3->CCR2 = PIDout0;
+        }
+        if(pid1.active){
+          TIM3->CCR1 = PIDout1;
+        }
+
+        // link the PID active to the configuration active
+        pid0.active = cfg.PID_flags.PID0_active;
+        pid1.active = cfg.PID_flags.PID1_active;
+    }
+
+    /*************************************************************************
+     * Print some variables via UART
+     ************************************************************************/
+    if( cnt_print_uart >= cfg.interval_PRINT_UART
+        && cfg.interval_PRINT_UART < 255
+        ){
+      cnt_print_uart = 0;
+
+#ifdef PRINT_UART_ADC
+      printf("collected ADC results %d\r\n", adc_result_cnt);
+      // reset ADC result counter
+      adc_result_cnt = 0;
+
+      // printout collected data
+      // first 4 samples are from current sources
+      for(uint8_t i = 0; i<4; i++){
+        printf("%d\t", avr_adcBuf_GAIN_0[i]);
       }
-      has_new_adc_result = 0;   // reset new result flag
+      printf("\r\n");
+      for(uint8_t i = 0; i<4; i++){
+        printf("%d\t", avr_adcBuf_GAIN_1[i]);
+      }
+      printf("\r\n");
+
+      printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
+
+#endif
+#ifdef PRINT_UART_PID
+      printf("PID0 %d\r\n",  pid0.active);
+      printf(" - I   %f\r\n",  current0);
+      printf(" - U   %f\r\n",  voltage0);
+      printf(" - PWM %ld\r\n", TIM3->CCR2);
+      printf(" - Tm  %f\r\n",  temperature0);
+      printf(" - Ts  %f\r\n",  pid0.PIDcfg->PID_T );
+      printf(" - P   %f\r\n",  pid0.PIDcfg->PID_P );
+      printf(" - I   %f\r\n",  pid0.PIDcfg->PID_I );
+      printf(" - D   %f\r\n",  pid0.PIDcfg->PID_D );
+
+      printf("PID1 %d\r\n", pid1.active);
+      printf(" - I   %f\r\n",  current1);
+      printf(" - U   %f\r\n",  voltage1);
+      printf(" - PWM %ld\r\n", TIM3->CCR1);
+      printf(" - Tm  %f\r\n",  temperature1);
+      printf(" - Ts  %f\r\n",  pid1.PIDcfg->PID_T );
+      printf(" - P   %f\r\n",  pid1.PIDcfg->PID_P );
+      printf(" - I   %f\r\n",  pid1.PIDcfg->PID_I );
+      printf(" - D   %f\r\n",  pid1.PIDcfg->PID_D );
+#endif
+#ifdef PRINT_UART_CALC_TEMP
+      printf("Temperatures:\r\n");
+      printf("CH0: %f\r\n", temperature0);
+      printf("CH1: %f\r\n", temperature1);
+#endif
+    }
+
+    /***************************************************************************
+     * Send out periodic CAN messages for ADC
+     **************************************************************************/
+    // ADC CAN message
+    if( cnt_can_adc >= cfg.interval_CAN_ADC && cfg.interval_CAN_ADC < 255) {
+        // reset CAN timer counter
+        cnt_can_adc = 0;
+
+        // TODO remove debug CAN message transmission
+        CAN_send_DAC_readback();
+
+        /**********************************************************************/
+        // convert 16bit ADC result into 2x 8bit for CAN message
+        // one CAN message can transport up to 8 bytes
+
+        /**********************************************************************/
+        // CHANNEL 0
+        // position 0 - 3 GAIN_0
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
+        }
+        // position 4 - 7 GAIN_1
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i]);
+            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
+        }
+        // sendout frame with data
+        CAN_send_data_frame(CAN_ADC_MSG_ID_CH0 | (cfg.board_ID << 4), 8, data);
+
+        /**********************************************************************/
+        // CHANNEL 1
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i+2]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i+2]);
+        }
+        // position 4 - 7 GAIN_1
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i+2]);
+            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
+        }
+        // sendout frame with data
+        CAN_send_data_frame(CAN_ADC_MSG_ID_CH1 | (cfg.board_ID << 4), 8, data);
+
+        /**********************************************************************/
+        // send internal data
+        for(uint8_t i = 0; i<2; i++) {
+            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 4]);
+            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 4]);
+        }
+        // sendout frame with data
+        CAN_send_data_frame(CAN_UC_STATUS | (cfg.board_ID << 4), 4, data);
+    }
+
+    /***************************************************************************
+     * Send out periodic CAN messages for I2C bus
+     **************************************************************************/
+    // I2C sensors
+    if( cnt_can_i2c_tmp100 >= cfg.interval_I2C_TMP100
+        && cfg.interval_I2C_TMP100 < 255){
+      cnt_can_i2c_tmp100 = 0;
+      uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
+      data[0] = upper(tmp100);
+      data[1] = lower(tmp100);
+      CAN_send_data_frame(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 2, data);
+    }
+    if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680
+        && cfg.interval_I2C_BME680 < 255){
+      //TODO to be implemented
     }
   }
   /* USER CODE END 3 */

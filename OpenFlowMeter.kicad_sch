@@ -1079,6 +1079,11 @@
     (uuid fdef1ad3-22f1-4256-ad5b-45074e55643e)
   )
 
+  (text "instead of LT1490A I used: SGM8522XS\nDespite the reason of just trying this, its much cheaper"
+    (at 181.61 163.83 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 162eb22e-9a2e-4e10-a8f6-541344a983d3)
+  )
   (text "\"Backplane\" connection" (at 179.07 31.75 0)
     (effects (font (size 1.27 1.27) bold) (justify left bottom))
     (uuid 41423042-f62b-4deb-8206-555d99755597)
@@ -2295,16 +2300,16 @@
       (reference "C33") (unit 1) (value "100n") (footprint "Capacitor_SMD:C_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-0000606200ab/0b3d1f56-e29e-4e42-b34d-ed5e508dae90"
-      (reference "D1") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric")
+      (reference "D1") (unit 1) (value "LED rd") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-0000606200ab/470da751-b9c7-43d4-90d5-cd51a26b15b6"
-      (reference "D2") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric")
+      (reference "D2") (unit 1) (value "LED yl") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-0000606200ab/6687dc92-4c3e-490b-975b-47b065bb5215"
-      (reference "D3") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric")
+      (reference "D3") (unit 1) (value "LED yl") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-0000606200ab/d308747e-9f11-44ad-b7b7-2ad3cc32402d"
-      (reference "D4") (unit 1) (value "LED") (footprint "LED_SMD:LED_0603_1608Metric")
+      (reference "D4") (unit 1) (value "LED gn") (footprint "LED_SMD:LED_0603_1608Metric")
     )
     (path "/00000000-0000-0000-0000-000061b62926"
       (reference "H1") (unit 1) (value "MountingHole_Pad") (footprint "MountingHole:MountingHole_3.2mm_M3_Pad_Via")
