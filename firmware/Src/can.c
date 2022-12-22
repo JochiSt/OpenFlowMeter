@@ -35,6 +35,8 @@ uint8_t can_message_received = 0;
 CAN_RxHeaderTypeDef   RxHeader;
 uint8_t               RxData[8];
 uint8_t data[8] = {0};        ///< bytes, which are send via the CAN bus
+
+uint16_t PWM0, PWM1;
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan;
@@ -304,13 +306,10 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData){
   // 0x1?1 DAC settings
   }else if ( RxHeader.StdId == (uint32_t)(CAN_DAC_ID | (cfg.board_ID << 4))) {
     // set PWM values
-    uint16_t pwm1 = RxData[0] <<8 | RxData[1];
-    uint16_t pwm2 = RxData[2] <<8 | RxData[3];
+    PWM0 = RxData[0] <<8 | RxData[1];
+    PWM1 = RxData[2] <<8 | RxData[3];
 
-    printf("PWM1 %x PWM2 %x\r\n", pwm1, pwm2);
-
-    TIM3->CCR2 = pwm1; // set channel 1 max. 1024
-    TIM3->CCR1 = pwm2; // set channel 2 max. 1024
+    printf("PWM1 %x PWM2 %x\r\n", PWM0, PWM1);
 
     CAN_send_DAC_readback();
   /****************************************************************************/

@@ -72,6 +72,8 @@ float temperature0, temperature1;
 
 uint16_t PIDout0, PIDout1;
 
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -316,9 +318,13 @@ int main(void)
         /** update the output, if the PID is active ***************************/
         if(pid0.active){
           TIM3->CCR2 = PIDout0;
+        }else{
+          TIM3->CCR2 = PWM0;
         }
         if(pid1.active){
           TIM3->CCR1 = PIDout1;
+        }else{
+          TIM3->CCR1 = PWM1;
         }
 
         // link the PID active to the configuration active

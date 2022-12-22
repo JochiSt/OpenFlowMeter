@@ -53,6 +53,8 @@ extern CAN_RxHeaderTypeDef   RxHeader;
 extern uint8_t               RxData[8];
 extern uint8_t data[8];
 
+extern uint16_t PWM0, PWM1;
+
 /* USER CODE END Private defines */
 
 void MX_CAN_Init(void);
