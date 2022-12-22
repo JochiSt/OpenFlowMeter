@@ -77,6 +77,9 @@ def main():
         #TIME_PID_ACTIVE = 10
         #TIME_STOP = 2
 
+        TIME_DISTURB = 200
+        disturbed = False
+
         try:
             while True:
                 ofm.waitForNewMessage()
@@ -86,7 +89,6 @@ def main():
 
                 if runtime > TIME_START and runtime < TIME_START + TIME_PID_ACTIVE  and not dac_on:
                     dac_on = True
-                    #ofm.setDAC(10, 512)
                     ofm.config.PID_flags = 0b00000010
                     ofm.changeConfig()
                     print("PID enabled")
@@ -101,6 +103,12 @@ def main():
 
                 if runtime > TIME_START + TIME_PID_ACTIVE + TIME_STOP:
                     break
+
+                if runtime > TIME_START + TIME_DISTURB and not disturbed:
+                    print("Changing setpoint of PID")
+                    disturbed = True
+                    ofm.config.PID_T[1] = ofm.config.PID_T[1] + 10
+                    ofm.changeConfig()
 
                 timestamp = np.append(timestamp, runtime)
                 t_tmp100 = np.append(t_tmp100, ofm.TMP100_T)
