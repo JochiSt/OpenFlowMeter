@@ -59,11 +59,10 @@ def main():
         timestamp = np.array([])
 
         t_tmp100 = np.array([])
-        dac_0 = np.array([])
-        dac_1 = np.array([])
-
-        r_0 = [np.array([]), np.array([])]
-        r_1 = [np.array([]), np.array([])]
+        dac  = [np.array([]), np.array([])]
+        setp = [np.array([]), np.array([])]
+        r_0  = [np.array([]), np.array([])]
+        r_1  = [np.array([]), np.array([])]
 
         print("Use CTRL-C to stop datataking...")
 
@@ -106,8 +105,9 @@ def main():
                 timestamp = np.append(timestamp, runtime)
                 t_tmp100 = np.append(t_tmp100, ofm.TMP100_T)
 
-                dac_0 = np.append(dac_0, ofm.DACreadback[0])
-                dac_1 = np.append(dac_1, ofm.DACreadback[1])
+                for ch in [0,1]:
+                    dac[ch]  = np.append(dac[ch], ofm.DACreadback[ch])
+                    setp[ch] = np.append(setp[ch], ofm.config.PID_T[ch])
 
                 for gain in [0,1]:
                     # prevent division by zero
@@ -150,7 +150,8 @@ def main():
             ax[i].set_ylabel("Temperature / degC", color=color)
             ax[i].tick_params(axis='y', labelcolor=color)
 
-            ax[i].axhline(ofm.config.PID_T[i])
+            ax[i].plot( timestamp, setp[i], label="setpoint")
+            #ax[i].axhline(ofm.config.PID_T[i])
 
         for gain in [0,1]:
             colors = ['mediumblue', 'cornflowerblue']
@@ -168,9 +169,7 @@ def main():
         for i in [0,1]:
             ax2[i].set_ylabel("DAC setpoint / LSB", color=color)
             ax2[i].tick_params(axis='y', labelcolor=color)
-
-        ax2[0].plot( timestamp, dac_0, label="DAC CH0", color=color)
-        ax2[1].plot( timestamp, dac_1, label="DAC CH1", color=color)
+            ax2[i].plot( timestamp, dac[i], label="DAC", color=color)
 
         ax3 = [
             ax[0].twinx(),
