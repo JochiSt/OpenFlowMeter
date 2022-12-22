@@ -32,15 +32,15 @@ def main():
 
         # PID settings channel 0
         ofm.config.PID_T[0] = 40.0
-        ofm.config.PID_P[0] = 0.9
+        ofm.config.PID_P[0] = 0
         ofm.config.PID_I[0] = 0
         ofm.config.PID_D[0] = 0
 
         # PID settings channel 1
-        ofm.config.PID_T[1] = 40.0
-        ofm.config.PID_P[1] = 0
-        ofm.config.PID_I[1] = 0
-        ofm.config.PID_D[1] = 0
+        ofm.config.PID_T[1] = 30.0
+        ofm.config.PID_P[1] = 4
+        ofm.config.PID_I[1] = 0.00002
+        ofm.config.PID_D[1] = 0.1
 
         time.sleep(1)
         ofm.changeConfig()
