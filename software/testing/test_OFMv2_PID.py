@@ -196,6 +196,20 @@ def main():
             ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
             ax[i].set_xlabel("measurement time / s")
 
+        for i in [0,1]:
+            ax[i].text(0.2, 0.95, "T %f\nP %f\nI %f\nD %f"%(
+                    ofm.config.PID_T[i],
+                    ofm.config.PID_P[i],
+                    ofm.config.PID_I[i],
+                    ofm.config.PID_D[i]
+                ),
+                 horizontalalignment='left',
+                 verticalalignment='top',
+                 transform=ax[i].transAxes,
+                 fontfamily = 'monospace',
+                 fontsize = 'medium')
+            #ofm.config.PID_T[1] = 30.0
+
         #fig.legend()
 
         fig.tight_layout()
