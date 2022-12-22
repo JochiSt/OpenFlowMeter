@@ -29,6 +29,7 @@ void runPID(PID* pid){
 
 #ifdef PID_DEBUG_PRINTF
     printf("PID error  %f\r\n", error);
+    printf("   in %f", *pid->input);
     printf("    P %f - I %f - D %f\r\n", P_term, I_term, D_term);
     printf("PID sum    %f\r\n", output);
 #endif
@@ -50,5 +51,6 @@ void runPID(PID* pid){
   }else{
     // TODO implement some default output, which is used, when the PIC is not
     // operating
+    *pid->output = MIN_PID_OUTPUT;
   }
 }
