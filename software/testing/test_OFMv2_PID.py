@@ -69,6 +69,15 @@ def main():
 
         dac_on = False
 
+        TIME_START = 30
+        TIME_PID_ACTIVE = 300
+        TIME_STOP = 60
+
+        # for debugging
+        #TIME_START = 2
+        #TIME_PID_ACTIVE = 10
+        #TIME_STOP = 2
+
         try:
             while True:
                 ofm.waitForNewMessage()
@@ -76,14 +85,14 @@ def main():
 
                 runtime = time.time()-time0
 
-                if runtime > 30 and runtime < 120 and not dac_on:
+                if runtime > TIME_START and runtime < TIME_START + TIME_PID_ACTIVE  and not dac_on:
                     dac_on = True
                     #ofm.setDAC(10, 512)
                     ofm.config.PID_flags = 0b00000010
                     ofm.changeConfig()
                     print("PID enabled")
 
-                if runtime > 120 and dac_on:
+                if runtime > TIME_START + TIME_PID_ACTIVE and dac_on:
                     dac_on = False
                     ofm.config.PID_flags = 0b00000000
                     ofm.changeConfig()
@@ -91,7 +100,7 @@ def main():
 
                     ofm.setDAC(10,10)
 
-                if runtime > 240:   # exit after 4 minutes
+                if runtime > TIME_START + TIME_PID_ACTIVE + TIME_STOP:
                     break
 
                 timestamp = np.append(timestamp, runtime)
