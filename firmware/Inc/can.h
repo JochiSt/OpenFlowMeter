@@ -66,8 +66,6 @@ void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData);
 void CAN_send_DAC_readback();
 void CAN_send_Configuration();
 
-bool CAN_txRdy(CAN_HandleTypeDef* handle);
-
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
