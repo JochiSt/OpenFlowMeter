@@ -1079,7 +1079,7 @@
     (uuid fdef1ad3-22f1-4256-ad5b-45074e55643e)
   )
 
-  (text "instead of LT1490A I used: SGM8522XS\nDespite the reason of just trying this, its much cheaper"
+  (text "instead of LT1490A I used: SGM8522XS\nDespite the reason of just trying this, its much cheaper.\nDoes not work for the current sources, because the supply \nvoltage is too high."
     (at 181.61 163.83 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 162eb22e-9a2e-4e10-a8f6-541344a983d3)
@@ -1099,6 +1099,11 @@
   (text "Powered with 24V" (at 195.58 69.85 0)
     (effects (font (size 2.9972 2.9972) (thickness 0.5994) bold) (justify left bottom))
     (uuid 7c04618d-9115-4179-b234-a8faf854ea92)
+  )
+  (text "Whether this jumper (JP1) is needed\nhighly depends on the CAN bus \nlayout and termination"
+    (at 180.34 52.07 0)
+    (effects (font (size 1.27 1.27) (color 255 153 0 1)) (justify left bottom))
+    (uuid ad896529-e7ca-4822-a4f8-9ab8a499ca64)
   )
   (text "Mounting holes" (at 143.51 163.83 0)
     (effects (font (size 1.27 1.27) bold) (justify left bottom))
