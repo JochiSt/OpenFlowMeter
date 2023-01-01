@@ -6,6 +6,11 @@ def convertCurrent(lsb):
 def convertVoltage(lsb):
     return lsb * 3.3/4095
 
+def U2LSB(voltage):
+    return int( voltage / 3.3 * 4095 )
+
+def I2LSB(current):
+    return int( current / 10e-3 / 3.3 * 4095 )
 
 class PT100(object):
     A = 3.9083e-3
