@@ -52,64 +52,121 @@ def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
 
 if __name__ == "__main__":
 
-    Ugain=5
-    Igain=5
 
     fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
-    d_sR = {}
-    d_Ulsb = {}
-    d_Ilsb = {}
+    d_sR = np.array([])
 
-    R = PT100.convertPT100_R(40)
+    T_PT100 = 40    # temperature of the PT100 sensor
+    R = PT100.convertPT100_R( T_PT100 )
 
-    for Istim in [
-             1e-3,
-            10e-3,
-            20e-3,
-            30e-3,
-            ]:
-        for Ugain, Igain in [
-                (1,1),
-                (5,5),
+    DEBUG_PRINT = False
+    #DEBUG_PRINT = True
+    if DEBUG_PRINT:
+        a_Istim = np.linspace(1e-3, 3e-3, 10)
+    else:
+        a_Istim = np.linspace(1e-3, 30e-3, 1000)
 
-                ]:
+    a_max_Ugain = convertVoltage(4020) / (R * a_Istim)
+    a_max_Igain = convertCurrent(4020) / a_Istim
 
-                if Istim not in d_sR.keys():
-                    d_sR[Istim] = np.array([])
-                    d_Ulsb[Istim] = np.array([])
-                    d_Ilsb[Istim] = np.array([])
+    for Istim in a_Istim:
 
-                Ilsb = I2LSB( Istim * Igain )
-                if Ilsb > 4000:
-                    Ilsb = I2LSB(Istim)
-                    Igain = 1
+        # use here only 4020 LSB as fullscale, to prevent saturation
+        max_Ugain = convertVoltage(4020) / (R * Istim)
+        max_Igain = convertCurrent(4020) / Istim
 
-                Ulsb = U2LSB( R * Istim * Ugain)
-                if Ulsb > 4000:
-                    Ulsb = U2LSB( R*Istim )
-                    Ugain = 1
+        if DEBUG_PRINT:
+            print("I stimulus: %4.2f mA"%(Istim*1000))
+            print("max Gain: U: %4.2f V/V  I: %4.2f A/A"%(max_Ugain, max_Igain))
+            print()
 
-                U, I, R, sU, sI, sR = resolution(Ulsb, Ilsb, Ugain, Igain)
+        # calculate the best matching gain
+        # limit the gain to unity
+        Ugain = max( max_Ugain, 1)
+        Igain = max( max_Igain, 1)
 
-                d_sR[Istim] = np.append(d_sR[Istim], sR)
-                d_Ulsb[Istim] = np.append(d_Ulsb[Istim], Ulsb)
+        Isat = False
+        Usat = False
 
-                print("%6.4f +- %5.4f V"%(U, sU), end="\t")
-                print("%7.4f +- %5.4f mA"%(I*1000, sI*1000), end="\t")
-                print("%2d - %2d"%(Ugain, Igain))
-                print("%7.4f +- %6.4f Ohm"%(R, sR), end="\t")
+        Ilsb = I2LSB( Istim * Igain )
+        if Ilsb > 4020:     # if High Gain is saturating use low gain
+            Ilsb = I2LSB(Istim)
+            Igain = 1
+            Isat = True
 
-                # add 100 to sR, because we are interested in the deltaT to 0°C
-                print("+- %6.4f °C"%(PT100.convertPT100_T(100+sR) ))
+        Ulsb = U2LSB( R * Istim * Ugain)
+        if Ulsb > 4020:     # if High Gain is saturating use low gain
+            Ulsb = U2LSB( R*Istim )
+            Ugain = 1
+            Usat = True
 
-                print("%7.4f %% %7.4f %% %7.4f %% %7.4f %%"%(
-                    sU/U*100, sI/I*100, sR/R*100,
-                    PT100.convertPT100_T(100+sR) / PT100.convertPT100_T(R) * 100
-                    ))
+        #if Isat and Usat:   # if both are in saturation, skip it
+        #    break
 
-                print()
+        if DEBUG_PRINT:
+            if Isat:
+                print("I saturated")
+
+            if Usat:
+                print("U saturated")
+
+        fs_U = convertVoltage(4095) / Ugain
+        fs_I = convertCurrent(4095) / Igain
+        fs_R = fs_U / fs_I
+
+        if DEBUG_PRINT:
+            print("Fullscale: %3.2f V \t %4.2f mA"%(fs_U, fs_I*1000))
+            print("%5.2f Ohm = %5.2f °C"%(fs_R, PT100.convertPT100_T(fs_R)))
+
+        U, I, R, sU, sI, sR = resolution(Ulsb, Ilsb, Ugain, Igain)
+
+        d_sR = np.append(d_sR, sR)
+
+        if DEBUG_PRINT:
+            print("%6.4f +- %5.4f V"%(U, sU), end="\t")
+            print("%7.4f +- %5.4f mA"%(I*1000, sI*1000), end="\t")
+            print("%2d - %2d"%(Ugain, Igain))
+            print("%7.4f +- %6.4f Ohm"%(R, sR), end="\t")
+
+            # add 100 to sR, because we are interested in the deltaT to 0°C
+            print("+- %6.4f °C"%(PT100.convertPT100_T(100+sR) ))
+
+            print("%7.4f %% %7.4f %% %7.4f %% %7.4f %%"%(
+                sU/U*100, sI/I*100, sR/R*100,
+                PT100.convertPT100_T(100+sR) / PT100.convertPT100_T(R) * 100
+                ))
+
+            print()
+            print( '#'*40 )
 
 
+    ax[0].plot(a_Istim*1000, a_max_Ugain, label="gain U")
+    ax[0].plot(a_Istim*1000, a_max_Igain, label="gain I")
+
+    ax[0].axhline(1, color="black", label="unity gain")
+    ax[0].legend()
+
+    ax[0].set_ylabel("gain")
+    ax[0].set_xlabel("exitation current / mA")
+
+
+    ax[1].plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR), label="sigma R")
+    ax[1].set_ylabel("temperature resolution")
+    ax[1].set_xlabel("exitation current / mA")
+
+    """
+    zi = Z.reshape( (len(uniX), len(uniY)) ).T
+
+    # Create the contour plot
+    CS = plt.contourf(xi, yi, zi,
+                      128,   # number of levels
+                      #cmap=plt.cm.rainbow
+                      #cmap=plt.cm.plasma
+                      cmap=plt.cm.viridis
+                      )
+    cbar = plt.colorbar()
+    cbar.set_label('bias voltage / V')
+    """
     fig.tight_layout()
     plt.show()
