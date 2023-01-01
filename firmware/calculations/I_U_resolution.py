@@ -52,6 +52,19 @@ def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
 
 if __name__ == "__main__":
 
+    """
+    R2 =
+        27k - 3.07
+        22k - 3.54
+        18k - 4.11
+        12k - 5.66
+        10k - 6.60
+        5k6 - 11
+
+        R1 = 56k
+    """
+
+
 
     fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
