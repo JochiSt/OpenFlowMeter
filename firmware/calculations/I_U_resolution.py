@@ -8,6 +8,7 @@ sys.path.append("../../software/pyUSBtin")  # needed for OpenFlowMeter
 from OpenFlowMeter import PT100
 from OpenFlowMeter import convertVoltage, convertCurrent, I2LSB, U2LSB
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
@@ -53,6 +54,8 @@ if __name__ == "__main__":
 
     Ugain=5
     Igain=5
+
+    fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
     d_sR = {}
     d_Ulsb = {}
@@ -108,3 +111,5 @@ if __name__ == "__main__":
                 print()
 
 
+    fig.tight_layout()
+    plt.show()
