@@ -96,7 +96,7 @@ if __name__ == "__main__":
     if DEBUG_PRINT:
         a_Istim = np.linspace(1e-3, 3e-3, 10)
     else:
-        a_Istim = np.linspace(1e-3, 30e-3, 1000)
+        a_Istim = np.linspace(1e-3, 30e-3, 1024)
 
     a_max_Ugain = convertVoltage(4020) / (R * a_Istim)
     a_max_Igain = convertCurrent(4020) / a_Istim
