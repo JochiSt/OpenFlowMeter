@@ -11,6 +11,8 @@ from OpenFlowMeter import convertVoltage, convertCurrent, I2LSB, U2LSB
 import matplotlib.pyplot as plt
 import numpy as np
 
+from scipy.optimize import minimize, leastsq
+
 def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
     """
 
@@ -105,8 +107,8 @@ def calculate_Tresolution(Ugain, Igain, T_PT100 = 40):
 
         # calculate the best matching gain
         # limit the gain to unity
-        Ugain = 5
-        Igain = 11
+        #Ugain = 5
+        #Igain = 11
 
         Isat = False
         Usat = False
@@ -176,17 +178,37 @@ def calculate_Tresolution(Ugain, Igain, T_PT100 = 40):
     return a_Istim, d_sR, used_Igain, used_Ugain
 
 
+def minfunc(gain):
+    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(gain[0], gain[1])
+
+    sR = np.where(a_Istim < 5e-3, d_sR * 10 , d_sR)
+
+    return np.sum(sR)
+
 if __name__ == "__main__":
 
     ###########################################################################
     # Plotting
 
     Ugain = 5
-    Igain = 11
+    Igain = 5
 
     T_PT100 = 40
 
-    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(Ugain, Igain, T_PT100)
+    # minimize areas of d_sR, gives a compromise between low and high current
+    # resolution.
+
+    res = minimize( minfunc,
+                   (Ugain, Igain),
+                   bounds=[ (1, None),(1, None) ] ,
+                   tol=1e-10,
+                   #method='TNC',
+                   method='SLSQP',
+                   #method='L-BFGS-B',
+                   )
+    print(res)
+
+    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(res.x[0], res.x[1], T_PT100)
 
     fig, ax = plt.subplots(1, 1, figsize=(6,5))
     fig.suptitle("Resolution for PT100 @ %3.1f °C"%(T_PT100))
@@ -194,13 +216,13 @@ if __name__ == "__main__":
     ax.plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR), label="sigma R")
     ax.set_ylabel("temperature resolution / K")
     ax.set_xlabel("exitation current / mA")
+    ax.legend()
 
     ax1 = ax.twinx()
-
     ax1.plot(a_Istim*1000, used_Igain, color="red", label="used gain I")
     ax1.plot(a_Istim*1000, used_Ugain, color="green", label="used gain U")
-
     ax1.set_ylabel("gain (V/V or A/A)")
+    ax1.legend()
 
     fig.tight_layout()
     plt.show()
