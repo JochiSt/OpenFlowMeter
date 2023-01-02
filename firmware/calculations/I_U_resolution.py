@@ -233,13 +233,17 @@ if __name__ == "__main__":
                         )
     ax.set_ylabel("temperature resolution / K")
     ax.set_xlabel("exitation current / mA")
-    ax.legend()
+    #ax.legend(loc='best')
 
     ax1 = ax.twinx()
-    ax1.plot(a_Istim*1000, used_Igain, color="red", label="used gain I")
-    ax1.plot(a_Istim*1000, used_Ugain, color="green", label="used gain U")
+    plts += ax1.plot(a_Istim*1000, used_Igain, color="red",
+                         label="used gain I (%6.2f)"%(Igain))
+    plts += ax1.plot(a_Istim*1000, used_Ugain, color="green",
+                         label="used gain U (%6.2f)"%(Ugain))
     ax1.set_ylabel("gain (V/V or A/A)")
-    ax1.legend()
+
+    labs = [l.get_label() for l in plts]
+    ax.legend(plts, labs, loc=0)
 
     fig.tight_layout()
     plt.show()
