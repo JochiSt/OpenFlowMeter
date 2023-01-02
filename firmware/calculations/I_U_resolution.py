@@ -121,12 +121,13 @@ if __name__ == "__main__":
         Usat = False
 
         Ilsb = I2LSB( Istim * Igain )
+        Ulsb = U2LSB( R * Istim * Ugain)
+
         if Ilsb > 4020:     # if High Gain is saturating use low gain
             Ilsb = I2LSB(Istim)
             Igain = 1
             Isat = True
 
-        Ulsb = U2LSB( R * Istim * Ugain)
         if Ulsb > 4020:     # if High Gain is saturating use low gain
             Ulsb = U2LSB( R*Istim )
             Ugain = 1
@@ -206,18 +207,5 @@ if __name__ == "__main__":
 
     ax1.set_ylabel("gain (V/V or A/A)")
 
-    """
-    zi = Z.reshape( (len(uniX), len(uniY)) ).T
-
-    # Create the contour plot
-    CS = plt.contourf(xi, yi, zi,
-                      128,   # number of levels
-                      #cmap=plt.cm.rainbow
-                      #cmap=plt.cm.plasma
-                      cmap=plt.cm.viridis
-                      )
-    cbar = plt.colorbar()
-    cbar.set_label('bias voltage / V')
-    """
     fig.tight_layout()
     plt.show()
