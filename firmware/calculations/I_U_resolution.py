@@ -203,16 +203,16 @@ if __name__ == "__main__":
 
     T_PT100 = 40
 
-    # minimize areas of d_sR, gives a compromise between low and high current
-    # resolution.
-
+    # minimize areas of temperature resolution, gives a compromise between
+    # low and high current resolution.
     res = minimize( minfunc,
                    (Ugain, Igain),
-                   bounds=[ (1, None),(1, None) ] ,
-                   tol=1e-10,
+                   bounds=[ (1, 11),(1, 11) ] ,
+                   tol=1e-15,
                    #method='TNC',
                    method='SLSQP',
                    #method='L-BFGS-B',
+                   options={'disp': False, 'maxiter': 500}
                    )
     print(res)
 
