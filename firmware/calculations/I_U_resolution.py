@@ -11,7 +11,7 @@ from OpenFlowMeter import convertVoltage, convertCurrent, I2LSB, U2LSB
 import matplotlib.pyplot as plt
 import numpy as np
 
-from scipy.optimize import minimize, leastsq
+from scipy.optimize import minimize
 
 def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
     """
