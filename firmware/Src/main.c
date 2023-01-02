@@ -399,8 +399,13 @@ int main(void)
 #endif
 #ifdef PRINT_UART_CALC_TEMP
       printf("Temperatures:\r\n");
+      printf("ADC gain selection %d \r\n", ADCgainUsed);
       printf("CH0: %f\r\n", temperature0);
+      printf(" - I   %f\r\n",  current0);
+      printf(" - U   %f\r\n",  voltage0);
       printf("CH1: %f\r\n", temperature1);
+      printf(" - I   %f\r\n",  current1);
+      printf(" - U   %f\r\n",  voltage1);
 #endif
     }
 
