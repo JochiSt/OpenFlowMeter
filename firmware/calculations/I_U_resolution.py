@@ -67,7 +67,7 @@ def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
     return U, I, R, sU, sI, sR
 
 
-if __name__ == "__main__":
+def calculate_Tresolution(Ugain, Igain, T_PT100 = 40):
 
     """
     R2 =
@@ -82,13 +82,9 @@ if __name__ == "__main__":
     """
 
     d_sR  = np.array([])
-    d_sR1 = np.array([])
-
     used_Igain = np.array([])
     used_Ugain = np.array([])
 
-
-    T_PT100 = 40    # temperature of the PT100 sensor
     R = PT100.convertPT100_R( T_PT100 )
 
     DEBUG_PRINT = False
@@ -103,18 +99,13 @@ if __name__ == "__main__":
 
     for Istim in a_Istim:
 
-        # use here only 4020 LSB as fullscale, to prevent saturation
-        max_Ugain = convertVoltage(4020) / (R * Istim)
-        max_Igain = convertCurrent(4020) / Istim
-
         if DEBUG_PRINT:
             print("I stimulus: %4.2f mA"%(Istim*1000))
-            print("max Gain: U: %4.2f V/V  I: %4.2f A/A"%(max_Ugain, max_Igain))
             print()
 
         # calculate the best matching gain
         # limit the gain to unity
-        Ugain = 6
+        Ugain = 5
         Igain = 11
 
         Isat = False
@@ -165,9 +156,6 @@ if __name__ == "__main__":
         U, I, R, sU, sI, sR = resolution(Ulsb, Ilsb, Ugain, Igain)
         d_sR = np.append(d_sR, sR)
 
-        U, I, R, sU, sI, sR = resolution(U2LSB(R * Istim), I2LSB(Istim), 1, 1)
-        d_sR1 = np.append(d_sR1, sR)
-
         if DEBUG_PRINT:
             print("%6.4f +- %5.4f V"%(U, sU), end="\t")
             print("%7.4f +- %5.4f mA"%(I*1000, sI*1000), end="\t")
@@ -185,30 +173,29 @@ if __name__ == "__main__":
             print()
             print( '#'*40 )
 
+    return a_Istim, d_sR, used_Igain, used_Ugain
+
+
+if __name__ == "__main__":
+
     ###########################################################################
     # Plotting
 
-    fig, ax = plt.subplots(2, 1, figsize=(6,10))
+    Ugain = 5
+    Igain = 11
+
+    T_PT100 = 40
+
+    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(Ugain, Igain, T_PT100)
+
+    fig, ax = plt.subplots(1, 1, figsize=(6,5))
     fig.suptitle("Resolution for PT100 @ %3.1f °C"%(T_PT100))
 
-    ax[0].plot(a_Istim*1000, a_max_Igain, label="maximal gain I", color="red")
-    ax[0].plot(a_Istim*1000, a_max_Ugain, label="maximal gain U", color="green")
+    ax.plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR), label="sigma R")
+    ax.set_ylabel("temperature resolution / K")
+    ax.set_xlabel("exitation current / mA")
 
-    ax[0].axhline(1, color="black", label="unity gain")
-    ax[0].legend()
-
-    ax[0].set_ylabel("gain")
-    ax[0].set_xlabel("exitation current / mA")
-
-    ax0 = ax[0].twinx()
-    ax0.plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR1), label="sigma R unity gain")
-    ax0.set_ylabel("unity gain temperature resolution / K")
-
-    ax[1].plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR), label="sigma R")
-    ax[1].set_ylabel("temperature resolution / K")
-    ax[1].set_xlabel("exitation current / mA")
-
-    ax1 = ax[1].twinx()
+    ax1 = ax.twinx()
 
     ax1.plot(a_Istim*1000, used_Igain, color="red", label="used gain I")
     ax1.plot(a_Istim*1000, used_Ugain, color="green", label="used gain U")
