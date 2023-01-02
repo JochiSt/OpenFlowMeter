@@ -124,17 +124,20 @@ if __name__ == "__main__":
         Ulsb = U2LSB( R * Istim * Ugain)
 
         if Ilsb > 4020:     # if High Gain is saturating use low gain
-            Ilsb = I2LSB(Istim)
-            Igain = 1
             Isat = True
 
         if Ulsb > 4020:     # if High Gain is saturating use low gain
-            Ulsb = U2LSB( R*Istim )
-            Ugain = 1
             Usat = True
 
         #if Isat and Usat:   # if both are in saturation, skip it
         #    break
+        if Isat:
+            Ilsb = I2LSB(Istim)
+            Igain = 1
+
+        if Usat:
+            Ulsb = U2LSB( R*Istim )
+            Ugain = 1
 
         used_Igain = np.append(used_Igain, Igain)
         used_Ugain = np.append(used_Ugain, Ugain)
