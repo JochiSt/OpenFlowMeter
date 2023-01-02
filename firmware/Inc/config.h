@@ -9,9 +9,15 @@ extern "C" {
 
 #include "pid.h"
 
-typedef struct  {
 extern const float LSB2U;
 extern const float LSB2I;
+
+typedef struct {
+    float Ugain;
+    float Igain;
+} gain_config_t ;
+
+typedef struct {
     /** @defgroup OFM_cfg configuration of the Open Flow Meter
      *  @{
      */
@@ -63,6 +69,18 @@ extern const float LSB2I;
 
     PID_config_t PID0; ///< configuration of PID channel 0
     PID_config_t PID1; ///< configuration of PID channel 1
+
+    /** @}*/
+
+    ////////////////////////////////////////////////////////////////////////////
+    /** @defgroup gain configuration
+     *  @ingroup OFM_cfg
+     *  switchable gain of the voltage and current channel
+     *  only the high gain is stored here, the lower gain is always 1
+     *  @{
+     */
+    gain_config_t GAIN0;
+    gain_config_t GAIN1;
 
     /** @}*/
 
