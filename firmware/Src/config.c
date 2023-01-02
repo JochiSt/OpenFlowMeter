@@ -39,6 +39,13 @@ void generateDefaultCFG(config_t *cfg){
   cfg->PID_flags.PID0_active = 0;
   cfg->PID_flags.PID1_active = 0;
 
+  // gain settings from calculations / optimisation
+  cfg->GAIN0.Igain = 6.89;
+  cfg->GAIN0.Ugain = 9.39;
+
+  cfg->GAIN1.Igain = 6.89;
+  cfg->GAIN1.Ugain = 9.39;
+
 }
 
 /**
