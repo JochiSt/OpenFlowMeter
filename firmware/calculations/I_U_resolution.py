@@ -273,9 +273,9 @@ if __name__ == "__main__":
                          label="opt. gain U (%6.2f)"%(Ugain))
 
     plts += ax1.plot(a_Istim_R*1000, used_Igain_R, color="red",
-                         label="R gain I (%6.2f R=%4.1f kOhm)"%(Igain_R, R1_I/1000))
+                         label="R gain I (%6.2f R1=%4.1f kOhm R2=%4.1f kOhm)"%(Igain_R, R1_I/1000, R2/1000))
     plts += ax1.plot(a_Istim_R*1000, used_Ugain_R, color="lightgreen",
-                         label="R gain U (%6.2f R=%4.1f kOhm)"%(Ugain_R, R1_U/1000))
+                         label="R gain U (%6.2f R1=%4.1f kOhm R2=%4.1f kOhm)"%(Ugain_R, R1_U/1000, R2/1000))
 
     ax1.set_ylabel("gain (V/V or A/A)")
 
