@@ -288,21 +288,33 @@ int main(void)
          */
         // calculate current and voltage of each channel
         // use the highest possible gain
+
         /** CHANNEL 0 *********************************************************/
-        if( avr_adcBuf_GAIN_1[0] < 4020 && avr_adcBuf_GAIN_1[1] < 4020 ){
-          current0 = avr_adcBuf_GAIN_1[0] * 3.3 / 4096 * 10e-3;
-          voltage0 = avr_adcBuf_GAIN_1[1] * 3.3 / 4096;
+        if( avr_adcBuf_GAIN_1[0] < 4020 ){
+          // high gain setting
+          current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
         }else{
-          current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
-          voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
+          current0 = avr_adcBuf_GAIN_0[0] * LSB2I;
         }
-        /** CHANNEL 1 *********************************************************/
-        if( avr_adcBuf_GAIN_1[2] < 4020 && avr_adcBuf_GAIN_1[3] < 4020 ){
-          current1 = avr_adcBuf_GAIN_1[2] * 3.3 / 4096 * 10e-3;
-          voltage1 = avr_adcBuf_GAIN_1[3] * 3.3 / 4096;
+
+        if( avr_adcBuf_GAIN_1[1] < 4020 ){
+          // high gain setting
+          voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
         }else{
-          current1 = avr_adcBuf_GAIN_0[2] * 3.3 / 4096 * 10e-3;
-          voltage1 = avr_adcBuf_GAIN_0[3] * 3.3 / 4096;
+          voltage0 = avr_adcBuf_GAIN_0[1] * LSB2U;
+        }
+
+        /** CHANNEL 1 *********************************************************/
+        if( avr_adcBuf_GAIN_1[2] < 4020 ){
+          // high gain setting
+          current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
+        }else{
+          current1 = avr_adcBuf_GAIN_0[2] * LSB2I;
+        }
+        if( avr_adcBuf_GAIN_1[3] < 4020 ){
+          voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
+        }else{
+          voltage1 = avr_adcBuf_GAIN_0[3] * LSB2U;
         }
 
         /** calculate temperatures ********************************************/
