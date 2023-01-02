@@ -70,6 +70,7 @@ float voltage0, voltage1;
 /// temperature
 float temperature0, temperature1;
 
+/// output from PID, which is connected to the PWM output, if the PID is active
 uint16_t PIDout0, PIDout1;
 
 /* USER CODE END PV */
