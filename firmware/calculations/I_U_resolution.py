@@ -198,10 +198,7 @@ def minfunc(gain):
 if __name__ == "__main__":
 
     ###########################################################################
-    # Plotting
-
-    Ugain = 10
-    Igain = 10
+    # Optimise the best gain
 
     T_PT100 = 40
 
@@ -216,7 +213,8 @@ if __name__ == "__main__":
                    #method='L-BFGS-B',
                    options={'disp': False, 'maxiter': 500}
                    )
-    print(res)
+    if not res.success:
+        print(res)
 
     Ugain = res.x[0]
     Igain = res.x[1]
