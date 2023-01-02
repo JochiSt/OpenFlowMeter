@@ -10,6 +10,8 @@ extern "C" {
 #include "pid.h"
 
 typedef struct  {
+extern const float LSB2U;
+extern const float LSB2I;
     /** @defgroup OFM_cfg configuration of the Open Flow Meter
      *  @{
      */
