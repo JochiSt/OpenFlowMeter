@@ -129,8 +129,13 @@ if __name__ == "__main__":
         if Ulsb > 4020:     # if High Gain is saturating use low gain
             Usat = True
 
-        #if Isat and Usat:   # if both are in saturation, skip it
-        #    break
+        """
+        # this is what is currently implemented in the firmware
+        if Isat or Usat:
+            Isat = True
+            Usat = True
+        """
+
         if Isat:
             Ilsb = I2LSB(Istim)
             Igain = 1
