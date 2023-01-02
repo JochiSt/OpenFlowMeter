@@ -216,12 +216,21 @@ if __name__ == "__main__":
                    )
     print(res)
 
-    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(res.x[0], res.x[1], T_PT100)
+    Ugain = res.x[0]
+    Igain = res.x[1]
+
+    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(Ugain, Igain, T_PT100)
 
     fig, ax = plt.subplots(1, 1, figsize=(6,5))
     fig.suptitle("Resolution for PT100 @ %3.1f °C"%(T_PT100))
 
-    ax.plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR), label="sigma R")
+    plts = []
+    plts += ax.plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR),
+                        label="T resolution (max: %4.2f, avg: %4.2f)"%(
+                                    np.max(  PT100.convertPT100_T( 100+d_sR )),
+                                    np.mean( PT100.convertPT100_T( 100+d_sR ))
+                                    )
+                        )
     ax.set_ylabel("temperature resolution / K")
     ax.set_xlabel("exitation current / mA")
     ax.legend()
