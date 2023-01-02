@@ -246,4 +246,5 @@ if __name__ == "__main__":
     ax.legend(plts, labs, loc=0)
 
     fig.tight_layout()
+    plt.savefig("gain_optimisation.png")
     plt.show()
