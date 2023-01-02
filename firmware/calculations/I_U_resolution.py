@@ -68,7 +68,12 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
-    d_sR = np.array([])
+    d_sR  = np.array([])
+    d_sR1 = np.array([])
+
+    used_Igain = np.array([])
+    used_Ugain = np.array([])
+
 
     T_PT100 = 40    # temperature of the PT100 sensor
     R = PT100.convertPT100_R( T_PT100 )
@@ -96,8 +101,8 @@ if __name__ == "__main__":
 
         # calculate the best matching gain
         # limit the gain to unity
-        Ugain = max( max_Ugain, 1)
-        Igain = max( max_Igain, 1)
+        Ugain = 6
+        Igain = 11
 
         Isat = False
         Usat = False
@@ -117,6 +122,9 @@ if __name__ == "__main__":
         #if Isat and Usat:   # if both are in saturation, skip it
         #    break
 
+        used_Igain = np.append(used_Igain, Igain)
+        used_Ugain = np.append(used_Ugain, Ugain)
+
         if DEBUG_PRINT:
             if Isat:
                 print("I saturated")
@@ -133,8 +141,10 @@ if __name__ == "__main__":
             print("%5.2f Ohm = %5.2f °C"%(fs_R, PT100.convertPT100_T(fs_R)))
 
         U, I, R, sU, sI, sR = resolution(Ulsb, Ilsb, Ugain, Igain)
-
         d_sR = np.append(d_sR, sR)
+
+        U, I, R, sU, sI, sR = resolution(U2LSB(R * Istim), I2LSB(Istim), 1, 1)
+        d_sR1 = np.append(d_sR1, sR)
 
         if DEBUG_PRINT:
             print("%6.4f +- %5.4f V"%(U, sU), end="\t")
@@ -153,9 +163,8 @@ if __name__ == "__main__":
             print()
             print( '#'*40 )
 
-
-    ax[0].plot(a_Istim*1000, a_max_Ugain, label="gain U")
-    ax[0].plot(a_Istim*1000, a_max_Igain, label="gain I")
+    ax[0].plot(a_Istim*1000, a_max_Igain, label="maximal gain I", color="red")
+    ax[0].plot(a_Istim*1000, a_max_Ugain, label="maximal gain U", color="green")
 
     ax[0].axhline(1, color="black", label="unity gain")
     ax[0].legend()
@@ -163,10 +172,20 @@ if __name__ == "__main__":
     ax[0].set_ylabel("gain")
     ax[0].set_xlabel("exitation current / mA")
 
+    ax0 = ax[0].twinx()
+    ax0.plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR1), label="sigma R unity gain")
+    ax0.set_ylabel("unity gain temperature resolution / K")
 
     ax[1].plot(a_Istim*1000, PT100.convertPT100_T(100+d_sR), label="sigma R")
-    ax[1].set_ylabel("temperature resolution")
+    ax[1].set_ylabel("temperature resolution / K")
     ax[1].set_xlabel("exitation current / mA")
+
+    ax1 = ax[1].twinx()
+
+    ax1.plot(a_Istim*1000, used_Igain, color="red", label="used gain I")
+    ax1.plot(a_Istim*1000, used_Ugain, color="green", label="used gain U")
+
+    ax1.set_ylabel("gain (V/V or A/A)")
 
     """
     zi = Z.reshape( (len(uniX), len(uniY)) ).T
