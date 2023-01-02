@@ -202,6 +202,9 @@ if __name__ == "__main__":
 
     T_PT100 = 40
 
+    Ugain = 3
+    Igain = 20
+
     # minimize areas of temperature resolution, gives a compromise between
     # low and high current resolution.
     res = minimize( minfunc,
