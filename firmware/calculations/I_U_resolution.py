@@ -13,6 +13,8 @@ import numpy as np
 
 from scipy.optimize import minimize
 
+from eseries import find_nearest, E12
+
 def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
     """
 
@@ -219,7 +221,30 @@ if __name__ == "__main__":
     Ugain = res.x[0]
     Igain = res.x[1]
 
-    a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(Ugain, Igain, T_PT100)
+    ###########################################################################
+    # Calculate the resistors
+
+    #  GAIN = 1 + R1/R2
+    # R1 = (GAIN - 1) * R2
+    # R2 = R1 / (GAIN - 1)
+    R2 = 56e3
+
+    # calculate the resistances from E12
+    R1_U = (Ugain - 1) * R2
+    R1_U = find_nearest(E12, R1_U)
+
+    R1_I = (Igain - 1) * R2
+    R1_I = find_nearest(E12, R1_I)
+
+    # possible realisations
+    Ugain_R = 1 + R1_U / R2
+    Igain_R = 1 + R1_I / R2
+
+    ###########################################################################
+    # Plotting
+
+    a_Istim,   d_sR,   used_Igain,   used_Ugain   = calculate_Tresolution(Ugain, Igain, T_PT100)
+    a_Istim_R, d_sR_R, used_Igain_R, used_Ugain_R = calculate_Tresolution(Ugain_R, Igain_R, T_PT100)
 
     fig, ax = plt.subplots(1, 1, figsize=(6,5))
     fig.suptitle("Resolution for PT100 @ %3.1f °C"%(T_PT100))
@@ -231,15 +256,29 @@ if __name__ == "__main__":
                                     np.mean( PT100.convertPT100_T( 100+d_sR ))
                                     )
                         )
+
+    plts += ax.plot(a_Istim_R*1000, PT100.convertPT100_T(100+d_sR_R),
+                        label="T resolution R (max: %4.2f, avg: %4.2f)"%(
+                                    np.max(  PT100.convertPT100_T( 100+d_sR_R )),
+                                    np.mean( PT100.convertPT100_T( 100+d_sR_R ))
+                                    )
+                        )
+
     ax.set_ylabel("temperature resolution / K")
     ax.set_xlabel("exitation current / mA")
     #ax.legend(loc='best')
 
     ax1 = ax.twinx()
-    plts += ax1.plot(a_Istim*1000, used_Igain, color="red",
-                         label="used gain I (%6.2f)"%(Igain))
-    plts += ax1.plot(a_Istim*1000, used_Ugain, color="green",
-                         label="used gain U (%6.2f)"%(Ugain))
+    plts += ax1.plot(a_Istim*1000, used_Igain, color="darkred",
+                         label="opt. gain I (%6.2f)"%(Igain))
+    plts += ax1.plot(a_Istim*1000, used_Ugain, color="darkgreen",
+                         label="opt. gain U (%6.2f)"%(Ugain))
+
+    plts += ax1.plot(a_Istim_R*1000, used_Igain_R, color="red",
+                         label="R gain I (%6.2f R=%4.1f kOhm)"%(Igain_R, R1_I/1000))
+    plts += ax1.plot(a_Istim_R*1000, used_Ugain_R, color="lightgreen",
+                         label="R gain U (%6.2f R=%4.1f kOhm)"%(Ugain_R, R1_U/1000))
+
     ax1.set_ylabel("gain (V/V or A/A)")
 
     labs = [l.get_label() for l in plts]
