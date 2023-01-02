@@ -81,10 +81,6 @@ if __name__ == "__main__":
         R1 = 56k
     """
 
-
-
-    fig, ax = plt.subplots(2, 1, figsize=(6,10))
-
     d_sR  = np.array([])
     d_sR1 = np.array([])
 
@@ -179,6 +175,12 @@ if __name__ == "__main__":
 
             print()
             print( '#'*40 )
+
+    ###########################################################################
+    # Plotting
+
+    fig, ax = plt.subplots(2, 1, figsize=(6,10))
+    fig.suptitle("Resolution for PT100 @ %3.1f °C"%(T_PT100))
 
     ax[0].plot(a_Istim*1000, a_max_Igain, label="maximal gain I", color="red")
     ax[0].plot(a_Istim*1000, a_max_Ugain, label="maximal gain U", color="green")
