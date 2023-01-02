@@ -14,15 +14,32 @@ import numpy as np
 def resolution(Ulsb, Ilsb, Ugain = 1, Igain = 1):
     """
 
-
     Parameters
     ----------
-    gain : TYPE, optional
-        DESCRIPTION. The default is 1.
+    Ulsb : int
+        measured voltage in LSB.
+    Ilsb : int
+        measured current in LSB.
+    Ugain : float, optional
+        coltage gain. The default is 1.
+    Igain : int, optional
+        current gain. The default is 1.
 
     Returns
     -------
-
+    U : float
+        voltage in V.
+    I : float
+        current in A.
+    R : float
+        resistance in Ohm.
+    sU : float
+        size of 1 LSB in voltage.
+    sI : float
+        size of 1 LSB in current.
+    sR : float
+        size of 1 LSB in resistance. Derived via gaussian error propagation
+        from sU and sI.
 
     """
 
