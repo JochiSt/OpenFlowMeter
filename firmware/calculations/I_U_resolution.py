@@ -180,10 +180,18 @@ def calculate_Tresolution(Ugain, Igain, T_PT100 = 40):
 
 def minfunc(gain):
     a_Istim, d_sR, used_Igain, used_Ugain = calculate_Tresolution(gain[0], gain[1])
-    # give the lower exitation currents a higher weighting
-    sR = np.where(a_Istim < 3e-3, d_sR * 10 , d_sR)
 
-    return np.sum(sR)
+    sT_raw = PT100.convertPT100_T( 100 + d_sR )
+
+    # give the lower exitation currents a higher weighting
+    sT = np.where(a_Istim < 3.0e-3, sT_raw * 10 , sT_raw)
+    sT = np.where(a_Istim < 1.2e-3, sT_raw * 50 , sT)    # no self warming
+
+    if np.max(sT_raw) >= 1:
+        return np.sum(sT) * 100
+
+    return np.sum(sT)
+    #return np.max(sT)
 
 if __name__ == "__main__":
 
