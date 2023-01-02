@@ -53,6 +53,9 @@ class OpenFlowMeter_Config(object):
         self.PID_I = [0.0 , 0.0]
         self.PID_D = [0.0 , 0.0]
 
+        self.Ugain = [0.0 , 0.0]
+        self.Igain = [0.0 , 0.0]
+
         self.SMOO = 15
         self.SMOO_MAX = 16
 
@@ -83,6 +86,12 @@ class OpenFlowMeter_Config(object):
         print("\tSMOO     %d"%(self.SMOO))
         print("\tSMOO_MAX %d"%(self.SMOO_MAX))
 
+        print()
+        print("Amplification:")
+        print("\tU0: %f"%(self.Ugain[0]))
+        print("\tI0: %f"%(self.Igain[0]))
+        print("\tU1: %f"%(self.Ugain[1]))
+        print("\tI1: %f"%(self.Igain[1]))
 
     def toBytes(self):
         """
@@ -100,6 +109,9 @@ class OpenFlowMeter_Config(object):
             self.PID_T[1], self.PID_P[1], self.PID_I[1], self.PID_D[1]
             ], dtype=np.float32)
 
+        GAINs = np.array([
+            self.Ugain[0], self.Igain[0], self.Ugain[1], self.Igain[1]
+            ], dtype=np.float32)
 
         ret = bytearray([
             self.boardID,               # 0
@@ -119,6 +131,8 @@ class OpenFlowMeter_Config(object):
             ])
 
         ret += bytearray(PIDs.tobytes())
+
+        ret += bytearray(GAINs.tobytes())
 
         return ret
 
@@ -145,18 +159,23 @@ class OpenFlowMeter_Config(object):
         self.SMOO_MAX            = bytesin[6]
         self.PID_flags           = bytesin[7]
 
-        nfloat = 8
+        nfloat = 12
         floatstart = 8
         floats = np.frombuffer(bytesin[ floatstart :  floatstart + nfloat*4], dtype=np.float32)
 
-        self.PID_T[0] = floats[0]
-        self.PID_P[0] = floats[1]
-        self.PID_I[0] = floats[2]
-        self.PID_D[0] = floats[3]
-        self.PID_T[1] = floats[4]
-        self.PID_P[1] = floats[5]
-        self.PID_I[1] = floats[6]
-        self.PID_D[1] = floats[7]
+        self.PID_T[0] = floats[ 0]
+        self.PID_P[0] = floats[ 1]
+        self.PID_I[0] = floats[ 2]
+        self.PID_D[0] = floats[ 3]
+        self.PID_T[1] = floats[ 4]
+        self.PID_P[1] = floats[ 5]
+        self.PID_I[1] = floats[ 6]
+        self.PID_D[1] = floats[ 7]
+
+        self.Ugain[0] = floats[ 8]
+        self.Igain[0] = floats[ 9]
+        self.Ugain[1] = floats[10]
+        self.Igain[0] = floats[11]
 
 if __name__ == "__main__":
     OFMcfg = OpenFlowMeter_Config()
