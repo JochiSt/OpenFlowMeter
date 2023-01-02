@@ -242,6 +242,8 @@ int main(void)
   uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
   uint8_t cnt_print_uart = 0;     ///< counter for UART output
 
+  uint8_t ADCgainUsed = 0;        ///< which ADC gain is used for calculation
+
   /****************************************************************************/
   printf("successfully started everything\r\n");
   // Main loop
@@ -290,9 +292,11 @@ int main(void)
         // use the highest possible gain
 
         /** CHANNEL 0 *********************************************************/
+        ADCgainUsed = 0;
         if( avr_adcBuf_GAIN_1[0] < 4020 ){
           // high gain setting
           current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
+          ADCgainUsed |= (1 << 0);
         }else{
           current0 = avr_adcBuf_GAIN_0[0] * LSB2I;
         }
@@ -300,6 +304,7 @@ int main(void)
         if( avr_adcBuf_GAIN_1[1] < 4020 ){
           // high gain setting
           voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
+          ADCgainUsed |= (1 << 1);
         }else{
           voltage0 = avr_adcBuf_GAIN_0[1] * LSB2U;
         }
@@ -308,11 +313,13 @@ int main(void)
         if( avr_adcBuf_GAIN_1[2] < 4020 ){
           // high gain setting
           current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
+          ADCgainUsed |= (1 << 2);
         }else{
           current1 = avr_adcBuf_GAIN_0[2] * LSB2I;
         }
         if( avr_adcBuf_GAIN_1[3] < 4020 ){
           voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
+          ADCgainUsed |= (1 << 3);
         }else{
           voltage1 = avr_adcBuf_GAIN_0[3] * LSB2U;
         }
