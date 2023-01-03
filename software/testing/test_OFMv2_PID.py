@@ -73,10 +73,10 @@ def main():
         sat_i_1 = 0
         sat_u_1 = 0
 
-        i_0 = [0,0]
-        u_0 = [0,0]
-        i_1 = [0,0]
-        u_1 = [0,0]
+        i_0 = [0]*2
+        u_0 = [0]*2
+        i_1 = [0]*2
+        u_1 = [0]*2
 
         print("Use CTRL-C to stop datataking...")
 
