@@ -59,7 +59,7 @@ typedef struct {
      *  @{
      */
     union{
-        struct {
+        struct { // LSB first
             uint8_t PID0_active : 1;  ///< is PID channel 0 active
             uint8_t PID1_active : 1;  ///< is PID channel 1 active
             uint8_t spare : 6;
