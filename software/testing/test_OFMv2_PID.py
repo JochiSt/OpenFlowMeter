@@ -65,6 +65,7 @@ def main():
         t_tmp100 = np.array([])
         dac  = [np.array([]), np.array([])]
         setp = [np.array([]), np.array([])]
+        temperatures = [np.array([]), np.array([])]
         r_0  = [np.array([]), np.array([])]
         r_1  = [np.array([]), np.array([])]
 
@@ -130,6 +131,7 @@ def main():
                 for ch in [0,1]:
                     dac[ch]  = np.append(dac[ch], ofm.DACreadback[ch])
                     setp[ch] = np.append(setp[ch], ofm.config.PID_T[ch])
+                    temperatures[ch] = np.append(temperatures[ch], ofm.temperatures[ch])
 
                 for gain in [0,1]:
 
@@ -204,6 +206,9 @@ def main():
                        label="T CH0 gain %d"%(gain), color=colors[gain])
             ax[1].plot( timestamp, PT100.convertPT100_T(r_1[gain]),
                        label="T CH1 gain %d"%(gain), color=colors[gain])
+
+        for i in [0,1]:
+            ax[i].plot( timestamp, temperatures[i], label="calc. T", color='tab:deeppink')
 
         ax2 = [
             ax[0].twinx(),
