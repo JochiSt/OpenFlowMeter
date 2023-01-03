@@ -178,7 +178,6 @@ class OpenFlowMeter(object):
                 return
 
             self.temperatures = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
-            print(self.temperatures)
 
         elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
