@@ -35,7 +35,9 @@ def main():
         ofm.config.Ugain[0] = 1 + 330e3 / 56e3
         ofm.config.Ugain[1] = 1 + 330e3 / 56e3
 
-        ofm.saveCofig2EEPROM(default=0)     # save the default config in EEPROM
+        #ofm.saveCofig2EEPROM(default=0)     # save the default config in EEPROM
+
+        ofm.config.clearLocalCfg()
 
         ofm.requestConfigFromDevice()
         time.sleep(5)
