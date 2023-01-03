@@ -44,6 +44,8 @@ extern CAN_HandleTypeDef hcan;
 #define CAN_ADC_MSG_ID_CH0  0x103
 #define CAN_ADC_MSG_ID_CH1  0x104
 
+#define CAN_TEMPERATURE_ID  0x105
+
 #define CAN_I2C_MSG_TMP100  0x108
 #define CAN_I2C_MSG_BME680  0x109
 
@@ -66,6 +68,7 @@ void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData);
 
 void CAN_send_DAC_readback();
+void CAN_send_temperatures(float *temperature0, float *temperature1);
 void CAN_send_Configuration();
 
 /* USER CODE END Prototypes */

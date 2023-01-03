@@ -371,6 +371,19 @@ void CAN_send_DAC_readback(void){
   CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
 }
 
+void CAN_send_temperatures(float *temperature0, float *temperature1){
+  uint8_t *ptr_t0 = (uint8_t*)temperature0;
+  uint8_t *ptr_t1 = (uint8_t*)temperature1;
+  for( uint8_t i=0; i<4; i++){
+    data[i] = ptr_t0[i];
+  }
+  for( uint8_t i=0; i<4; i++){
+    data[i+4] = ptr_t1[i];
+  }
+  CAN_send_data_frame( CAN_TEMPERATURE_ID | (cfg.board_ID << 4), 8, data);
+}
+
+
 void CAN_send_Configuration(void){
   uint8_t *ptr = (uint8_t*)&cfg;
   uint8_t addr; // address inside the EEPROM

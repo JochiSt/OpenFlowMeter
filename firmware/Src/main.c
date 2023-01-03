@@ -424,6 +424,7 @@ int main(void)
 
         // TODO remove debug CAN message transmission
         CAN_send_DAC_readback();
+        CAN_send_temperatures(&temperature0, &temperature1);
 
         /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
