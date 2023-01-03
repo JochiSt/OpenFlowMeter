@@ -47,6 +47,7 @@ class OpenFlowMeter_Config(object):
         self.interval_I2C_BME680 = 255
 
         self.PID_flags  = 0
+        self.PID_active = [ False, False ]
 
         self.PID_T = [0.0 , 0.0]
         self.PID_P = [0.0 , 0.0]
@@ -68,14 +69,22 @@ class OpenFlowMeter_Config(object):
         print("\t\tI2C BME680 %d"%(self.interval_I2C_BME680))
         print()
         print("PIDflags 0x%X"%(self.PID_flags))
-        print("PID 0")
+        print("PID 0\t", end="")
+        if self.PID_active[1]:
+            print("active")
+        else:
+            print("deactivated")
         print("\tT: %f"%(self.PID_T[0]))
         print("\tP: %f"%(self.PID_P[0]))
         print("\tI: %f"%(self.PID_I[0]))
         print("\tD: %f"%(self.PID_D[0]))
 
         print()
-        print("PID 1")
+        print("PID 1\t", end="")
+        if self.PID_active[1]:
+            print("active")
+        else:
+            print("deactivated")
         print("\tT: %f"%(self.PID_T[1]))
         print("\tP: %f"%(self.PID_P[1]))
         print("\tI: %f"%(self.PID_I[1]))
@@ -103,6 +112,8 @@ class OpenFlowMeter_Config(object):
         all bytes beloging to the configuration.
 
         """
+
+        self.PID_flags = self.PID_active[1] << 1 | self.PID_active[0]
 
         PIDs = np.array([
             self.PID_T[0], self.PID_P[0], self.PID_I[0], self.PID_D[0],
@@ -162,6 +173,9 @@ class OpenFlowMeter_Config(object):
         nfloat = 12
         floatstart = 8
         floats = np.frombuffer(bytesin[ floatstart :  floatstart + nfloat*4], dtype=np.float32)
+
+        self.PID_active = [ bool((self.PID_flags & 0x1)),
+                            bool((self.PID_flags & 0x2) >> 1) ]
 
         self.PID_T[0] = floats[ 0]
         self.PID_P[0] = floats[ 1]
