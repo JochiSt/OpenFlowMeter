@@ -3,13 +3,13 @@
 def convertCurrent(lsb, gain=0):
     current = lsb * 3.3/4095 * 10e-3
     if gain:
-        current /= 1 + 470e3 / 56e3
+        current /= (1 + 470e3 / 56e3)
     return current
 
 def convertVoltage(lsb, gain=0):
     voltage = lsb * 3.3/4095
     if gain:
-        voltage /= 1 + 330e3 / 56e3
+        voltage /= (1 + 330e3 / 56e3)
     return voltage
 
 def U2LSB(voltage):

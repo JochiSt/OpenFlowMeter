@@ -64,6 +64,16 @@ def main():
         r_0  = [np.array([]), np.array([])]
         r_1  = [np.array([]), np.array([])]
 
+        sat_i_0 = 0
+        sat_u_0 = 0
+        sat_i_1 = 0
+        sat_u_1 = 0
+
+        i_0 = [0,0]
+        u_0 = [0,0]
+        i_1 = [0,0]
+        u_1 = [0,0]
+
         print("Use CTRL-C to stop datataking...")
 
         dac_on = False
@@ -118,27 +128,54 @@ def main():
                     setp[ch] = np.append(setp[ch], ofm.config.PID_T[ch])
 
                 for gain in [0,1]:
+
+                    i_0[gain] = ofm.current(0,gain)
+                    i_1[gain] = ofm.current(1,gain)
+
+                    u_0[gain] = ofm.voltage(0,gain)
+                    u_1[gain] = ofm.voltage(1,gain)
+
+                    # exclude the saturation points
+                    sat_i_0 = i_0[gain] > 4020
+                    sat_u_0 = u_0[gain] > 4020
+                    sat_i_1 = i_1[gain] > 4020
+                    sat_u_1 = u_1[gain] > 4020
+
+                    u_0[gain] = convertVoltage(u_0[gain], gain)
                     # prevent division by zero
-                    i_0 = ofm.current(0,gain)
-                    i_1 = ofm.current(1,gain)
+                    i_0[gain] = max( convertCurrent(i_0[gain], gain) , 0.00001)
 
-                    u_0 = ofm.voltage(0,gain)
-                    u_1 = ofm.voltage(1,gain)
+                    u_1[gain] = convertVoltage(u_1[gain], gain)
+                    # prevent division by zero
+                    i_1[gain] = max( convertCurrent(i_1[gain], gain) , 0.00001)
 
-                    if i_0 < 4020 and u_0 < 4020:  # exclude the saturation points
-                        u_0 = convertVoltage(u_0)
-                        i_0 = convertCurrent(max(i_0, 0.00001))
-                        r_0[gain] = np.append(r_0[gain], u_0 / i_0)
-                    else:
+                    print(sat_i_0, sat_u_0, sat_i_1, sat_u_1)
+
+                    # check for high gain setting, whether saturation has
+                    # happened and if so, use the lower gain value
+                    if gain == 1:
+                        if sat_i_0:
+                            i_0[gain] = i_0[0]
+                        if sat_u_0:
+                            u_0[gain] = u_0[0]
+
+                        if sat_i_1:
+                            i_1[gain] = i_1[0]
+                        if sat_u_1:
+                            u_1[gain] = u_1[0]
+
+                    # only, if both are saturated ignore points
+                    if sat_i_0 and sat_u_0:
                         r_0[gain] = np.append(r_0[gain], np.nan)
-
-                    if i_1 < 4020 and u_1 < 4020:  # exclude the saturation points
-                        u_1 = convertVoltage(u_1)
-                        i_1 = convertCurrent(max(i_1, 0.00001))
-                        r_1[gain] = np.append(r_1[gain], u_1 / i_1)
-
                     else:
+                        r_0[gain] = np.append(r_0[gain], u_0[gain] / i_0[gain])
+
+                    if sat_i_1 and sat_u_1:
                         r_1[gain] = np.append(r_1[gain], np.nan)
+                    else:
+                        r_1[gain] = np.append(r_1[gain], u_1[gain] / i_1[gain])
+
+                    print(gain, r_0[gain][-1], r_1[gain][-1])
 
         except KeyboardInterrupt:
             pass
