@@ -89,13 +89,13 @@ def main():
 
                 if runtime > TIME_START and runtime < TIME_START + TIME_PID_ACTIVE  and not dac_on:
                     dac_on = True
-                    ofm.config.PID_flags = 0b00000010
+                    ofm.config.PID_active[1] = True
                     ofm.changeConfig()
                     print("PID enabled")
 
                 if runtime > TIME_START + TIME_PID_ACTIVE and dac_on:
                     dac_on = False
-                    ofm.config.PID_flags = 0b00000000
+                    ofm.config.PID_active[1] = False
                     ofm.changeConfig()
                     print("PID disabled")
 
