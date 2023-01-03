@@ -191,6 +191,7 @@ def main():
 
         fig, ax = plt.subplots(2, 1, figsize=(6,10))
 
+        # temperatures
         color = 'tab:blue'
         for i in [0,1]:
             ax[i].plot( timestamp, t_tmp100, label="T TMP100", color='lightsteelblue')
@@ -210,6 +211,7 @@ def main():
         for i in [0,1]:
             ax[i].plot( timestamp, temperatures[i], label="calc. T", color='tab:deeppink')
 
+        # DAC setpoint
         ax2 = [
             ax[0].twinx(),
             ax[1].twinx()
@@ -226,6 +228,7 @@ def main():
             ax[1].twinx()
             ]
 
+        # resistance
         color = 'tab:green'
         for i in [0,1]:
             ax3[i].set_ylabel("resistance / Ohm", color=color)
