@@ -66,19 +66,22 @@ void printCfg(config_t *cfg){
   printf("SMOO:    %d\r\n", cfg->SMOO);
   printf("SMOOMAX: %d\r\n", cfg->SMOO_MAX);
 
-  /*
-  // set the PID
-  cfg->PID0.PID_T
-  cfg->PID0.PID_P
-  cfg->PID0.PID_I
-  cfg->PID0.PID_D
+  printf("\r\n");
+  printf("Gain:");
+  printf("  CH0 I %f U%f\r\n", cfg->GAIN0.Igain, cfg->GAIN0.Ugain);
+  printf("  CH0 I %f U%f\r\n", cfg->GAIN1.Igain, cfg->GAIN1.Ugain);
 
-  cfg->PID1.PID_T
-  cfg->PID1.PID_P
-  cfg->PID1.PID_I
-  cfg->PID1.PID_D
+  printf("\r\n");
+  printf("PID 0: (%d)\r\n", cfg->PID_flags.PID0_active);
+  printf("  T %f\r\n", cfg->PID0.PID_T);
+  printf("  P %f\r\n", cfg->PID0.PID_P);
+  printf("  I %f\r\n", cfg->PID0.PID_I);
+  printf("  D %f\r\n", cfg->PID0.PID_D);
 
-  cfg->PID_flags.PID0_active
-  cfg->PID_flags.PID1_active
-  */
+  printf("PID 1: (%d)\r\n", cfg->PID_flags.PID1_active);
+  printf("  T %f\r\n", cfg->PID1.PID_T);
+  printf("  P %f\r\n", cfg->PID1.PID_P);
+  printf("  I %f\r\n", cfg->PID1.PID_I);
+  printf("  D %f\r\n", cfg->PID1.PID_D);
+
 }
