@@ -214,6 +214,26 @@ class OpenFlowMeter_Config(object):
 if __name__ == "__main__":
     OFMcfg = OpenFlowMeter_Config()
     cfgbytes = OFMcfg.toBytes()
+    print(cfgbytes)
+
+    # test the gain settings
+
+    cfgbytes[40] = 73
+    cfgbytes[41] = 146
+    cfgbytes[42] = 220
+    cfgbytes[43] = 64
+    cfgbytes[44] = 37
+    cfgbytes[45] = 73
+    cfgbytes[46] = 22
+    cfgbytes[47] = 65
+    cfgbytes[48] = 73
+    cfgbytes[49] = 146
+    cfgbytes[50] = 220
+    cfgbytes[51] = 64
+    cfgbytes[52] = 37
+    cfgbytes[53] = 73
+    cfgbytes[54] = 22
+    cfgbytes[55] = 65
 
     for byte in cfgbytes:
         print("%X"%(byte), end=" ", flush=True)
