@@ -202,11 +202,17 @@ if __name__ == "__main__":
     print("length of configuration %d"%(len(cfgbytes)) )
     print()
 
+    print('#'*20)
+
     OFMcfg.printout()
+
+    print('#'*20)
 
     OFMcfg.fromBytes(cfgbytes)
 
     OFMcfg.printout()
+
+    print('#'*20)
 
     print()
     print()
