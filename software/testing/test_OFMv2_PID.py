@@ -24,7 +24,11 @@ def main():
         # initialise OFM
         ofm =  OpenFlowMeter(usbtin = setup.usbtin, boardID=0x1)
         ofm.requestConfigFromDevice()
-        time.sleep(1)
+        time.sleep(2)
+        ofm.requestConfigFromDevice()
+        time.sleep(2)
+        ofm.requestConfigFromDevice()
+        time.sleep(2)
 
         ofm.config.interval_I2C_TMP100 = 64
 
