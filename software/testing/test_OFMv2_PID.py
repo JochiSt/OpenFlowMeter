@@ -153,8 +153,6 @@ def main():
                     # prevent division by zero
                     i_1[gain] = max( convertCurrent(i_1[gain], gain) , 0.00001)
 
-                    print(sat_i_0, sat_u_0, sat_i_1, sat_u_1)
-
                     # check for high gain setting, whether saturation has
                     # happened and if so, use the lower gain value
                     if gain == 1:
@@ -178,8 +176,6 @@ def main():
                         r_1[gain] = np.append(r_1[gain], np.nan)
                     else:
                         r_1[gain] = np.append(r_1[gain], u_1[gain] / i_1[gain])
-
-                    print(gain, r_0[gain][-1], r_1[gain][-1])
 
         except KeyboardInterrupt:
             pass
