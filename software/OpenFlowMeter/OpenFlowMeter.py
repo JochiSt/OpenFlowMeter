@@ -12,6 +12,8 @@ sys.path.append("../pyUSBtin")
 from pyusbtin.canmessage import CANMessage
 import time
 
+import numpy as np
+
 class OpenFlowMeter(object):
     """
         Class for handling the OpenFlowMeter using USBTIN with python
@@ -23,6 +25,7 @@ class OpenFlowMeter(object):
     CAN_DAC_ID          = 0x102     # DAC setpoints
     CAN_ADC_MSG_ID_CH0  = 0x103     # ADC channel 0
     CAN_ADC_MSG_ID_CH1  = 0x104     # ADC channel 1
+    CAN_TEMPERATURE_ID  = 0x105     # calculated temperatures (2x float)
     CAN_I2C_MSG_TMP100  = 0x108     # on board TMP100
     CAN_I2C_MSG_BME680  = 0x109     # on board BME680
 
@@ -54,6 +57,8 @@ class OpenFlowMeter(object):
 
         self.uCtemperature = 0
         self.uCrefvoltage  = 0
+
+        self.temperatures = [0]*2
 
         self.TMP100_T = 0
 
@@ -167,6 +172,13 @@ class OpenFlowMeter(object):
             if msg.dlc > 2:
                 return
             self.TMP100_T =  ((msg[0] << 8)  + msg[1] ) * 0.0625;
+
+        elif msg.mid == OpenFlowMeter.CAN_TEMPERATURE_ID | (self.config.boardID << 4):
+            if msg.dlc != 8:
+                return
+
+            self.temperatures = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
+            print(self.temperatures)
 
         elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
