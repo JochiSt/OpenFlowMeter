@@ -53,6 +53,8 @@
 //#define PRINT_UART_PID          // print PID performance
 //#define PRINT_UART_ADC        // print the ADC data
 //#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
+
+//#define WRITE_DEFAULT_CFG_EEPROM_STARTUP
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -166,7 +168,9 @@ int main(void)
   printf("\r\n\r\nDEFAULT config:\r\n");
   printCfg(&default_cfg);
 
-  //write_EEPROM_cfg(&hi2c1, &default_cfg);
+#ifdef WRITE_DEFAULT_CFG_EEPROM_STARTUP
+  write_EEPROM_cfg(&hi2c1, &default_cfg);
+#endif
 
   read_EEPROM_cfg(&hi2c1, &cfg, &default_cfg);
 
