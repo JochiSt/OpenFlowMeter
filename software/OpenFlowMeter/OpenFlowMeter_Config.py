@@ -209,7 +209,7 @@ class OpenFlowMeter_Config(object):
         self.Ugain[0] = floats[ 8]
         self.Igain[0] = floats[ 9]
         self.Ugain[1] = floats[10]
-        self.Igain[0] = floats[11]
+        self.Igain[1] = floats[11]
 
 if __name__ == "__main__":
     OFMcfg = OpenFlowMeter_Config()
