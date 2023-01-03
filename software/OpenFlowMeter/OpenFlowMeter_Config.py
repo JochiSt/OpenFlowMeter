@@ -60,6 +60,26 @@ class OpenFlowMeter_Config(object):
         self.SMOO = 15
         self.SMOO_MAX = 16
 
+    def clearLocalCfg(self):
+        self.interval_CAN_ADC = 0
+        self.interval_PRINT_UART = 0
+        self.interval_I2C_TMP100 = 0
+        self.interval_I2C_BME680 = 0
+
+        self.PID_flags  = 0
+        self.PID_active = [ False, False ]
+
+        self.PID_T = [0.0 , 0.0]
+        self.PID_P = [0.0 , 0.0]
+        self.PID_I = [0.0 , 0.0]
+        self.PID_D = [0.0 , 0.0]
+
+        self.Ugain = [0.0 , 0.0]
+        self.Igain = [0.0 , 0.0]
+
+        self.SMOO = 0
+        self.SMOO_MAX = 0
+
     def printout(self):
         print("Board ID: %d"%(self.boardID))
         print("Intervals:")
