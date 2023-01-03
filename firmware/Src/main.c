@@ -400,7 +400,7 @@ int main(void)
 #endif
 #ifdef PRINT_UART_CALC_TEMP
       printf("Temperatures:\r\n");
-      printf("ADC gain selection %d \r\n", ADCgainUsed);
+      printf("ADC gain selection %x \r\n", ADCgainUsed);
       printf("CH0: %f\r\n", temperature0);
       printf(" - I   %f\r\n",  current0);
       printf(" - U   %f\r\n",  voltage0);
