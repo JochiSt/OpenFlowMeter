@@ -105,8 +105,8 @@ def StabilityTest(ofm, channel=[0,1], DACs = [128], repetitions=200):
 
 def CurrentCalibration(ofm, dmm, channel=0, DACs=[], repetitions=10):
 
-    voltage = np.array([])
-    current = np.array([])
+    voltage = [np.array([]), np.array([])]
+    current = [np.array([]), np.array([])]
     MMcurrent = np.array([])
 
     # set DAC
@@ -128,8 +128,9 @@ def CurrentCalibration(ofm, dmm, channel=0, DACs=[], repetitions=10):
             if ofm:
                 ofm.waitForNewMessage()
 
-                current = np.append(current, ofm.current(channel))
-                voltage = np.append(voltage, ofm.voltage(channel))
+                for gain in [0,1]:
+                    current[gain] = np.append(current[gain], ofm.current(channel, gain))
+                    voltage[gain] = np.append(voltage[gain], ofm.voltage(channel, gain))
 
                 ofm.hasNewMessage = False
 
