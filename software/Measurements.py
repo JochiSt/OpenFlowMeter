@@ -104,16 +104,17 @@ def StabilityTest(ofm, channel=[0,1], DACs = [128], repetitions=200):
     return voltage, current
 
 def CurrentCalibration(ofm, dmm, channel=0, DACs=[], repetitions=10):
-
     voltage = [np.array([]), np.array([])]
     current = [np.array([]), np.array([])]
     MMcurrent = np.array([])
 
     # set DAC
     for dac in DACs:
-        DACset = [dac,dac]
         if ofm:
-            ofm.setDAC(DACset[0], DACset[1])
+            if channel == 0:
+                ofm.setDAC(dac, None)
+            if channel == 1:
+                ofm.setDAC(None, dac)
 
         # wait some seconds to settle everything
         time.sleep(2)
@@ -134,6 +135,10 @@ def CurrentCalibration(ofm, dmm, channel=0, DACs=[], repetitions=10):
 
                 ofm.hasNewMessage = False
 
-    ofm.setDAC(0,0)
+    # reset the DAC setting
+    if channel == 0:
+        ofm.setDAC(0, None)
+    if channel == 1:
+        ofm.setDAC(None, 0)
 
     return voltage, current, MMcurrent
