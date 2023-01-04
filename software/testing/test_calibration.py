@@ -47,7 +47,9 @@ def main():
 
     # save recorded data in NPZ files
     np.savez("calibration_%s_CH%d_%d.npz"%(time.strftime("%Y%m%d_%H%M%S"), channel, repetitions),
-                        voltage=voltage, current=current, MMcurrent=MMcurrent, dac_steps=dac_steps)
+                        voltage0=voltage[0], current0=current[0],
+                        voltage1=voltage[1], current1=current[1],
+                        MMcurrent=MMcurrent, dac_steps=dac_steps)
 
 if __name__ == "__main__":
     main()
