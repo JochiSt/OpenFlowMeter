@@ -113,8 +113,10 @@ def plot_calibration(filename):
              linewidth=6, alpha=0.6)
     ax3.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
     ax3.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
-    ax3.plot(MMcurrent, current[0], marker='.', label="current low gain", color='black', alpha=0.2)
-    ax3.plot(MMcurrent, current[1], marker='.', label="current high gain", color='blue')
+    ax3.plot(MMcurrent, current[0], marker='.',
+             label="current low gain", color='black', alpha=0.2)
+    ax3.plot(MMcurrent, current[1], marker='.',
+             label="current high gain", color='blue')
 
     ax3.set_xlim([0,5])
     ax3.set_ylim([0,5])
