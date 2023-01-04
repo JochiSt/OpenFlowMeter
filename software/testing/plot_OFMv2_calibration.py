@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+"""
+
+"""
+
+import numpy as np
+from scipy.optimize import curve_fit
+
+import sys
+sys.path.append("../")
+from OpenFlowMeter import convertVoltage, convertCurrent
+
+import matplotlib.pyplot as plt
+
+def plot_calibration(filename):
+    npzfile = np.load(filename)
+
+
+    voltage0 = npzfile['voltage0']
+    voltage1 = npzfile['voltage1']
+
+    voltage = [ voltage0, voltage1 ]
+    current = [ npzfile['current0'], npzfile['current1'] ]            # OpenFlowMeter measured current
+    MMcurrent = npzfile['MMcurrent']  # Multimeter measured current
+    dac_setp = npzfile['dac_steps']
+
+    # we have to recover the DAC setting for each measurement point
+    # only all DAC settings are given
+    repetitions = int( len(voltage)/len(dac_setp) )
+    dac_steps = np.array([])
+    for dac in dac_setp:
+        dac_steps = np.append(dac_steps, np.ones(repetitions)*dac)
+
+    MMcurrent =np.array(  [0 if v is None else v for v in MMcurrent] )
+
+    for gain in [0,1]:
+        voltage[gain] = convertVoltage( voltage[gain], gain )
+        current[gain] = convertCurrent( current[gain], gain )
+
+    MMcurrent /= 10 # to get it in mA
+
+    fig, ax1 = plt.subplots()
+    ax1.set_title("OFM current vs. Multimeter current")
+    color = 'tab:red'
+    ax1.set_xlabel("multimeter current / mA")
+    ax1.set_ylabel("OFM current / mA", color=color)
+    for gain in [0,1]:
+        ax1.plot( MMcurrent, current[gain], color=color, label="calibration", marker="." )
+
+    ax1.plot( [0,33], [0,33], color=color, linestyle='--',label="y=x")
+    ax1.set_ylim([0,33])
+    ax1.set_xlim([0,max(MMcurrent)])
+    ax1.tick_params(axis='y', labelcolor=color)
+
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    color = 'tab:blue'
+    ax2.set_ylabel('OFM voltage / V', color=color)  # we already handled the x-label with ax1
+    for gain in [0,1]:
+        ax2.plot( MMcurrent, voltage[gain], color=color)
+    ax2.plot( [0,40], [0,4], color=color, linestyle='--',label="y=x")
+    ax2.tick_params(axis='y', labelcolor=color)
+    ax2.set_ylim([0,4.0])
+
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.show()
+
+    fig, ax1 = plt.subplots()
+    ax1.set_title("Multimeter current vs. DAC setpoint")
+    color = 'tab:red'
+    ax1.set_xlabel("DAC setting / LSB")
+    ax1.set_ylabel("multimeter current / mA", color=color)
+    ax1.plot( dac_steps, MMcurrent, color=color, label="calibration", marker="." )
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.set_ylim([0,max(MMcurrent)])
+    ax1.set_xlim([0,max(dac_steps)])
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.show()
+
+    def fit_func(x, a):
+        return a*x
+
+    print("Fitting DAC step and MM current")
+    popt, pcov = curve_fit(fit_func, dac_steps, MMcurrent, bounds=([0], [0.05]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("MMcurrent = (", popt[0], "+-", perr[0], ") * dac_step")
+
+    dac_for_1mA = int( 1 / popt[0] )
+    print("\t1mA is equal to a DAC setting of", dac_for_1mA)
+
+    print("Fitting OFM current and MM current")
+    popt, pcov = curve_fit(fit_func, current, MMcurrent, bounds=([0.8], [1.2]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("MMcurrent = (", popt[0], "+-", perr[0], ") * OFM current")
+
+
+if __name__ == "__main__":
+
+    plot_calibration("calibration_20230104_082037_CH0_10.npz")
