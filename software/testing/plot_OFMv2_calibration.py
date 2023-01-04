@@ -68,18 +68,8 @@ def plot_calibration(filename):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
-    fig, ax1 = plt.subplots()
-    ax1.set_title("Multimeter current vs. DAC setpoint")
-    color = 'tab:red'
-    ax1.set_xlabel("DAC setting / LSB")
-    ax1.set_ylabel("multimeter current / mA", color=color)
-    ax1.plot( dac_steps, MMcurrent, color=color, label="calibration", marker="." )
-    ax1.tick_params(axis='y', labelcolor=color)
-    ax1.set_ylim([0,max(MMcurrent)])
-    ax1.set_xlim([0,max(dac_steps)])
-    fig.tight_layout()  # otherwise the right y-label is slightly clipped
-    plt.show()
-
+    ###########################################################################
+    # FIT MM current and dac steps
     def fit_func(x, a):
         return a*x
 
@@ -90,6 +80,27 @@ def plot_calibration(filename):
 
     dac_for_1mA = int( 1 / popt[0] )
     print("\t1mA is equal to a DAC setting of %d (0x%X)"%(dac_for_1mA,dac_for_1mA))
+
+    fig, ax1 = plt.subplots()
+    ax1.set_title("Multimeter current vs. DAC setpoint")
+    color = 'tab:red'
+    ax1.set_xlabel("DAC setting / LSB")
+    ax1.set_ylabel("multimeter current / mA", color=color)
+    ax1.plot( dac_steps, MMcurrent, color=color, label="multimeter current", marker="." )
+    ax1.plot( dac_steps, fit_func(dac_steps, popt[0]),
+                 label="fit -> 1mA = %d (0x%X) LSB"%(dac_for_1mA,dac_for_1mA))
+
+    ax1.plot( [0, dac_for_1mA ], [1, 1], color='black')
+    ax1.plot( [dac_for_1mA, dac_for_1mA ], [0, 1], color='black')
+
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.set_ylim([0,max(MMcurrent)])
+    ax1.set_xlim([0,max(dac_steps)])
+    ax1.legend()
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+    plt.show()
+
+
 
     ###########################################################################
     # Fit the HIGH gain section (without saturation)
