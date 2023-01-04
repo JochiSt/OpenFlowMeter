@@ -192,6 +192,47 @@ def plot_calibration(filename):
     ax5.legend()
     plt.show()
 
+
+    ###########################################################################
+    # plot voltages
+    x2 =  MMcurrent[MMcurrent  <= HIGH_GAIN_SATURATION]
+    y2 = voltage[1][MMcurrent <= HIGH_GAIN_SATURATION]
+    popt, pcov = curve_fit(fit_func, x2*1e-3, y2, bounds=([0.3, 200]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("HIGH gain OFM voltage = (", popt[0], "+-", perr[0], ") * MM current")
+    HGohm = popt[0]
+
+    popt, pcov = curve_fit(fit_func, MMcurrent*1e-3, voltage[0], bounds=([0.3, 200]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("LOW gain  OFM voltage = (", popt[0], "+-", perr[0], ") * MM current")
+    LGohm = popt[0]
+
+    fig, ax6 = plt.subplots()
+    #ax6.plot( x2, fit_func(x2, popt[0]),
+    #         label="fit high gain (y = %4.3f*x)"%(popt[0]),
+    #         color='green',
+    #         linewidth=6, alpha=0.6)
+    ax6.plot( [0,40], [0,40e-3*LGohm], color='red', linestyle='--',label="LG %5.2f Ohm"%(LGohm))
+    ax6.plot( [0,40], [0,40e-3*HGohm], color='green', linestyle='--',label="HG %5.2f Ohm"%(HGohm))
+
+    ax6.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    ax6.plot(MMcurrent, voltage[0], marker='.',
+             label="voltage low gain", color='black', alpha=0.2)
+    ax6.plot(MMcurrent, voltage[1], marker='.',
+             label="voltage high gain", color='blue')
+
+    ax6.set_xlim([0,5])
+    ax6.set_ylim([0,0.7])
+
+    ax6.set_ylabel("OFM voltage / V")
+    ax6.set_xlabel("MM current / mA")
+
+    ax6.set_title("High gain calibration check")
+
+    ax6.legend()
+
+    plt.show()
+
 if __name__ == "__main__":
 
     #plot_calibration("calibration_20230104_085105_CH0_10.npz")
