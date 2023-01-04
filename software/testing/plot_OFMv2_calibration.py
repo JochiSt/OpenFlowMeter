@@ -97,6 +97,37 @@ def plot_calibration(filename):
     print("MMcurrent = (", popt[0], "+-", perr[0], ") * OFM current")
 
 
+    ###########################################################################
+    # Fit the HIGH gain section (without saturation)
+    HIGH_GAIN_SATURATION = 3.3
+    x2 = MMcurrent[MMcurrent  <= HIGH_GAIN_SATURATION]
+    y2 = current[1][MMcurrent <= HIGH_GAIN_SATURATION]
+    popt, pcov = curve_fit(fit_func, x2, y2, bounds=([0.3, 10]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("OFM current = (", popt[0], "+-", perr[0], ") * MM current")
+
+    fig, ax3 = plt.subplots()
+    ax3.plot( x2, fit_func(x2, popt[0]),
+             label="fit high gain (y = %4.3f*x)"%(popt[0]),
+             color='green',
+             linewidth=6, alpha=0.6)
+    ax3.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
+    ax3.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    ax3.plot(MMcurrent, current[0], marker='.', label="current low gain", color='black', alpha=0.2)
+    ax3.plot(MMcurrent, current[1], marker='.', label="current high gain", color='blue')
+
+    ax3.set_xlim([0,5])
+    ax3.set_ylim([0,5])
+
+    ax3.set_ylabel("OFM current / mA")
+    ax3.set_xlabel("MM current / mA")
+
+    ax3.set_title("High gain calibration check")
+
+    ax3.legend()
+
+    plt.show()
+
 if __name__ == "__main__":
 
     plot_calibration("calibration_20230104_085105_CH0_10.npz")
