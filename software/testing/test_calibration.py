@@ -14,6 +14,8 @@ def main():
     dmmsetup = None
     cansetup = None
 
+    print("Starting time:", time.strftime("%Y%m%d_%H%M%S") )
+
     try:
         # initialise USBtin
         cansetup = CANsetup()
@@ -30,8 +32,6 @@ def main():
         repetitions = 10      # repeat how many times
         dac_steps = np.linspace(0, 99, 100).astype(int)
         dac_steps = np.append(dac_steps, np.linspace(100, 1024, 100).astype(int))
-
-        print(dac_steps)
 
         # just for testing python
     #    repetitions = 1
