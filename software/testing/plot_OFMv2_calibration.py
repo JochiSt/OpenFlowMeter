@@ -132,4 +132,5 @@ def plot_calibration(filename):
 
 if __name__ == "__main__":
 
-    plot_calibration("calibration_20230104_085105_CH0_10.npz")
+    #plot_calibration("calibration_20230104_085105_CH0_10.npz")
+    plot_calibration("calibration_20230104_094358_CH0_10.npz")
