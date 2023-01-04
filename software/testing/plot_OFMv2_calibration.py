@@ -105,6 +105,7 @@ def plot_calibration(filename):
     ###########################################################################
     # Fit the HIGH gain section (without saturation)
     HIGH_GAIN_SATURATION = 3.3
+
     x2 = MMcurrent[MMcurrent  <= HIGH_GAIN_SATURATION]
     y2 = current[1][MMcurrent <= HIGH_GAIN_SATURATION]
     popt, pcov = curve_fit(fit_func, x2, y2, bounds=([0.3, 10]) )
@@ -139,7 +140,7 @@ def plot_calibration(filename):
 
     fig, ax4 = plt.subplots()
     ax4.plot( MMcurrent, current[1]-fit_func(MMcurrent, popt[0]),
-             label="fit high gain (y = %4.3f*x)"%(popt[0]),
+             label="fit residuals high gain (y = %4.3f*x)"%(popt[0]),
              color='green',)
     #        linewidth=6, alpha=0.6)
     #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
@@ -153,7 +154,7 @@ def plot_calibration(filename):
     ax4.set_xlim([0,3.5])
     ax4.set_ylim([-0.02,0.02])
 
-    ax3.set_ylabel("residual to fit / mA")
+    ax4.set_ylabel("residuals (OFM current - fit) / mA")
     ax4.set_xlabel("MM current / mA")
     ax4.set_title("High gain residuals")
     ax4.legend()
