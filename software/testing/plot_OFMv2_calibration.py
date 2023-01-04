@@ -236,4 +236,12 @@ def plot_calibration(filename):
 if __name__ == "__main__":
 
     #plot_calibration("calibration_20230104_085105_CH0_10.npz")
-    plot_calibration("calibration_20230104_094358_CH0_10.npz")
+    #plot_calibration("calibration_20230104_094358_CH0_10.npz")
+    #plot_calibration('calibration_20230104_100702_CH0_10.npz')
+    print('#'*40)
+    print('CHANNEL0')
+    plot_calibration('calibration_20230104_105710_CH0_20.npz')
+    print('#'*40)
+    print('CHANNEL1')
+    #plot_calibration('calibration_20230104_113819_CH1_20.npz')
+    plot_calibration('calibration_20230104_122100_CH1_20.npz')
