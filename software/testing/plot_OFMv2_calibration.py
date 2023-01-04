@@ -130,6 +130,62 @@ def plot_calibration(filename):
 
     plt.show()
 
+    ###########################################################################
+
+    fig, ax4 = plt.subplots()
+    ax4.plot( MMcurrent, current[1]-fit_func(MMcurrent, popt[0]),
+             label="fit high gain (y = %4.3f*x)"%(popt[0]),
+             color='green',)
+    #        linewidth=6, alpha=0.6)
+    #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
+    ax4.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    ax4.axhline(0, color='black')
+    #ax5.plot(MMcurrent, current[0], marker='.',
+    #         label="current low gain", color='black', alpha=0.2)
+    #ax5.plot(MMcurrent, current[1], marker='.',
+    #         label="current high gain", color='blue')
+
+    ax4.set_xlim([0,3.5])
+    ax4.set_ylim([-0.02,0.02])
+
+    ax3.set_ylabel("residual to fit / mA")
+    ax4.set_xlabel("MM current / mA")
+    ax4.set_title("High gain residuals")
+    ax4.legend()
+    plt.show()
+
+
+    ###########################################################################
+    # Fit the LOW gain section
+    x2 = MMcurrent[MMcurrent  >= HIGH_GAIN_SATURATION]
+    y2 = current[0][MMcurrent >= HIGH_GAIN_SATURATION]
+
+    print("Fitting OFM current and MM current")
+    popt, pcov = curve_fit(fit_func, x2, y2, bounds=([0.3, 1.2]) )
+    perr = np.sqrt(np.diag(pcov))
+    print("OFM current = (", popt[0], "+-", perr[0], ") * MM current")
+
+    fig, ax5 = plt.subplots()
+    ax5.plot( MMcurrent, current[0]-fit_func(MMcurrent, popt[0]),
+             label="fit high gain (y = %4.3f*x)"%(popt[0]),
+             color='green',)
+    #        linewidth=6, alpha=0.6)
+    #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
+    ax5.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    #ax5.plot(MMcurrent, current[0], marker='.',
+    #         label="current low gain", color='black', alpha=0.2)
+    #ax5.plot(MMcurrent, current[1], marker='.',
+    #         label="current high gain", color='blue')
+
+    ax5.set_xlim([3.2,30])
+    ax5.set_ylim([-0.5,0.5])
+
+    #ax3.set_ylabel("OFM current / mA")
+    ax5.set_xlabel("MM current / mA")
+    ax5.set_title("Low gain residuals")
+    ax5.legend()
+    plt.show()
+
 if __name__ == "__main__":
 
     #plot_calibration("calibration_20230104_085105_CH0_10.npz")
