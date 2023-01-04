@@ -91,12 +91,6 @@ def plot_calibration(filename):
     dac_for_1mA = int( 1 / popt[0] )
     print("\t1mA is equal to a DAC setting of %d (0x%X)"%(dac_for_1mA,dac_for_1mA))
 
-    print("Fitting OFM current and MM current")
-    popt, pcov = curve_fit(fit_func, current[0], MMcurrent, bounds=([0.3, 1.2]) )
-    perr = np.sqrt(np.diag(pcov))
-    print("MMcurrent = (", popt[0], "+-", perr[0], ") * OFM current")
-
-
     ###########################################################################
     # Fit the HIGH gain section (without saturation)
     HIGH_GAIN_SATURATION = 3.3
