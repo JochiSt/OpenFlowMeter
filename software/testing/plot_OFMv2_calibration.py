@@ -109,6 +109,7 @@ def plot_calibration(filename):
     ax1.set_ylim([0,max(MMcurrent)])
     ax1.set_xlim([0,max(dac_steps)])
     ax1.legend()
+
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
@@ -151,6 +152,7 @@ def plot_calibration(filename):
 
     ax3.legend()
 
+    fig.tight_layout()
     plt.show()
 
     ###########################################################################
@@ -176,8 +178,9 @@ def plot_calibration(filename):
     ax4.set_xlabel("MM current / mA")
     ax4.set_title("High gain residuals")
     ax4.legend()
-    plt.show()
 
+    fig.tight_layout()
+    plt.show()
 
     ###########################################################################
     # Fit the LOW gain section
@@ -209,6 +212,8 @@ def plot_calibration(filename):
     ax5.set_xlabel("MM current / mA")
     ax5.set_title("Low gain residuals")
     ax5.legend()
+
+    fig.tight_layout()
     plt.show()
 
 
@@ -251,6 +256,7 @@ def plot_calibration(filename):
 
     ax6.legend()
 
+    fig.tight_layout()
     plt.show()
 
 
