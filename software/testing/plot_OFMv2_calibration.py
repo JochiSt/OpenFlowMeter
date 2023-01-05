@@ -244,7 +244,40 @@ def plot_calibration(filename):
 
     ax6.set_ylabel("OFM voltage / V")
     ax6.set_xlabel("MM current / mA")
+    ax6.set_title("High gain calibration check")
 
+    ax6.legend()
+
+    plt.show()
+
+
+    ###########################################################################
+    # plot the resistance
+
+    fig, ax6 = plt.subplots()
+
+    mmsel = MMcurrent[current[0] > 0]
+    vsel = voltage[0][current[0] > 0]
+    isel = current[0][current[0] > 0]
+
+    ax6.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+
+
+    ax6.plot(isel, vsel/(isel/1e3), marker='.',
+             label="resistance low gain", color='black', alpha=0.2)
+
+    mmsel = MMcurrent[current[1] > 0]
+    vsel = voltage[1][current[1] > 0]
+    isel = current[1][current[1] > 0]
+
+    ax6.plot(isel, vsel/(isel/1e3), marker='.',
+             label="resistance high gain", color='blue')
+
+    ax6.set_xlim([0,30])
+    ax6.set_ylim([110,130])
+
+    ax6.set_ylabel("measured resistance / Ohm")
+    ax6.set_xlabel("OFM current / mA")
     ax6.set_title("High gain calibration check")
 
     ax6.legend()
