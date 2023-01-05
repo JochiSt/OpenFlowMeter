@@ -270,6 +270,7 @@ def plot_calibration(filename):
     isel = current[0][current[0] > 0]
 
     ax6.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4, label='HG saturation')
+    ax6.axvline(1, color='green', linewidth=0.5, label='1mA')
 
     ax6.plot(isel, vsel/(isel/1e3), marker='.',
              label="resistance low gain", color='black', alpha=0.2)
