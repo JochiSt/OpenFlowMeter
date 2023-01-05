@@ -116,7 +116,7 @@ def plot_calibration(filename):
 
     ###########################################################################
     # Fit the HIGH gain section (without saturation)
-    HIGH_GAIN_SATURATION = 3.3
+    HIGH_GAIN_SATURATION = convertCurrent( 3900, 1 ) *1e3
 
     x2 = MMcurrent[MMcurrent  <= HIGH_GAIN_SATURATION]
     y2 = current[1][MMcurrent <= HIGH_GAIN_SATURATION]
@@ -132,7 +132,10 @@ def plot_calibration(filename):
              linewidth=6, alpha=0.6)
 
     ax3.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
-    ax3.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+
+    ax3.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4)
+    ax3.axhline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4)
+
     ax3.plot(MMcurrent, current[0], marker='.',
              label="current low gain", color='black', alpha=0.2)
     ax3.plot(MMcurrent, current[1], marker='.',
@@ -158,7 +161,7 @@ def plot_calibration(filename):
              color='green',)
     #        linewidth=6, alpha=0.6)
     #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
-    ax4.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    ax4.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4)
     ax4.axhline(0, color='black')
 
     #ax5.plot(MMcurrent, current[0], marker='.',
@@ -193,7 +196,7 @@ def plot_calibration(filename):
              color='green',)
     #        linewidth=6, alpha=0.6)
     #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
-    ax5.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    ax5.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4)
     #ax5.plot(MMcurrent, current[0], marker='.',
     #         label="current low gain", color='black', alpha=0.2)
     #ax5.plot(MMcurrent, current[1], marker='.',
@@ -233,7 +236,7 @@ def plot_calibration(filename):
     ax6.plot( [0,40], [0,40e-3*LGohm], color='red', linestyle='--',label="LG %5.2f Ohm"%(LGohm))
     ax6.plot( [0,40], [0,40e-3*HGohm], color='green', linestyle='--',label="HG %5.2f Ohm"%(HGohm))
 
-    ax6.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
+    ax6.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4)
     ax6.plot(MMcurrent, voltage[0], marker='.',
              label="voltage low gain", color='black', alpha=0.2)
     ax6.plot(MMcurrent, voltage[1], marker='.',
@@ -260,8 +263,7 @@ def plot_calibration(filename):
     vsel = voltage[0][current[0] > 0]
     isel = current[0][current[0] > 0]
 
-    ax6.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
-
+    ax6.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4, label='HG saturation')
 
     ax6.plot(isel, vsel/(isel/1e3), marker='.',
              label="resistance low gain", color='black', alpha=0.2)
