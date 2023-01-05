@@ -29,11 +29,11 @@ def main():
         ofm.changeConfig()
 
         # program the soldered gains into the configuration
-        ofm.config.Igain[0] = 1 + 470e3 / 56e3
-        ofm.config.Igain[1] = 1 + 470e3 / 56e3
+        ofm.config.Igain[0] = 1 + 47.0e3 / 5.6e3
+        ofm.config.Igain[1] = 1 + 47.0e3 / 5.6e3
 
-        ofm.config.Ugain[0] = 1 + 330e3 / 56e3
-        ofm.config.Ugain[1] = 1 + 330e3 / 56e3
+        ofm.config.Ugain[0] = 1 + 33.0e3 / 5.6e3
+        ofm.config.Ugain[1] = 1 + 33.0e3 / 5.6e3
 
         #ofm.saveCofig2EEPROM(default=0)     # save the default config in EEPROM
 
