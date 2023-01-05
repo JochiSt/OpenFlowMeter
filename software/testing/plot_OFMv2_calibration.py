@@ -37,6 +37,16 @@ def plot_calibration(filename):
 
     MMcurrent =np.array(  [0 if v is None else v for v in MMcurrent] )
 
+    ###########################################################################
+    # check raw values
+    print("Saturation / maximum of the raw values (LSB):")
+    for gain in [0,1]:
+        print("GAIN ", gain)
+        print("\tcurrent", np.max( current[gain] ) )
+        print("\tvoltage", np.max( voltage[gain] ) )
+
+    ###########################################################################
+    # convert LSB into physical values
     for gain in [0,1]:
         voltage[gain] = convertVoltage( voltage[gain], gain )
         current[gain] = convertCurrent( current[gain], gain ) *1e3
