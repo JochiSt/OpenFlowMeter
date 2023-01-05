@@ -282,12 +282,12 @@ def plot_calibration(filename):
     ax6.plot(isel, vsel/(isel/1e3), marker='.',
              label="resistance high gain", color='blue')
 
-    ax6.set_xlim([0,30])
+    ax6.set_xlim([0,10])
     ax6.set_ylim([110,130])
 
     ax6.set_ylabel("measured resistance / Ohm")
     ax6.set_xlabel("OFM current / mA")
-    ax6.set_title("High gain calibration check")
+    ax6.set_title("Resistance matching before offset correction")
 
     ax6.legend()
 
