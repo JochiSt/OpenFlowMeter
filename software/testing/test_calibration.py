@@ -37,6 +37,8 @@ def test_calibration():
         repetitions = 10      # repeat how many times
         dac_steps = np.linspace(0, 99, 100).astype(int)
         dac_steps = np.append(dac_steps, np.linspace(100, 1024, 100).astype(int))
+        dac_steps = np.linspace(0, 128, 129).astype(int)
+        dac_steps = np.append(dac_steps, np.linspace(128, 1024, 100).astype(int))
 
         # just for testing python
     #    repetitions = 1
