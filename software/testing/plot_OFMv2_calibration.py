@@ -81,13 +81,14 @@ def plot_calibration(filename):
 
     ###########################################################################
     # FIT MM current and dac steps
-    def fit_func(x, a):
-        return a*x
+    def fit_func(x, a, b=0):
+        return a*x + b
 
     print("Fitting DAC step and MM current")
-    popt, pcov = curve_fit(fit_func, dac_steps, MMcurrent, bounds=([0, 0.05]) )
+    popt, pcov = curve_fit(fit_func, dac_steps, MMcurrent, bounds=([-10, 0.05]) )
     perr = np.sqrt(np.diag(pcov))
     print("MMcurrent = (", popt[0], "+-", perr[0], ") * dac_step")
+    print("\tOFFSET: (", popt[1], "+-", perr[1], ")")
 
     dac_for_1mA = int( 1 / popt[0] )
     print("\t1mA is equal to a DAC setting of %d (0x%X)"%(dac_for_1mA,dac_for_1mA))
@@ -98,7 +99,7 @@ def plot_calibration(filename):
     ax1.set_xlabel("DAC setting / LSB")
     ax1.set_ylabel("multimeter current / mA", color=color)
     ax1.plot( dac_steps, MMcurrent, color=color, label="multimeter current", marker="." )
-    ax1.plot( dac_steps, fit_func(dac_steps, popt[0]),
+    ax1.plot( dac_steps, fit_func(dac_steps, popt[0], popt[1]),
                  label="fit -> 1mA = %d (0x%X) LSB"%(dac_for_1mA,dac_for_1mA))
 
     ax1.plot( [0, dac_for_1mA ], [1, 1], color='black')
@@ -119,13 +120,14 @@ def plot_calibration(filename):
 
     x2 = MMcurrent[MMcurrent  <= HIGH_GAIN_SATURATION]
     y2 = current[1][MMcurrent <= HIGH_GAIN_SATURATION]
-    popt, pcov = curve_fit(fit_func, x2, y2, bounds=([0.3, 10]) )
+    popt, pcov = curve_fit(fit_func, x2, y2, bounds=([-10.0, 10]) )
     perr = np.sqrt(np.diag(pcov))
-    print("OFM current = (", popt[0], "+-", perr[0], ") * MM current")
+    print("OFM current = (", popt[0], "+-", perr[0], ") * MM current +",
+                          "(", popt[1], "+-", perr[1], ")")
 
     fig, ax3 = plt.subplots()
-    ax3.plot( x2, fit_func(x2, popt[0]),
-             label="fit high gain (y = %4.3f*x)"%(popt[0]),
+    ax3.plot( x2, fit_func(x2, popt[0], popt[1]),
+             label="fit high gain (y = %4.3f*x + %4.3f)"%(popt[0], popt[1]),
              color='green',
              linewidth=6, alpha=0.6)
 
@@ -151,8 +153,8 @@ def plot_calibration(filename):
     ###########################################################################
 
     fig, ax4 = plt.subplots()
-    ax4.plot( MMcurrent, current[1]-fit_func(MMcurrent, popt[0]),
-             label="fit residuals high gain (y = %4.3f*x)"%(popt[0]),
+    ax4.plot( MMcurrent, current[1]-fit_func(MMcurrent, popt[0], popt[1]),
+             label="fit residuals high gain (y = %4.3f*x + %4.3f)"%(popt[0], popt[1]),
              color='green',)
     #        linewidth=6, alpha=0.6)
     #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
@@ -180,13 +182,14 @@ def plot_calibration(filename):
     y2 = current[0][MMcurrent >= HIGH_GAIN_SATURATION]
 
     print("Fitting OFM current and MM current")
-    popt, pcov = curve_fit(fit_func, x2, y2, bounds=([0.3, 1.2]) )
+    popt, pcov = curve_fit(fit_func, x2, y2, bounds=([-10.0, 1.2]) )
     perr = np.sqrt(np.diag(pcov))
-    print("OFM current = (", popt[0], "+-", perr[0], ") * MM current")
+    print("OFM current = (", popt[0], "+-", perr[0], ") * MM current +",
+                          "(", popt[1], "+-", perr[1], ")")
 
     fig, ax5 = plt.subplots()
-    ax5.plot( MMcurrent, current[0]-fit_func(MMcurrent, popt[0]),
-             label="fit high gain (y = %4.3f*x)"%(popt[0]),
+    ax5.plot( MMcurrent, current[0]-fit_func(MMcurrent, popt[0], popt[1]),
+             label="fit high gain (y = %4.3f*x + %4.3f)"%(popt[0], popt[1]),
              color='green',)
     #        linewidth=6, alpha=0.6)
     #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
@@ -196,10 +199,10 @@ def plot_calibration(filename):
     #ax5.plot(MMcurrent, current[1], marker='.',
     #         label="current high gain", color='blue')
 
-    ax5.set_xlim([3.2,30])
-    ax5.set_ylim([-0.5,0.5])
+    ax5.set_xlim([0,30])
+    ax5.set_ylim([-0.05,0.05])
 
-    #ax3.set_ylabel("OFM current / mA")
+    ax5.set_ylabel("residuals (OFM current - fit) / mA")
     ax5.set_xlabel("MM current / mA")
     ax5.set_title("Low gain residuals")
     ax5.legend()
@@ -210,14 +213,16 @@ def plot_calibration(filename):
     # plot voltages
     x2 =  MMcurrent[MMcurrent  <= HIGH_GAIN_SATURATION]
     y2 = voltage[1][MMcurrent <= HIGH_GAIN_SATURATION]
-    popt, pcov = curve_fit(fit_func, x2*1e-3, y2, bounds=([0.3, 200]) )
+    popt, pcov = curve_fit(fit_func, x2*1e-3, y2, bounds=([-10.0, 200]) )
     perr = np.sqrt(np.diag(pcov))
-    print("HIGH gain OFM voltage = (", popt[0], "+-", perr[0], ") * MM current")
+    print("HIGH GAIN OFM voltage = (", popt[0], "+-", perr[0], ") * MM current +",
+                          "(", popt[1], "+-", perr[1], ")")
     HGohm = popt[0]
 
-    popt, pcov = curve_fit(fit_func, MMcurrent*1e-3, voltage[0], bounds=([0.3, 200]) )
+    popt, pcov = curve_fit(fit_func, MMcurrent*1e-3, voltage[0], bounds=([-10, 200]) )
     perr = np.sqrt(np.diag(pcov))
-    print("LOW gain  OFM voltage = (", popt[0], "+-", perr[0], ") * MM current")
+    print("LOW gain OFM voltage = (", popt[0], "+-", perr[0], ") * MM current +",
+                          "(", popt[1], "+-", perr[1], ")")
     LGohm = popt[0]
 
     fig, ax6 = plt.subplots()
@@ -234,8 +239,8 @@ def plot_calibration(filename):
     ax6.plot(MMcurrent, voltage[1], marker='.',
              label="voltage high gain", color='blue')
 
-    ax6.set_xlim([0,5])
-    ax6.set_ylim([0,0.7])
+    ax6.set_xlim([0,30])
+    ax6.set_ylim([0,3.5])
 
     ax6.set_ylabel("OFM voltage / V")
     ax6.set_xlabel("MM current / mA")
