@@ -7,12 +7,17 @@ from CANsetup import CANsetup
 from Measurements import CurrentCalibration
 from DMMsetup import DMMsetup
 
+from plot_OFMv2_calibration import plot_calibration
+
 import time
 
 import numpy as np
-def main():
+
+def test_calibration():
     dmmsetup = None
     cansetup = None
+
+    filename = None
 
     print("Starting time:", time.strftime("%Y%m%d_%H%M%S") )
 
@@ -49,10 +54,11 @@ def main():
             return
 
         # save recorded data in NPZ files
-        np.savez("calibration_%s_CH%d_%d.npz"%(time.strftime("%Y%m%d_%H%M%S"), channel, repetitions),
-                            voltage0=voltage[0], current0=current[0],
-                            voltage1=voltage[1], current1=current[1],
-                            MMcurrent=MMcurrent, dac_steps=dac_steps)
+        filename = "calibration_%s_CH%d_%d.npz"%(time.strftime("%Y%m%d_%H%M%S"), channel, repetitions)
+        np.savez(filename,
+                    voltage0=voltage[0], current0=current[0],
+                    voltage1=voltage[1], current1=current[1],
+                    MMcurrent=MMcurrent, dac_steps=dac_steps)
     except Exception as e:
         print(e)
         pass
@@ -63,7 +69,13 @@ def main():
         if cansetup:
             cansetup.deinit()
 
+    return filename
+
 if __name__ == "__main__":
-    main()
+    filename = test_calibration()
+    if filename:
+        print(filename)
+
+        plot_calibration(filename)
 
 
