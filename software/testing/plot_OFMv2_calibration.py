@@ -347,6 +347,44 @@ def plot_calibration(filename):
     fig.tight_layout()
     plt.show()
 
+    ###########################################################################
+    # plot corrected resistance
+
+    fig, ax8 = plt.subplots()
+
+    mmsel = MMcurrent[current[0] > 0]
+    vsel = voltage[0][current[0] > 0] + U_HG_LG
+    isel = current[0][current[0] > 0] + I_HG_LG
+
+    ax8.axvline(HIGH_GAIN_SATURATION, color='red', linewidth=0.4, label='HG saturation')
+    ax8.axvline(1, color='green', linewidth=0.5, label='1mA')
+
+    ax8.plot(isel, vsel/(isel/1e3), marker='.',
+             label="resistance low gain\n"+
+                     "Ubias = %6.4f\n"%(U_HG_LG) +
+                     "Ibias = %6.4f"%(I_HG_LG)
+             , color='black', alpha=0.2)
+
+    mmsel = MMcurrent[current[1] > 0]
+    vsel = voltage[1][current[1] > 0]
+    isel = current[1][current[1] > 0]
+
+    ax8.plot(isel, vsel/(isel/1e3), marker='.',
+             label="resistance high gain", color='blue')
+
+    ax8.set_xlim([0,10])
+    ax8.set_ylim([116,119])
+
+    ax8.set_ylabel("measured resistance / Ohm")
+    ax8.set_xlabel("OFM current / mA")
+    ax8.set_title("Resistance matching after offsets")
+
+    ax8.legend()
+
+    fig.tight_layout()
+    plt.show()
+
+
 if __name__ == "__main__":
 
     #plot_calibration("calibration_20230104_085105_CH0_10.npz")
