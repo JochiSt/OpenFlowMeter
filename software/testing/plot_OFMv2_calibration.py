@@ -13,6 +13,7 @@ from OpenFlowMeter import convertVoltage, convertCurrent
 import matplotlib.pyplot as plt
 
 def plot_calibration(filename):
+    print(filename)
     npzfile = np.load(filename)
 
     voltage = [ npzfile['voltage0'], npzfile['voltage1'] ]
