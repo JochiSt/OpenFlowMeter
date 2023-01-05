@@ -117,6 +117,7 @@ def plot_calibration(filename):
              label="fit high gain (y = %4.3f*x)"%(popt[0]),
              color='green',
              linewidth=6, alpha=0.6)
+
     ax3.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
     ax3.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
     ax3.plot(MMcurrent, current[0], marker='.',
@@ -146,6 +147,7 @@ def plot_calibration(filename):
     #ax5.plot( [0,40], [0,40], color='red', linestyle='--',label="y=x")
     ax4.axvline(HIGH_GAIN_SATURATION, color='black', linewidth=0.4)
     ax4.axhline(0, color='black')
+
     #ax5.plot(MMcurrent, current[0], marker='.',
     #         label="current low gain", color='black', alpha=0.2)
     #ax5.plot(MMcurrent, current[1], marker='.',
@@ -238,6 +240,7 @@ if __name__ == "__main__":
     #plot_calibration("calibration_20230104_085105_CH0_10.npz")
     #plot_calibration("calibration_20230104_094358_CH0_10.npz")
     #plot_calibration('calibration_20230104_100702_CH0_10.npz')
+    plot_calibration("calibration_20230105_083834_CH0_2.npz")
     print('#'*40)
     print('CHANNEL0')
     plot_calibration('calibration_20230104_105710_CH0_20.npz')
