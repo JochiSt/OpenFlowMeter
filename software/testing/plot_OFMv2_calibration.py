@@ -291,6 +291,60 @@ def plot_calibration(filename):
 
     ax6.legend()
 
+    fig.tight_layout()
+    plt.show()
+
+    ###########################################################################
+
+    fig, ax7 = plt.subplots(2, 2, figsize=(6,10))
+
+    ax7 = ax7.reshape( (4,) )
+
+    ax7[0].plot(current[1], current[0], marker='.')
+    ax7[0].set_xlabel("HG current / mA")
+    ax7[0].set_ylabel("LG current / mA")
+    ax7[0].plot([0,5], [0,5])
+    ax7[0].set_ylim([0,3.5])
+    ax7[0].set_xlim([0,3.5])
+
+    ax7[1].plot(current[1], current[1]-current[0], marker='.')
+    ax7[1].set_xlabel("HG current / mA")
+    ax7[1].set_ylabel("HG - LG current / mA")
+    ax7[1].axhline(0)
+    ax7[1].set_ylim([-0.15, 0.15])
+    ax7[1].set_xlim([0,3.5])
+
+    ax7[2].plot(voltage[1], voltage[0], marker='.')
+    ax7[2].set_xlabel("HG voltage / V")
+    ax7[2].set_ylabel("LG voltage / V")
+    ax7[2].plot([0,5], [0,5])
+    ax7[2].set_ylim([0,0.35])
+    ax7[2].set_xlim([0,0.35])
+
+    ax7[3].plot(voltage[1], voltage[1]-voltage[0], marker='.')
+    ax7[3].set_xlabel("HG voltage / V")
+    ax7[3].set_ylabel("HG - LG voltage / V")
+    ax7[3].axhline(0)
+    ax7[3].set_ylim([-0.02,0.02])
+    ax7[3].set_xlim([0,0.35])
+
+    U_HG_LG = voltage[1]-voltage[0]
+    U_HG_LG = np.mean(U_HG_LG[5:100])
+    ax7[3].axhline(U_HG_LG, color='red')
+    print("Offset U", U_HG_LG)
+
+    I_HG_LG = current[1]-current[0]
+    I_HG_LG = np.mean(I_HG_LG[5:100])
+    ax7[1].axhline(I_HG_LG, color='red')
+    print("Offset I", I_HG_LG)
+
+    ax7[2].plot(voltage[1], voltage[0]+U_HG_LG, marker='.')
+    ax7[3].plot(voltage[1], voltage[1] - (voltage[0] + U_HG_LG), marker='.')
+
+    ax7[0].plot(current[1], current[0]+I_HG_LG, marker='.')
+    ax7[1].plot(current[1], current[1] - (current[0] + I_HG_LG), marker='.')
+
+    fig.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
