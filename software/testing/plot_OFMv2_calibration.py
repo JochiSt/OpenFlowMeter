@@ -80,6 +80,70 @@ def plot_calibration(filename):
     plt.show()
 
     ###########################################################################
+    fig, ax1a = plt.subplots(2, 2, figsize=(6,10))
+
+    ax1a = ax1a.reshape( (4,) )
+
+    ax1a[0].plot(MMcurrent, current[0], marker='')
+    ax1a[0].set_xlabel("MM current / mA")
+    ax1a[0].set_ylabel("LG current / mA")
+    ax1a[0].plot([0,50], [0,50])
+    ax1a[0].set_ylim([0,30])
+    ax1a[0].set_xlim([0,30])
+
+    ax1a[1].plot(MMcurrent, MMcurrent-current[0], marker='')
+    ax1a[1].set_xlabel("MM current / mA")
+    ax1a[1].set_ylabel("MM - LG current / mA")
+    ax1a[1].axhline(0)
+    #ax1a[1].set_ylim([-0.15, 0.15])
+    #ax1a[1].set_xlim([0,3.5])
+
+    ax1a[2].plot(MMcurrent, current[1], marker='')
+    ax1a[2].set_xlabel("MM current / mA")
+    ax1a[2].set_ylabel("HG current / mA")
+    ax1a[2].plot([0,5], [0,5])
+    ax1a[2].set_ylim([0,3.5])
+    ax1a[2].set_xlim([0,3.5])
+
+    ax1a[3].plot(MMcurrent, MMcurrent-current[1], marker='')
+    ax1a[3].set_xlabel("MM current / mA")
+    ax1a[3].set_ylabel("MM - HG current / mA")
+    ax1a[3].axhline(0)
+    ax1a[3].set_ylim([-0.2,0.2])
+    ax1a[3].set_xlim([0,3.5])
+
+
+    I_MM_LG = MMcurrent-current[0]
+    selection = MMcurrent > 2
+    selection2 = MMcurrent < 25
+    selection = selection & selection2
+    I_MM_LG = I_MM_LG[ selection ]
+    I_MM_LG = np.mean(I_MM_LG)
+    ax1a[1].axhline(I_MM_LG, color='red')
+    print("Offset LG", I_MM_LG)
+
+    ax1a[0].plot(MMcurrent[selection], current[0][selection]+I_MM_LG, marker='')
+    ax1a[1].plot(MMcurrent[selection], MMcurrent[selection] - (current[0][selection] + I_MM_LG), marker='')
+
+
+    I_MM_HG = MMcurrent-current[1]
+    selection = MMcurrent > 0.5
+    selection2 = MMcurrent < 3
+    selection = selection & selection2
+    I_MM_HG = I_MM_HG[ selection ]
+    I_MM_HG = np.mean(I_MM_HG)
+    ax1a[3].axhline(I_MM_HG, color='red')
+    print("Offset HG", I_MM_HG)
+
+    ax1a[2].plot(MMcurrent[selection], current[1][selection]+I_MM_HG, marker='')
+    ax1a[3].plot(MMcurrent[selection], MMcurrent[selection] - (current[1][selection] + I_MM_HG), marker='')
+
+    fig.tight_layout()
+    plt.show()
+
+    sys.exit(0)
+
+    ###########################################################################
     # FIT MM current and dac steps
     def fit_func(x, a, b=0):
         return a*x + b
