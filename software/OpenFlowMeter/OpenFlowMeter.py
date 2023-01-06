@@ -26,6 +26,8 @@ class OpenFlowMeter(object):
     CAN_ADC_MSG_ID_CH0  = 0x103     # ADC channel 0
     CAN_ADC_MSG_ID_CH1  = 0x104     # ADC channel 1
     CAN_TEMPERATURE_ID  = 0x105     # calculated temperatures (2x float)
+    CAN_VOLTAGE_ID      = 0x106     # calculated voltage (2x float)
+    CAN_CURRENT_ID      = 0x107     # calculated current (2x float)
     CAN_I2C_MSG_TMP100  = 0x108     # on board TMP100
     CAN_I2C_MSG_BME680  = 0x109     # on board BME680
 
@@ -59,6 +61,8 @@ class OpenFlowMeter(object):
         self.uCrefvoltage  = 0
 
         self.temperatures = [0]*2
+        self.voltages = [0]*2
+        self.currents = [0]*2
 
         self.TMP100_T = 0
 
@@ -176,8 +180,17 @@ class OpenFlowMeter(object):
         elif msg.mid == OpenFlowMeter.CAN_TEMPERATURE_ID | (self.config.boardID << 4):
             if msg.dlc != 8:
                 return
-
             self.temperatures = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
+
+        elif msg.mid == OpenFlowMeter.CAN_VOLTAGE_ID | (self.config.boardID << 4):
+            if msg.dlc != 8:
+                return
+            self.voltages = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
+
+        elif msg.mid == OpenFlowMeter.CAN_CURRENT_ID | (self.config.boardID << 4):
+            if msg.dlc != 8:
+                return
+            self.currents = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
 
         elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
