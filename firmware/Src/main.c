@@ -303,7 +303,7 @@ int main(void)
           current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
           ADCgainUsed |= (1 << 0);
         }else{
-          current0 = avr_adcBuf_GAIN_0[0] * LSB2I;
+          current0 = avr_adcBuf_GAIN_0[0] * LSB2I + cfg.GAIN0.Ibias;
         }
 
         if( avr_adcBuf_GAIN_1[1] < 4020 ){
@@ -311,7 +311,7 @@ int main(void)
           voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
           ADCgainUsed |= (1 << 1);
         }else{
-          voltage0 = avr_adcBuf_GAIN_0[1] * LSB2U;
+          voltage0 = avr_adcBuf_GAIN_0[1] * LSB2U + cfg.GAIN0.Ubias;
         }
 
         /** CHANNEL 1 *********************************************************/
@@ -320,13 +320,13 @@ int main(void)
           current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
           ADCgainUsed |= (1 << 2);
         }else{
-          current1 = avr_adcBuf_GAIN_0[2] * LSB2I;
+          current1 = avr_adcBuf_GAIN_0[2] * LSB2I + cfg.GAIN1.Ibias;
         }
         if( avr_adcBuf_GAIN_1[3] < 4020 ){
           voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
           ADCgainUsed |= (1 << 3);
         }else{
-          voltage1 = avr_adcBuf_GAIN_0[3] * LSB2U;
+          voltage1 = avr_adcBuf_GAIN_0[3] * LSB2U + cfg.GAIN1.Ubias;
         }
 
         /** calculate temperatures ********************************************/

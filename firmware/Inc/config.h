@@ -15,6 +15,8 @@ extern const float LSB2I;
 typedef struct {
     float Ugain;
     float Igain;
+    float Ubias;
+    float Ibias;
 } gain_config_t ;
 
 typedef struct {

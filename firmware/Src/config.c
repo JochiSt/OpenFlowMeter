@@ -42,10 +42,13 @@ void generateDefaultCFG(config_t *cfg){
   // gain settings from calculations / optimisation
   cfg->GAIN0.Igain = 1 + 47.0e3 / 5.6e3;
   cfg->GAIN0.Ugain = 1 + 33.0e3 / 5.6e3;
+  cfg->GAIN0.Ibias = 0.12;
+  cfg->GAIN0.Ubias = 0.01;
 
   cfg->GAIN1.Igain = 1 + 47.0e3 / 5.6e3;
   cfg->GAIN1.Ugain = 1 + 33.0e3 / 5.6e3;
-
+  cfg->GAIN1.Ibias = 0.12;
+  cfg->GAIN1.Ubias = 0.01;
 }
 
 /**
@@ -69,7 +72,10 @@ void printCfg(config_t *cfg){
   printf("\r\n");
   printf("Gain:");
   printf("  CH0 I %f U%f\r\n", cfg->GAIN0.Igain, cfg->GAIN0.Ugain);
-  printf("  CH0 I %f U%f\r\n", cfg->GAIN1.Igain, cfg->GAIN1.Ugain);
+  printf("  CH1 I %f U%f\r\n", cfg->GAIN1.Igain, cfg->GAIN1.Ugain);
+  printf("Offset:");
+  printf("  CH0 I %f U%f\r\n", cfg->GAIN0.Ibias, cfg->GAIN0.Ubias);
+  printf("  CH1 I %f U%f\r\n", cfg->GAIN1.Ibias, cfg->GAIN1.Ubias);
 
   printf("\r\n");
   printf("PID 0: (%d)\r\n", cfg->PID_flags.PID0_active);

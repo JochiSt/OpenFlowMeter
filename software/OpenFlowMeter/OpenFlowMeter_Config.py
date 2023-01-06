@@ -55,7 +55,9 @@ class OpenFlowMeter_Config(object):
         self.PID_D = [0.0 , 0.0]
 
         self.Ugain = [0.0 , 0.0]
+        self.Ubias = [0.0 , 0.0]
         self.Igain = [0.0 , 0.0]
+        self.Ibias = [0.0 , 0.0]
 
         self.SMOO = 15
         self.SMOO_MAX = 16
@@ -75,7 +77,9 @@ class OpenFlowMeter_Config(object):
         self.PID_D = [0.0 , 0.0]
 
         self.Ugain = [0.0 , 0.0]
+        self.Ubias = [0.0 , 0.0]
         self.Igain = [0.0 , 0.0]
+        self.Ibias = [0.0 , 0.0]
 
         self.SMOO = 0
         self.SMOO_MAX = 0
@@ -117,10 +121,14 @@ class OpenFlowMeter_Config(object):
 
         print()
         print("Amplification:")
-        print("\tU0: %f"%(self.Ugain[0]))
-        print("\tI0: %f"%(self.Igain[0]))
-        print("\tU1: %f"%(self.Ugain[1]))
-        print("\tI1: %f"%(self.Igain[1]))
+        print("\tU0:       %f"%(self.Ugain[0]))
+        print("\tI0:       %f"%(self.Igain[0]))
+        print("\tU0offset: %f"%(self.Ubias[0]))
+        print("\tI0offset: %f"%(self.Ibias[0]))
+        print("\tU1:       %f"%(self.Ugain[1]))
+        print("\tI1:       %f"%(self.Igain[1]))
+        print("\tU1offset: %f"%(self.Ubias[1]))
+        print("\tI1offset: %f"%(self.Ibias[1]))
 
     def toBytes(self):
         """
@@ -141,7 +149,8 @@ class OpenFlowMeter_Config(object):
             ], dtype=np.float32)
 
         GAINs = np.array([
-            self.Ugain[0], self.Igain[0], self.Ugain[1], self.Igain[1]
+            self.Ugain[0], self.Igain[0], self.Ubias[0], self.Ibias[0],
+            self.Ugain[1], self.Igain[1], self.Ubias[1], self.Ibias[1],
             ], dtype=np.float32)
 
         ret = bytearray([
@@ -190,26 +199,33 @@ class OpenFlowMeter_Config(object):
         self.SMOO_MAX            = bytesin[6]
         self.PID_flags           = bytesin[7]
 
-        nfloat = 12
+        nfloat = 16
         floatstart = 8
         floats = np.frombuffer(bytesin[ floatstart :  floatstart + nfloat*4], dtype=np.float32)
 
         self.PID_active = [ bool((self.PID_flags & 0x1)),
                             bool((self.PID_flags & 0x2) >> 1) ]
 
-        self.PID_T[0] = floats[ 0]
-        self.PID_P[0] = floats[ 1]
-        self.PID_I[0] = floats[ 2]
-        self.PID_D[0] = floats[ 3]
-        self.PID_T[1] = floats[ 4]
-        self.PID_P[1] = floats[ 5]
-        self.PID_I[1] = floats[ 6]
-        self.PID_D[1] = floats[ 7]
+        [
+            self.PID_T[0],
+            self.PID_P[0],
+            self.PID_I[0],
+            self.PID_D[0],
+            self.PID_T[1],
+            self.PID_P[1],
+            self.PID_I[1],
+            self.PID_D[1],
 
-        self.Ugain[0] = floats[ 8]
-        self.Igain[0] = floats[ 9]
-        self.Ugain[1] = floats[10]
-        self.Igain[1] = floats[11]
+            self.Ugain[0],
+            self.Igain[0],
+            self.Ubias[0],
+            self.Ibias[0],
+            self.Ugain[1],
+            self.Igain[1],
+            self.Ubias[1],
+            self.Ibias[1],
+        ] = floats
+
 
 if __name__ == "__main__":
     OFMcfg = OpenFlowMeter_Config()
