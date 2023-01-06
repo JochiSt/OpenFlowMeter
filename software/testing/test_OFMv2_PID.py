@@ -185,6 +185,14 @@ def main():
         except Exception as e:
             print(e)
 
+        filename = "PIDtest%s_.npz"%(time.strftime("%Y%m%d_%H%M%S"))
+        np.savez(filename,
+                    timestamp=timestamp,
+                    dac0  = dac[0],  dac1  = dac[1],
+                    setp0 = setp[0], setp1 = setp[1],
+                    temperature0 = temperatures[0], temperature1 = temperatures[1]
+                    )
+
         ofm.setDAC(10,10)
         ofm.config.PID_flags = 0b00000000
         ofm.changeConfig()
