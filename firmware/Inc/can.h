@@ -45,6 +45,8 @@ extern CAN_HandleTypeDef hcan;
 #define CAN_ADC_MSG_ID_CH1  0x104
 
 #define CAN_TEMPERATURE_ID  0x105
+#define CAN_VOLTAGE_ID      0x106
+#define CAN_CURRENT_ID      0x107
 
 #define CAN_I2C_MSG_TMP100  0x108
 #define CAN_I2C_MSG_BME680  0x109
