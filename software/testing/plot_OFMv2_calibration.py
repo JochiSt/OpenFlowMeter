@@ -13,6 +13,7 @@ from OpenFlowMeter import convertVoltage, convertCurrent
 import matplotlib.pyplot as plt
 
 def plot_calibration(filename):
+    print('#'*40)
     print(filename)
     npzfile = np.load(filename)
 
@@ -401,23 +402,38 @@ def plot_calibration(filename):
     ax7[3].set_xlim([0,0.35])
 
     U_HG_LG = voltage[1]-voltage[0]
-    U_HG_LG = U_HG_LG[ current[1] < HIGH_GAIN_SATURATION]
+
+    selection  = voltage[1] > 0.02
+    selection2 = voltage[1] < 0.33
+    selection = selection & selection2
+
+    U_HG_LG = U_HG_LG[ selection ]
     U_HG_LG = np.median(U_HG_LG)
     ax7[3].axhline(U_HG_LG, color='red')
     print("Offset U", U_HG_LG)
 
+    ax7[2].plot(voltage[1], voltage[0]+U_HG_LG, marker='')
+    ax7[3].plot(voltage[1][selection],
+                voltage[1][selection] - (voltage[0][selection] + U_HG_LG), marker='')
+
+    ###########################################################################
+    # current offset
+
     I_HG_LG = current[1]-current[0]
-    I_HG_LG = I_HG_LG[ current[1] < HIGH_GAIN_SATURATION]
+
+    selection  = current[1] > 0.2
+    selection2 = current[1] < HIGH_GAIN_SATURATION
+    selection = selection & selection2
+
+    I_HG_LG = I_HG_LG[ selection ]
     I_HG_LG = np.median(I_HG_LG)
     ax7[1].axhline(I_HG_LG, color='red')
     print("Offset I", I_HG_LG)
 
     ax7[0].plot(current[1], current[0]+I_HG_LG, marker='')
-    ax7[1].plot(current[1], current[1] - (current[0] + I_HG_LG), marker='')
+    ax7[1].plot(current[1][selection],
+                current[1][selection] - (current[0][selection] + I_HG_LG), marker='')
     ax7[1].axvline(HIGH_GAIN_SATURATION)
-
-    ax7[2].plot(voltage[1], voltage[0]+U_HG_LG, marker='')
-    ax7[3].plot(voltage[1], voltage[1] - (voltage[0] + U_HG_LG), marker='')
 
     fig.tight_layout()
     plt.show()
@@ -443,6 +459,8 @@ def plot_calibration(filename):
                      "Ibias = %6.4f"%(I_HG_LG)
              , color='black', alpha=0.2)
 
+    R_LG = vsel/(isel/1e3)
+
     mmsel = MMcurrent[current[1] > 0]
     vsel = voltage[1][current[1] > 0]
     isel = current[1][current[1] > 0]
@@ -450,8 +468,11 @@ def plot_calibration(filename):
     ax8.plot(isel, vsel/(isel/1e3), marker='.',
              label="resistance high gain", color='blue')
 
-    ax8.set_xlim([0,10])
-    ax8.set_ylim([110,130])
+    ax8.set_xlim([0,20])
+
+    R = np.mean(R_LG)
+    ax8.axhline(R, color="green", label="Mean resistance (%5.2f Ohm)"%(R))
+    ax8.set_ylim([ R - 1.5 , R + 1.5])
 
     ax8.set_ylabel("measured resistance / Ohm")
     ax8.set_xlabel("OFM current / mA")
@@ -460,6 +481,7 @@ def plot_calibration(filename):
     ax8.legend()
 
     fig.tight_layout()
+    plt.savefig(filename.replace('.npz', '_Rmatching_final.png'))
     plt.show()
 
 
