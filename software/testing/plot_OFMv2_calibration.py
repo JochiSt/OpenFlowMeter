@@ -16,8 +16,9 @@ def plot_calibration(filename):
     print(filename)
     npzfile = np.load(filename)
 
+    # OpenFlowMeter measured currents & voltages
     voltage = [ npzfile['voltage0'], npzfile['voltage1'] ]
-    current = [ npzfile['current0'], npzfile['current1'] ]            # OpenFlowMeter measured current
+    current = [ npzfile['current0'], npzfile['current1'] ]
 
     MMcurrent = npzfile['MMcurrent']  # Multimeter measured current
     dac_setp = npzfile['dac_steps']
@@ -53,6 +54,8 @@ def plot_calibration(filename):
         current[gain] = convertCurrent( current[gain], gain ) *1e3
 
     MMcurrent /= 10 # to get it in mA
+
+    ###########################################################################
 
     fig, ax1 = plt.subplots()
     ax1.set_title("OFM current vs. Multimeter current")
@@ -91,7 +94,7 @@ def plot_calibration(filename):
     ax1a[0].set_ylim([0,30])
     ax1a[0].set_xlim([0,30])
 
-    ax1a[1].plot(MMcurrent, MMcurrent-current[0], marker='')
+    ax1a[1].plot(MMcurrent, MMcurrent-current[0], marker='', label='difference to multimeter')
     ax1a[1].set_xlabel("MM current / mA")
     ax1a[1].set_ylabel("MM - LG current / mA")
     ax1a[1].axhline(0)
@@ -105,7 +108,7 @@ def plot_calibration(filename):
     ax1a[2].set_ylim([0,3.5])
     ax1a[2].set_xlim([0,3.5])
 
-    ax1a[3].plot(MMcurrent, MMcurrent-current[1], marker='')
+    ax1a[3].plot(MMcurrent, MMcurrent-current[1], marker='', label='difference to multimeter')
     ax1a[3].set_xlabel("MM current / mA")
     ax1a[3].set_ylabel("MM - HG current / mA")
     ax1a[3].axhline(0)
@@ -123,8 +126,9 @@ def plot_calibration(filename):
     print("Offset LG", I_MM_LG)
 
     ax1a[0].plot(MMcurrent[selection], current[0][selection]+I_MM_LG, marker='')
-    ax1a[1].plot(MMcurrent[selection], MMcurrent[selection] - (current[0][selection] + I_MM_LG), marker='')
-
+    ax1a[1].plot(MMcurrent[selection],
+                 MMcurrent[selection] - (current[0][selection] + I_MM_LG), marker='',
+                 label='difference corrected (%5.4f)'%(I_MM_LG))
 
     I_MM_HG = MMcurrent-current[1]
     selection = MMcurrent > 0.5
@@ -136,12 +140,17 @@ def plot_calibration(filename):
     print("Offset HG", I_MM_HG)
 
     ax1a[2].plot(MMcurrent[selection], current[1][selection]+I_MM_HG, marker='')
-    ax1a[3].plot(MMcurrent[selection], MMcurrent[selection] - (current[1][selection] + I_MM_HG), marker='')
+    ax1a[3].plot(MMcurrent[selection],
+                 MMcurrent[selection] - (current[1][selection] + I_MM_HG), marker='',
+                 label='difference corrected (%5.4f)'%(I_MM_HG))
+
+    ax1a[1].legend()
+    ax1a[3].legend()
 
     fig.tight_layout()
     plt.show()
 
-    sys.exit(0)
+    #sys.exit(0)
 
     ###########################################################################
     # FIT MM current and dac steps
@@ -177,7 +186,7 @@ def plot_calibration(filename):
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
     plt.show()
 
-
+    print(np.max( current[1] ) )
 
     ###########################################################################
     # Fit the HIGH gain section (without saturation)
@@ -323,7 +332,6 @@ def plot_calibration(filename):
     fig.tight_layout()
     plt.show()
 
-
     ###########################################################################
     # plot the resistance
 
@@ -393,20 +401,23 @@ def plot_calibration(filename):
     ax7[3].set_xlim([0,0.35])
 
     U_HG_LG = voltage[1]-voltage[0]
-    U_HG_LG = np.mean(U_HG_LG[5:100])
+    U_HG_LG = U_HG_LG[ current[1] < HIGH_GAIN_SATURATION]
+    U_HG_LG = np.median(U_HG_LG)
     ax7[3].axhline(U_HG_LG, color='red')
     print("Offset U", U_HG_LG)
 
     I_HG_LG = current[1]-current[0]
-    I_HG_LG = np.mean(I_HG_LG[5:100])
+    I_HG_LG = I_HG_LG[ current[1] < HIGH_GAIN_SATURATION]
+    I_HG_LG = np.median(I_HG_LG)
     ax7[1].axhline(I_HG_LG, color='red')
     print("Offset I", I_HG_LG)
 
-    ax7[2].plot(voltage[1], voltage[0]+U_HG_LG, marker='')
-    ax7[3].plot(voltage[1], voltage[1] - (voltage[0] + U_HG_LG), marker='')
-
     ax7[0].plot(current[1], current[0]+I_HG_LG, marker='')
     ax7[1].plot(current[1], current[1] - (current[0] + I_HG_LG), marker='')
+    ax7[1].axvline(HIGH_GAIN_SATURATION)
+
+    ax7[2].plot(voltage[1], voltage[0]+U_HG_LG, marker='')
+    ax7[3].plot(voltage[1], voltage[1] - (voltage[0] + U_HG_LG), marker='')
 
     fig.tight_layout()
     plt.show()
@@ -437,7 +448,7 @@ def plot_calibration(filename):
              label="resistance high gain", color='blue')
 
     ax8.set_xlim([0,10])
-    ax8.set_ylim([116,119])
+    ax8.set_ylim([110,130])
 
     ax8.set_ylabel("measured resistance / Ohm")
     ax8.set_xlabel("OFM current / mA")
@@ -462,3 +473,4 @@ if __name__ == "__main__":
     print('CHANNEL1')
     #plot_calibration('calibration_20230104_113819_CH1_20.npz')
     plot_calibration('calibration_20230104_122100_CH1_20.npz')
+    """
