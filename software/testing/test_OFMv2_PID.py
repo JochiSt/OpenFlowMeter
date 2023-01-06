@@ -219,7 +219,7 @@ def main():
                        label="T CH1 gain %d"%(gain), color=colors[gain])
 
         for i in [0,1]:
-            ax[i].plot( timestamp, temperatures[i], label="calc. T", color='tab:deeppink')
+            ax[i].plot( timestamp, temperatures[i], label="calc. T", color='deeppink', linewidth=4)
 
         # DAC setpoint
         ax2 = [
