@@ -303,7 +303,7 @@ int main(void)
           current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
           ADCgainUsed |= (1 << 0);
         }else{
-          current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias;
+          current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
         }
 
         if( avr_adcBuf_GAIN_1[1] < 4020 ){
@@ -320,7 +320,7 @@ int main(void)
           current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
           ADCgainUsed |= (1 << 2);
         }else{
-          current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias;
+          current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
         }
         if( avr_adcBuf_GAIN_1[3] < 4020 ){
           voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
