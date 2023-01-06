@@ -422,6 +422,9 @@ def plot_calibration(filename):
     fig.tight_layout()
     plt.show()
 
+    with open("bias_settings.txt", "a") as myfile:
+        myfile.write("%s\t%f\t%f\n"%(filename, U_HG_LG, I_HG_LG))
+
     ###########################################################################
     # plot corrected resistance
 
