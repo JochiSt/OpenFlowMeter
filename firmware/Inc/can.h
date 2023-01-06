@@ -68,7 +68,7 @@ void CAN_prepare_filter_mask(uint16_t maskID0, uint16_t canID0, uint16_t maskID1
 void CAN_parse_message(CAN_RxHeaderTypeDef RxHeader, uint8_t *RxData);
 
 void CAN_send_DAC_readback();
-void CAN_send_temperatures(float *temperature0, float *temperature1);
+void CAN_send_floats(uint16_t can_id, float *float0, float *float1);
 void CAN_send_Configuration();
 
 /* USER CODE END Prototypes */

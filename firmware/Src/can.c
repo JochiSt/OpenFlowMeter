@@ -371,16 +371,16 @@ void CAN_send_DAC_readback(void){
   CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
 }
 
-void CAN_send_temperatures(float *temperature0, float *temperature1){
-  uint8_t *ptr_t0 = (uint8_t*)temperature0;
-  uint8_t *ptr_t1 = (uint8_t*)temperature1;
+void CAN_send_floats(uint16_t can_id, float *float0, float *float1){
+  uint8_t *ptr_t0 = (uint8_t*)float0;
+  uint8_t *ptr_t1 = (uint8_t*)float1;
   for( uint8_t i=0; i<4; i++){
     data[i] = ptr_t0[i];
   }
   for( uint8_t i=0; i<4; i++){
     data[i+4] = ptr_t1[i];
   }
-  CAN_send_data_frame( CAN_TEMPERATURE_ID | (cfg.board_ID << 4), 8, data);
+  CAN_send_data_frame( can_id, 8, data);
 }
 
 
