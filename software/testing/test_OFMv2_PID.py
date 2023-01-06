@@ -79,6 +79,8 @@ def main():
         i_1 = [0]*2
         u_1 = [0]*2
 
+        PLOT_RESISTANCE = False
+
         print("Use CTRL-C to stop datataking...")
 
         dac_on = False
@@ -243,13 +245,14 @@ def main():
             ax3[i].spines['right'].set_position(('outward', 60))
             ax3[i].tick_params(axis='y', labelcolor=color)
 
-        for gain in [0,1]:
-            colors = ['forestgreen', 'lime']
+        if PLOT_RESISTANCE:
+            for gain in [0,1]:
+                colors = ['forestgreen', 'lime']
 
-            ax3[0].plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain),
-                        color=colors[gain])
-            ax3[1].plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain),
-                        color=colors[gain])
+                ax3[0].plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain),
+                            color=colors[gain])
+                ax3[1].plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain),
+                            color=colors[gain])
 
 
         for i in [0,1]:
