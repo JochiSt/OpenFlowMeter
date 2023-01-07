@@ -484,6 +484,58 @@ def plot_calibration(filename):
     plt.savefig(filename.replace('.npz', '_Rmatching_final.png'))
     plt.show()
 
+    ###########################################################################
+
+    fig, ax9 = plt.subplots(2, 2, figsize=(6,10))
+
+    ax9 = ax9.reshape( (4,) )
+
+    U_SATURATION_LSB = 3970
+    U_SATURATION = convertVoltage(U_SATURATION_LSB, 1)
+
+    I_SATURATION_LSB = 3970
+    I_SATURATION = convertCurrent(I_SATURATION_LSB, 1) * 1e3
+
+    ax9[0].plot(dac_steps, current[0] + I_HG_LG, marker='', label="LG current + offset")
+    ax9[0].plot(dac_steps, current[1], marker='', label="HG current")
+    ax9[0].axhline( I_SATURATION )
+    ax9[0].set_xlabel("DAC setpoint / LSB")
+    ax9[0].set_ylabel("current / mA")
+    #ax9[0].plot([0,5], [0,5])
+    ax9[0].set_ylim([0,4])
+    ax9[0].set_xlim([0,5*33])
+
+    ax9[1].plot(dac_steps[current[1] < I_SATURATION], current[1][current[1] < I_SATURATION]-(current[0][current[1] < I_SATURATION]+I_HG_LG), marker='')
+    ax9[1].set_xlabel("DAC setpoint / LSB")
+    ax9[1].set_ylabel("HG - LG current / mA")
+    ax9[1].axhline(0)
+    ax9[1].set_ylim([-0.05, 0.05])
+    ax9[1].set_xlim([0,5*33])
+
+    ax9[2].plot(dac_steps, voltage[0] + U_HG_LG, marker='', label="LG voltage + offset")
+    ax9[2].plot(dac_steps, voltage[1], marker='', label="HG voltage")
+    ax9[2].axhline( U_SATURATION )
+
+    ax9[2].set_xlabel("DAC setpoint / LSB")
+    ax9[2].set_ylabel("LG voltage / V")
+    #ax9[2].plot([0,5], [0,5])
+    ax9[2].set_ylim([0,0.5])
+    ax9[2].set_xlim([0,5*33])
+
+    ax9[3].plot(dac_steps[voltage[1] < U_SATURATION], voltage[1][voltage[1] < U_SATURATION]-(voltage[0][voltage[1] < U_SATURATION] + U_HG_LG), marker='')
+    ax9[3].set_xlabel("DAC setpoint / LSB")
+    ax9[3].set_ylabel("HG - LG voltage / V")
+    ax9[3].axhline(0)
+    ax9[3].set_ylim([-0.005,0.005])
+    ax9[3].set_xlim([0,5*33])
+
+    for i in range(4):
+        ax9[i].legend()
+
+    fig.tight_layout()
+    #plt.savefig(filename.replace('.npz', '_Rmatching_final.png'))
+    plt.show()
+
 
 if __name__ == "__main__":
 
