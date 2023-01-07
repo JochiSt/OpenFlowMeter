@@ -298,7 +298,7 @@ int main(void)
 
         /** CHANNEL 0 *********************************************************/
         ADCgainUsed = 0;
-        if( avr_adcBuf_GAIN_1[0] < 4020 ){
+        if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
           // high gain setting
           current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
           ADCgainUsed |= (1 << 0);
@@ -306,7 +306,7 @@ int main(void)
           current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
         }
 
-        if( avr_adcBuf_GAIN_1[1] < 4020 ){
+        if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
           // high gain setting
           voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
           ADCgainUsed |= (1 << 1);
@@ -315,14 +315,14 @@ int main(void)
         }
 
         /** CHANNEL 1 *********************************************************/
-        if( avr_adcBuf_GAIN_1[2] < 4020 ){
+        if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
           // high gain setting
           current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
           ADCgainUsed |= (1 << 2);
         }else{
           current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
         }
-        if( avr_adcBuf_GAIN_1[3] < 4020 ){
+        if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
           voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
           ADCgainUsed |= (1 << 3);
         }else{

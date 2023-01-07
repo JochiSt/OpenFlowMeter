@@ -9,6 +9,9 @@ extern "C" {
 
 #include "pid.h"
 
+#define ISATURATION_LSB   3970
+#define USATURATION_LSB   3970
+
 extern const float LSB2U;
 extern const float LSB2I;
 
