@@ -70,6 +70,9 @@ def main():
         dac  = [np.array([]), np.array([])]
         setp = [np.array([]), np.array([])]
         temperatures = [np.array([]), np.array([])]
+        voltages = [np.array([]), np.array([])]
+        currents = [np.array([]), np.array([])]
+        gains = np.array([])
         r_0  = [np.array([]), np.array([])]
         r_1  = [np.array([]), np.array([])]
 
@@ -101,6 +104,8 @@ def main():
         TIME_DISTURB = 200
         disturbed = False
 
+        events = []
+
         try:
             while True:
                 ofm.waitForNewMessage()
@@ -113,13 +118,14 @@ def main():
                     ofm.config.PID_active[1] = True
                     ofm.changeConfig()
                     print("PID enabled")
+                    events.append( (runtime, "PID enabled") )
 
                 if runtime > TIME_START + TIME_PID_ACTIVE and dac_on:
                     dac_on = False
                     ofm.config.PID_active[1] = False
                     ofm.changeConfig()
                     print("PID disabled")
-
+                    events.append( (runtime, "PID disabled") )
                     ofm.setDAC(10,10)
 
                 if runtime > TIME_START + TIME_PID_ACTIVE + TIME_STOP:
@@ -130,14 +136,20 @@ def main():
                     disturbed = True
                     ofm.config.PID_T[1] = ofm.config.PID_T[1] + 10
                     ofm.changeConfig()
+                    events.append( (runtime, "PID setpoint %3.1f"%(ofm.config.PID_T[1])) )
 
                 timestamp = np.append(timestamp, runtime)
                 t_tmp100 = np.append(t_tmp100, ofm.TMP100_T)
+
+                gains = np.append(gains, ofm.ADCgains)
 
                 for ch in [0,1]:
                     dac[ch]  = np.append(dac[ch], ofm.DACreadback[ch])
                     setp[ch] = np.append(setp[ch], ofm.config.PID_T[ch])
                     temperatures[ch] = np.append(temperatures[ch], ofm.temperatures[ch])
+
+                    voltages[ch] = np.append(voltages[ch], ofm.voltages[ch])
+                    currents[ch] = np.append(currents[ch], ofm.currents[ch])
 
                 for gain in [0,1]:
 
@@ -196,7 +208,12 @@ def main():
                     timestamp=timestamp,
                     dac0  = dac[0],  dac1  = dac[1],
                     setp0 = setp[0], setp1 = setp[1],
-                    temperature0 = temperatures[0], temperature1 = temperatures[1]
+                    temperature0 = temperatures[0], temperature1 = temperatures[1],
+                    voltage0 = voltages[0], voltage1 = voltages[1],
+                    current0 = currents[0], current1 = currents[1],
+                    events=events,
+                    ofmcfg = ofm.config.toBytes(),
+                    gains=gains
                     )
 
         ofm.setDAC(10,10)
