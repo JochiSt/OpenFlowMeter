@@ -93,16 +93,6 @@ def plot_OFMv2_PID(filename):
         ax3[i].spines['right'].set_position(('outward', 55))
         ax3[i].tick_params(axis='y', labelcolor=color)
 
-    """
-    if PLOT_RESISTANCE:
-        for gain in [0,1]:
-            colors = ['forestgreen', 'lime']
-
-            ax3[0].plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain),
-                        color=colors[gain])
-            ax3[1].plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain),
-                        color=colors[gain])
-    """
         ax3[i].plot(timestamp, currents[i]*1000, label="current", color=color)
 
     for i in [0,1]:
