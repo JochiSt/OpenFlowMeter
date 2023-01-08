@@ -450,10 +450,12 @@ int main(void)
         cnt_can_adc = 0;
 
         // TODO remove debug CAN message transmission
-        CAN_send_DAC_readback();
         CAN_send_floats(CAN_TEMPERATURE_ID | (cfg.board_ID << 4) , &temperature0, &temperature1);
         CAN_send_floats(CAN_VOLTAGE_ID | (cfg.board_ID << 4) , &voltage0, &voltage1);
         CAN_send_floats(CAN_CURRENT_ID | (cfg.board_ID << 4) , &current0, &current1);
+        //CAN_send_DAC_readback();
+        CAN_send_uint16s(CAN_DAC_ID         | (cfg.board_ID << 4),
+                             3, TIM3->CCR2, TIM3->CCR1, (uint16_t)ADCgainUsed );
 
         /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
