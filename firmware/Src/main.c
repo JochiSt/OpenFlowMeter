@@ -73,7 +73,7 @@ float voltage0, voltage1;
 float temperature0, temperature1;
 
 // avoid flickering saturation non saturation
-#define SAT_CNT_PRESET  7
+#define SAT_CNT_PRESET  10
 uint8_t current0_sat_cnt, current1_sat_cnt;
 uint8_t voltage0_sat_cnt, voltage1_sat_cnt;
 
