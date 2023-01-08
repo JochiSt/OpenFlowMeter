@@ -363,10 +363,9 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
 }
 
 void CAN_send_DAC_readback(void){
-  data[0] = upper(TIM3->CCR2);
-  data[1] = lower(TIM3->CCR2);
-  data[2] = upper(TIM3->CCR1);
-  data[3] = lower(TIM3->CCR1);
+  CAN_send_uint16s(CAN_DAC_ID | (cfg.board_ID << 4), 2, TIM3->CCR2, TIM3->CCR1);
+}
+
 void CAN_send_uint16s(uint16_t can_id, uint8_t n, ...){
   va_list args;
   if(n > 4){
@@ -380,7 +379,6 @@ void CAN_send_uint16s(uint16_t can_id, uint8_t n, ...){
     data[i*2 + 1] = lower(value);
   }
 
-  CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
   va_end(args);
   CAN_send_data_frame( can_id, n*2, data);
 }
