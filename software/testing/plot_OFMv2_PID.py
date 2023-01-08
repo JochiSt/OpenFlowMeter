@@ -37,7 +37,7 @@ def plot_OFMv2_PID(filename):
     ofmcfg       = OpenFlowMeter_Config()
     ofmcfg.fromBytes( npzfile['ofmcfg'] )
 
-    gains        = npzfile['gains']
+    gains        = npzfile['gains'].astype(int)
     # ofmcfg.printout()
 
     fig, ax = plt.subplots(2, 1, figsize=(8,10))
@@ -109,6 +109,20 @@ def plot_OFMv2_PID(filename):
 
         ax4[i].plot(timestamp, voltages[i], label="voltage", color=color)
 
+    ###########################################################################
+    # gains
+    ax5 = [
+        ax[0].twinx(),
+        ax[1].twinx()
+        ]
+    color = 'red'
+    for i in [0,1]:
+        ax5[i].set_ylabel("gains", color=color)
+        ax5[i].spines['right'].set_position(('outward', 55+55+55))
+        ax5[i].tick_params(axis='y', labelcolor=color)
+
+        ax5[i].plot(timestamp, np.right_shift(gains, (2*i)) & 0x3,
+                    label="gains", color=color, marker='.', linestyle='')
 
     for i in [0,1]:
         ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
