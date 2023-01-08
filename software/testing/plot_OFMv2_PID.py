@@ -114,22 +114,18 @@ def plot_OFMv2_PID(filename):
         ax[i].set_xlabel("measurement time / s")
         ax[i].set_xlim([25,75])
 
-    """
     for i in [0,1]:
-        ax[i].text(0.2, 0.95, "T %f\nP %f\nI %f\nD %f"%(
-                ofm.config.PID_T[i],
-                ofm.config.PID_P[i],
-                ofm.config.PID_I[i],
-                ofm.config.PID_D[i]
+        ax[i].text(0.1, 0.95, "T %f\nP %f\nI %f\nD %f"%(
+                ofmcfg.PID_T[i],
+                ofmcfg.PID_P[i],
+                ofmcfg.PID_I[i],
+                ofmcfg.PID_D[i]
             ),
              horizontalalignment='left',
              verticalalignment='top',
              transform=ax[i].transAxes,
              fontfamily = 'monospace',
              fontsize = 'medium')
-        #ofm.config.PID_T[1] = 30.0
-    """
-    #fig.legend()
 
     fig.tight_layout()
     plt.show()
