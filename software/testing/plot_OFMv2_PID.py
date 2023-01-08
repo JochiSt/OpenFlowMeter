@@ -53,6 +53,11 @@ def plot_OFMv2_PID(filename):
         ax[i].plot( timestamp, setp[i], label="setpoint")
         #ax[i].axhline(ofm.config.PID_T[i])
 
+        for (t, event) in events:
+            vline_color = next(ax[i]._get_lines.prop_cycler)['color']
+            ax[i].axvline(float(t), label=event,
+                          color = vline_color, linewidth=1)
+
     """
     for gain in [0,1]:
         colors = ['mediumblue', 'cornflowerblue']
