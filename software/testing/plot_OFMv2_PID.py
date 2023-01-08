@@ -2,6 +2,7 @@
 
 import sys
 sys.path.append("../")
+from OpenFlowMeter import OpenFlowMeter_Config
 from OpenFlowMeter import PT100
 from OpenFlowMeter import convertVoltage, convertCurrent
 
@@ -25,10 +26,21 @@ def plot_OFMv2_PID(filename):
     # OpenFlowMeter measured currents & voltages
     timestamp    = npzfile['timestamp']
     temperatures = [ npzfile['temperature0'], npzfile['temperature1'] ]
+
+    voltages = [ npzfile['voltage0'], npzfile['voltage1'] ]
+    currents = [ npzfile['current0'], npzfile['current1'] ]
+
     setp         = [ npzfile['setp0'], npzfile['setp1'] ]
     dac          = [ npzfile['dac0'], npzfile['dac1'] ]
 
-    fig, ax = plt.subplots(2, 1, figsize=(6,10))
+    events       = npzfile['events']
+    ofmcfg       = OpenFlowMeter_Config()
+    ofmcfg.fromBytes( npzfile['ofmcfg'] )
+
+    gains        = npzfile['gains']
+    # ofmcfg.printout()
+
+    fig, ax = plt.subplots(2, 1, figsize=(8,10))
 
     # temperatures
     color = 'tab:blue'
