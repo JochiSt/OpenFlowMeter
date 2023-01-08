@@ -95,6 +95,20 @@ def plot_OFMv2_PID(filename):
 
         ax3[i].plot(timestamp, currents[i]*1000, label="current", color=color)
 
+    ax4 = [
+        ax[0].twinx(),
+        ax[1].twinx()
+        ]
+    # voltage
+    color = 'tab:blue'
+    for i in [0,1]:
+        ax4[i].set_ylabel("voltage / V", color=color)
+        ax4[i].spines['right'].set_position(('outward', 55+55))
+        ax4[i].tick_params(axis='y', labelcolor=color)
+
+        ax4[i].plot(timestamp, voltages[i], label="voltage", color=color)
+
+
     for i in [0,1]:
         ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
         ax[i].set_xlabel("measurement time / s")
