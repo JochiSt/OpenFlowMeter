@@ -86,8 +86,6 @@ def main():
         i_1 = [0]*2
         u_1 = [0]*2
 
-        PLOT_RESISTANCE = False
-
         print("Use CTRL-C to stop datataking...")
 
         dac_on = False
