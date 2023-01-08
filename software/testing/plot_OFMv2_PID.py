@@ -86,12 +86,11 @@ def plot_OFMv2_PID(filename):
         ax[0].twinx(),
         ax[1].twinx()
         ]
-
-    # resistance
+    # current
     color = 'tab:green'
     for i in [0,1]:
-        ax3[i].set_ylabel("resistance / Ohm", color=color)
-        ax3[i].spines['right'].set_position(('outward', 60))
+        ax3[i].set_ylabel("current / mA", color=color)
+        ax3[i].spines['right'].set_position(('outward', 55))
         ax3[i].tick_params(axis='y', labelcolor=color)
 
     """
@@ -104,6 +103,7 @@ def plot_OFMv2_PID(filename):
             ax3[1].plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain),
                         color=colors[gain])
     """
+        ax3[i].plot(timestamp, currents[i]*1000, label="current", color=color)
 
     for i in [0,1]:
         ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
