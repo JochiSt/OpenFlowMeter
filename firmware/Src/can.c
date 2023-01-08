@@ -367,8 +367,22 @@ void CAN_send_DAC_readback(void){
   data[1] = lower(TIM3->CCR2);
   data[2] = upper(TIM3->CCR1);
   data[3] = lower(TIM3->CCR1);
+void CAN_send_uint16s(uint16_t can_id, uint8_t n, ...){
+  va_list args;
+  if(n > 4){
+    return;
+  }
+  va_start(args, n);
+
+  for( uint8_t i=0; i<n; i++){
+    uint16_t value = (uint16_t)va_arg(args, int);
+    data[i*2]     = upper(value);
+    data[i*2 + 1] = lower(value);
+  }
 
   CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
+  va_end(args);
+  CAN_send_data_frame( can_id, n*2, data);
 }
 
 void CAN_send_floats(uint16_t can_id, float *float0, float *float1){
