@@ -7,6 +7,8 @@ from OpenFlowMeter import PT100
 from OpenFlowMeter import convertVoltage, convertCurrent
 from CANsetup import CANsetup
 
+from plot_OFMv2_PID import plot_OFMv2_PID
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,6 +16,8 @@ import time
 
 def main():
     setup = None
+    filename = None
+
     try:
         print("Getting the configuration from OFM")
         print('#'*70+'\n')
@@ -199,85 +203,6 @@ def main():
         ofm.config.PID_flags = 0b00000000
         ofm.changeConfig()
 
-        fig, ax = plt.subplots(2, 1, figsize=(6,10))
-
-        # temperatures
-        color = 'tab:blue'
-        for i in [0,1]:
-            ax[i].plot( timestamp, t_tmp100, label="T TMP100", color='lightsteelblue')
-            ax[i].set_ylabel("Temperature / degC", color=color)
-            ax[i].tick_params(axis='y', labelcolor=color)
-
-            ax[i].plot( timestamp, setp[i], label="setpoint")
-            #ax[i].axhline(ofm.config.PID_T[i])
-
-        for gain in [0,1]:
-            colors = ['mediumblue', 'cornflowerblue']
-            ax[0].plot( timestamp, PT100.convertPT100_T(r_0[gain]),
-                       label="T CH0 gain %d"%(gain), color=colors[gain])
-            ax[1].plot( timestamp, PT100.convertPT100_T(r_1[gain]),
-                       label="T CH1 gain %d"%(gain), color=colors[gain])
-
-        for i in [0,1]:
-            ax[i].plot( timestamp, temperatures[i], label="calc. T", color='deeppink', linewidth=4)
-
-        # DAC setpoint
-        ax2 = [
-            ax[0].twinx(),
-            ax[1].twinx()
-            ]
-
-        color = 'tab:orange'
-        for i in [0,1]:
-            ax2[i].set_ylabel("DAC setpoint / LSB", color=color)
-            ax2[i].tick_params(axis='y', labelcolor=color)
-            ax2[i].plot( timestamp, dac[i], label="DAC", color=color)
-
-        ax3 = [
-            ax[0].twinx(),
-            ax[1].twinx()
-            ]
-
-        # resistance
-        color = 'tab:green'
-        for i in [0,1]:
-            ax3[i].set_ylabel("resistance / Ohm", color=color)
-            ax3[i].spines['right'].set_position(('outward', 60))
-            ax3[i].tick_params(axis='y', labelcolor=color)
-
-        if PLOT_RESISTANCE:
-            for gain in [0,1]:
-                colors = ['forestgreen', 'lime']
-
-                ax3[0].plot( timestamp, r_0[gain], label="R CH0 gain %d"%(gain),
-                            color=colors[gain])
-                ax3[1].plot( timestamp, r_1[gain], label="R CH1 gain %d"%(gain),
-                            color=colors[gain])
-
-
-        for i in [0,1]:
-            ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
-            ax[i].set_xlabel("measurement time / s")
-
-        for i in [0,1]:
-            ax[i].text(0.2, 0.95, "T %f\nP %f\nI %f\nD %f"%(
-                    ofm.config.PID_T[i],
-                    ofm.config.PID_P[i],
-                    ofm.config.PID_I[i],
-                    ofm.config.PID_D[i]
-                ),
-                 horizontalalignment='left',
-                 verticalalignment='top',
-                 transform=ax[i].transAxes,
-                 fontfamily = 'monospace',
-                 fontsize = 'medium')
-            #ofm.config.PID_T[1] = 30.0
-
-        #fig.legend()
-
-        fig.tight_layout()
-        plt.show()
-
     except Exception as e:
         print(e)
         pass
@@ -286,7 +211,9 @@ def main():
         if setup:
             setup.deinit()
 
-if __name__ == "__main__":
-    main()
+    return filename
 
+if __name__ == "__main__":
+    filename = main()
+    plot_OFMv2_PID(filename)
 
