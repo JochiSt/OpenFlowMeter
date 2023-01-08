@@ -72,6 +72,11 @@ float voltage0, voltage1;
 /// temperature
 float temperature0, temperature1;
 
+// avoid flickering saturation non saturation
+#define SAT_CNT_PRESET  7
+uint8_t current0_sat_cnt, current1_sat_cnt;
+uint8_t voltage0_sat_cnt, voltage1_sat_cnt;
+
 /// output from PID, which is connected to the PWM output, if the PID is active
 uint16_t PIDout0, PIDout1;
 
@@ -296,37 +301,59 @@ int main(void)
         // calculate current and voltage of each channel
         // use the highest possible gain
 
-        /** CHANNEL 0 *********************************************************/
         ADCgainUsed = 0;
+        /** CHANNEL 0 *********************************************************/
+        current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
         if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
           // high gain setting
-          current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
-          ADCgainUsed |= (1 << 0);
+          if(!current0_sat_cnt){
+            current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
+            ADCgainUsed |= (1 << 0);
+          }else{
+            current0_sat_cnt--;
+          }
         }else{
-          current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
+          current0_sat_cnt = SAT_CNT_PRESET;
         }
 
+        voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN0.Ubias;
         if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
           // high gain setting
-          voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
-          ADCgainUsed |= (1 << 1);
+          if(!voltage0_sat_cnt){
+            voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
+            ADCgainUsed |= (1 << 1);
+          }else{
+            voltage0_sat_cnt--;
+          }
         }else{
-          voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN0.Ubias;
+          voltage0_sat_cnt = SAT_CNT_PRESET;
         }
 
         /** CHANNEL 1 *********************************************************/
+        current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
         if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
           // high gain setting
-          current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
-          ADCgainUsed |= (1 << 2);
+          if(!current1_sat_cnt){
+            current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
+            ADCgainUsed |= (1 << 2);
+          }else{
+            current1_sat_cnt--;
+          }
         }else{
-          current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
+          current1_sat_cnt = SAT_CNT_PRESET;
         }
+
+        voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN1.Ubias;
         if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
-          voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
-          ADCgainUsed |= (1 << 3);
+          // high gain setting
+          if(!voltage1_sat_cnt){
+            voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
+            ADCgainUsed |= (1 << 3);
+          }else{
+            voltage1_sat_cnt--;
+          }
         }else{
-          voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN1.Ubias;
+          voltage1_sat_cnt = SAT_CNT_PRESET;
         }
 
         /** calculate temperatures ********************************************/
