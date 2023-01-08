@@ -15,6 +15,9 @@ PLOT_RESISTANCE = False
 
 
 def plot_OFMv2_PID(filename):
+    if not filename:
+        return
+
     print('#'*40)
     print(filename)
     npzfile = np.load(filename)
