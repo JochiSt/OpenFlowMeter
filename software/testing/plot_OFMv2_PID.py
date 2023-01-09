@@ -119,6 +119,9 @@ def plot_OFMv2_PID(filename):
         ax5[i].plot(timestamp, np.right_shift(gains, (2*i)) & 0x3,
                     label="gains", color=color, marker='.', linestyle='')
 
+        ax5[i].set_ylim([0,3.1])
+
+
     ###########################################################################
     # X axis
     for i in [0,1]:
