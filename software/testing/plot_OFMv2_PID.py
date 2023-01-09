@@ -159,7 +159,7 @@ def plot_OFMv2_PID(filename):
     ###########################################################################
     # PID information
     for i in [0,1]:
-        ax5[i].text(0.1, 0.95, "T %9.6f\nP %9.6f\nI %9.6f\nD %9.6f"%(
+        ax6[i].text(0.1, 0.95, "T %9.6f\nP %9.6f\nI %9.6f\nD %9.6f"%(
                 ofmcfg.PID_T[i],
                 ofmcfg.PID_P[i],
                 ofmcfg.PID_I[i],
