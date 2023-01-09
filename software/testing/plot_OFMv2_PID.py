@@ -3,14 +3,9 @@
 import sys
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter_Config
-from OpenFlowMeter import PT100
-from OpenFlowMeter import convertVoltage, convertCurrent
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-import time
-
 
 PLOT_RESISTANCE = False
 
