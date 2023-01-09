@@ -153,7 +153,7 @@ def main():
                             )
 
                         current_raw[ch][gain] = np.append(
-                                voltage_raw[ch][gain],
+                                current_raw[ch][gain],
                                 ofm.current(ch, gain)
                             )
 
