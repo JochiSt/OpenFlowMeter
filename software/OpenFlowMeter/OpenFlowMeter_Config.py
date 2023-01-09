@@ -258,6 +258,11 @@ if __name__ == "__main__":
     print("length of configuration %d"%(len(cfgbytes)) )
     print()
 
+    time_needed = 0.05 * len(cfgbytes)
+    print('This will take about %4.2f seconds using the delay of %3.2f'%(
+        time_needed, 0.05 ))
+    print()
+
     print('#'*20)
 
     OFMcfg.printout()
