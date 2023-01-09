@@ -69,7 +69,7 @@ def plot_OFMv2_PID(filename):
 
     color = 'tab:orange'
     for i in [0,1]:
-        ax2[i].set_ylabel("DAC setpoint / LSB", color=color)
+        ax2[i].set_ylabel("DAC value / LSB", color=color)
         ax2[i].set_ylim([0,1024])
         ax2[i].tick_params(axis='y', labelcolor=color)
         ax2[i].plot( timestamp, dac[i], label="DAC", color=color)
@@ -125,7 +125,10 @@ def plot_OFMv2_PID(filename):
     for i in [0,1]:
         ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
         ax[i].set_xlabel("measurement time / s")
-        ax[i].set_xlim([25,75])
+
+        #ax[i].set_xlim([45,48])
+
+        ax[i].legend()
 
     ###########################################################################
     # PID information
