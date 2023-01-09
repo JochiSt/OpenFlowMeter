@@ -165,15 +165,14 @@ def main():
 
         filename = "PIDtest_%s.npz"%(time.strftime("%Y%m%d_%H%M%S"))
         np.savez(filename,
-                    timestamp=timestamp,
-                    dac0  = dac[0],  dac1  = dac[1],
-                    setp0 = setp[0], setp1 = setp[1],
-                    temperature0 = temperatures[0], temperature1 = temperatures[1],
-                    voltage0 = voltages[0], voltage1 = voltages[1],
-                    current0 = currents[0], current1 = currents[1],
-                    events=events,
+                    timestamp = timestamp,
+                    temperatures = temperatures, setp=setp, dac=dac,
+                    voltages = voltages, currents = currents,
+                    current_raw = current_raw,
+                    voltage_raw = voltage_raw,
+                    events = events,
                     ofmcfg = ofm.config.toBytes(),
-                    gains=gains
+                    gains = gains
                     )
 
         ofm.setDAC(10,10)
