@@ -42,34 +42,25 @@ def plot_OFMv2_PID(filename):
 
     fig, ax = plt.subplots(2, 1, figsize=(8,10))
 
+    ###########################################################################
     # temperatures
     color = 'tab:blue'
-
     for i in [0,1]:
         #ax[i].plot( timestamp, t_tmp100, label="T TMP100", color='lightsteelblue')
         ax[i].set_ylabel("Temperature / degC", color=color)
         ax[i].tick_params(axis='y', labelcolor=color)
 
         ax[i].plot( timestamp, setp[i], label="setpoint")
-        #ax[i].axhline(ofm.config.PID_T[i])
 
         for (t, event) in events:
             vline_color = next(ax[i]._get_lines.prop_cycler)['color']
             ax[i].axvline(float(t), label=event,
                           color = vline_color, linewidth=1)
 
-    """
-    for gain in [0,1]:
-        colors = ['mediumblue', 'cornflowerblue']
-        ax[0].plot( timestamp, PT100.convertPT100_T(r_0[gain]),
-                   label="T CH0 gain %d"%(gain), color=colors[gain])
-        ax[1].plot( timestamp, PT100.convertPT100_T(r_1[gain]),
-                   label="T CH1 gain %d"%(gain), color=colors[gain])
-    """
-
     for i in [0,1]:
         ax[i].plot( timestamp, temperatures[i], label="calc. T", color='deeppink', linewidth=1)
 
+    ###########################################################################
     # DAC setpoint
     ax2 = [
         ax[0].twinx(),
@@ -83,6 +74,8 @@ def plot_OFMv2_PID(filename):
         ax2[i].tick_params(axis='y', labelcolor=color)
         ax2[i].plot( timestamp, dac[i], label="DAC", color=color)
 
+    ###########################################################################
+    # current
     ax3 = [
         ax[0].twinx(),
         ax[1].twinx()
@@ -96,6 +89,8 @@ def plot_OFMv2_PID(filename):
 
         ax3[i].plot(timestamp, currents[i]*1000, label="current", color=color)
 
+    ###########################################################################
+    # voltage
     ax4 = [
         ax[0].twinx(),
         ax[1].twinx()
@@ -124,11 +119,15 @@ def plot_OFMv2_PID(filename):
         ax5[i].plot(timestamp, np.right_shift(gains, (2*i)) & 0x3,
                     label="gains", color=color, marker='.', linestyle='')
 
+    ###########################################################################
+    # X axis
     for i in [0,1]:
         ax[i].set_title("OFM PID test / evaluation Channel %d"%(i))
         ax[i].set_xlabel("measurement time / s")
         ax[i].set_xlim([25,75])
 
+    ###########################################################################
+    # PID information
     for i in [0,1]:
         ax[i].text(0.1, 0.95, "T %f\nP %f\nI %f\nD %f"%(
                 ofmcfg.PID_T[i],
