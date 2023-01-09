@@ -5,6 +5,7 @@ sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter_Config
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 PLOT_RESISTANCE = False
@@ -111,6 +112,7 @@ def plot_OFMv2_PID(filename):
         ax5[i].set_ylabel("gains", color=color)
         ax5[i].spines['right'].set_position(('outward', 55+55+55))
         ax5[i].tick_params(axis='y', labelcolor=color)
+        ax5[i].yaxis.set_major_locator(MaxNLocator(integer=True))
 
         ax5[i].plot(timestamp, np.right_shift(gains, (2*i)) & 0x3,
                     label="gains", color=color, marker='.', linestyle='')
