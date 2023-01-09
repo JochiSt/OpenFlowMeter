@@ -143,13 +143,6 @@ class OpenFlowMeter(object):
         """
             handle a can message from USBtin
         """
-        # first check, that the message belongs to our module
-
-        # for(uint8_t i = 0; i<4; i++){
-        #  data[2*i    ] = upper(adcBuf[i]);
-        #  data[2*i + 1] = lower(adcBuf[i]);
-        # }
-
         if msg.mid == OpenFlowMeter.CAN_ADC_MSG_ID_CH0 | (self.config.boardID << 4):    # channel 0
             if msg.dlc < 8:
                 return
