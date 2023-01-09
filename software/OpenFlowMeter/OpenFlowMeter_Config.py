@@ -84,6 +84,21 @@ class OpenFlowMeter_Config(object):
         self.SMOO = 0
         self.SMOO_MAX = 0
 
+    def __getitem__(self, index):
+        cfgbytes = self.toBytes()
+        if index >= len(cfgbytes):
+            raise IndexError("Index out of bounds")
+
+        return cfgbytes[index]
+
+    def __setitem__(self, index, value):
+        cfgbytes = self.toBytes()
+        if index >= len(cfgbytes):
+            raise IndexError("Index out of bounds")
+
+        cfgbytes[index] = value
+        self.fromBytes(cfgbytes)
+
     def printout(self):
         print("Board ID: %d"%(self.boardID))
         print("Intervals:")
@@ -297,6 +312,8 @@ if __name__ == "__main__":
     print('#'*20)
 
     OFMcfg.fromBytes(cfgbytes)
+
+    OFMcfg[56] = 12
 
     OFMcfg.printout()
 
