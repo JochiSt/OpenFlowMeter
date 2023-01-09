@@ -303,7 +303,7 @@ class OpenFlowMeter(object):
                                 data=[0x12,0x34,0x56,0x78,0x90,0x01,0xFF,0xFD])
         self.usbtin.send(canmessage)
 
-    def changeConfig(self):
+    def changeConfig(self, everything=False):
         """
         send the full configuration to the OpenFlowMeter. This is not stored
         inside the EEPROM unless the OFM is told to do so.
@@ -313,9 +313,17 @@ class OpenFlowMeter(object):
         None.
 
         """
-        for i, byte in enumerate(self.config.toBytes()):
-            canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
-                                    dlc=8,
-                                    data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
-            self.usbtin.send(canmessage)
-            time.sleep(OpenFlowMeter.CHANGE_CFG_DELAY)
+        if everything:
+            for i, byte in enumerate(self.config.toBytes()):
+                canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
+                                        dlc=8,
+                                        data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
+                self.usbtin.send(canmessage)
+                time.sleep(OpenFlowMeter.CHANGE_CFG_DELAY)
+        else:
+            for i, byte in self._deviceconfig.delta(self.config):
+                canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
+                                        dlc=8,
+                                        data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
+                self.usbtin.send(canmessage)
+                time.sleep(OpenFlowMeter.CHANGE_CFG_DELAY)
