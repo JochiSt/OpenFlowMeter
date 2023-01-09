@@ -11,6 +11,7 @@ sys.path.append( os.path.dirname(os.path.realpath(__file__)) + "../pyUSBtin")
 sys.path.append("../pyUSBtin")
 from pyusbtin.canmessage import CANMessage
 import time
+import copy
 
 import numpy as np
 
@@ -73,6 +74,8 @@ class OpenFlowMeter(object):
 
         self.config = OpenFlowMeter_Config()
         self.config.boardID = boardID
+        # store configuration, which is in the device
+        self._deviceconfig = copy.deepcopy(self.config)
 
         # register this module to the USBtin interface
         self.usbtin.add_message_listener(self.handleCANmessage)
@@ -201,6 +204,7 @@ class OpenFlowMeter(object):
                 #print(msg[0], msg[1], end="", flush=True)
                 try:
                     self.config[msg[0]] = msg[1]
+                    self._deviceconfig[msg[0]] = msg[1]
                 except IndexError:
                     #print(" <- ", end="", flush=True)
                     pass
