@@ -119,6 +119,31 @@ def plot_OFMv2_PID(filename):
 
         ax5[i].set_ylim([0,3.1])
 
+    ###########################################################################
+    # raw values
+    ax6 = [
+        ax[0].twinx(),
+        ax[1].twinx()
+        ]
+    color = 'black'
+    for i in [0,1]:
+        ax6[i].set_ylabel("raw values / LSB", color=color)
+        ax6[i].spines['right'].set_position(('outward', 55+55+55+40))
+        ax6[i].tick_params(axis='y', labelcolor=color)
+        ax6[i].set_yscale('log', base=2)
+
+
+        for gain in [0,1]:
+            ax6[i].plot(timestamp, current_raw[i][gain][:len(timestamp)],
+                    label="current G=%d"%(gain), color=color, marker='',
+                    linestyle='-', linewidth=1-gain*0.4)
+            ax6[i].plot(timestamp, voltage_raw[i][gain][:len(timestamp)],
+                    label="current G=%d"%(gain), color=color, marker='',
+                    linestyle='--', linewidth=1-gain*0.4)
+
+        ax6[i].set_ylim([1,4096])
+
+
 
     ###########################################################################
     # X axis
