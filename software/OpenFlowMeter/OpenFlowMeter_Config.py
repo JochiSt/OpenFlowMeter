@@ -269,8 +269,9 @@ class OpenFlowMeter_Config(object):
 
 
 if __name__ == "__main__":
+    import copy
     OFMcfg  = OpenFlowMeter_Config()
-    OFMcfg2 = OpenFlowMeter_Config()
+    OFMcfg2 = copy.deepcopy(OFMcfg)
     cfgbytes = OFMcfg.toBytes()
     print(cfgbytes)
 
