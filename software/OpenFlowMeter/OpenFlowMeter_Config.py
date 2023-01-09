@@ -176,6 +176,32 @@ class OpenFlowMeter_Config(object):
 
         return ret
 
+    def delta(self, cfg_new):
+        """
+
+
+        Parameters
+        ----------
+        cfg_new : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        cfg_delta : TYPE
+            pairs of address and content / byte of the difference to the old cfg.
+
+        """
+        cfg1 = self.toBytes()
+        cfg2 = cfg_new.toBytes()
+
+        cfg_delta = []
+
+        for i, byte in enumerate(cfg1):
+            if byte != cfg2[i]:
+                cfg_delta.append( (i, cfg2[i]) )
+
+        return cfg_delta
+
     def fromBytes(self, bytesin=[]):
         """
         construct the configuration from the bytes
@@ -228,7 +254,8 @@ class OpenFlowMeter_Config(object):
 
 
 if __name__ == "__main__":
-    OFMcfg = OpenFlowMeter_Config()
+    OFMcfg  = OpenFlowMeter_Config()
+    OFMcfg2 = OpenFlowMeter_Config()
     cfgbytes = OFMcfg.toBytes()
     print(cfgbytes)
 
@@ -274,6 +301,11 @@ if __name__ == "__main__":
     OFMcfg.printout()
 
     print('#'*20)
+
+    print("Delta:", OFMcfg2.delta(OFMcfg) )
+
+    print('#'*20)
+
 
     print()
     print()
