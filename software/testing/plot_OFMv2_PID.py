@@ -20,13 +20,16 @@ def plot_OFMv2_PID(filename):
 
     # OpenFlowMeter measured currents & voltages
     timestamp    = npzfile['timestamp']
-    temperatures = [ npzfile['temperature0'], npzfile['temperature1'] ]
+    temperatures = npzfile['temperatures']
 
-    voltages = [ npzfile['voltage0'], npzfile['voltage1'] ]
-    currents = [ npzfile['current0'], npzfile['current1'] ]
+    voltages = npzfile['voltages']
+    currents = npzfile['currents']
 
-    setp         = [ npzfile['setp0'], npzfile['setp1'] ]
-    dac          = [ npzfile['dac0'], npzfile['dac1'] ]
+    current_raw = npzfile['current_raw']
+    voltage_raw = npzfile['voltage_raw']
+
+    setp         = npzfile['setp']
+    dac          = npzfile['dac']
 
     events       = npzfile['events']
     ofmcfg       = OpenFlowMeter_Config()

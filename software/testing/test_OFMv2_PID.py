@@ -76,15 +76,15 @@ def main():
         r_0  = [np.array([]), np.array([])]
         r_1  = [np.array([]), np.array([])]
 
-        sat_i_0 = 0
-        sat_u_0 = 0
-        sat_i_1 = 0
-        sat_u_1 = 0
+        current_raw = [
+            [np.array([]), np.array([])],
+            [np.array([]), np.array([])]
+            ]
 
-        i_0 = [0]*2
-        u_0 = [0]*2
-        i_1 = [0]*2
-        u_1 = [0]*2
+        voltage_raw = [
+            [np.array([]), np.array([])],
+            [np.array([]), np.array([])]
+            ]
 
         print("Use CTRL-C to stop datataking...")
 
@@ -136,9 +136,11 @@ def main():
                     ofm.changeConfig()
                     events.append( (runtime, "PID setpoint %3.1f"%(ofm.config.PID_T[1])) )
 
+
+                # recording of the data
+
                 timestamp = np.append(timestamp, runtime)
                 t_tmp100 = np.append(t_tmp100, ofm.TMP100_T)
-
                 gains = np.append(gains, ofm.ADCgains)
 
                 for ch in [0,1]:
@@ -149,51 +151,16 @@ def main():
                     voltages[ch] = np.append(voltages[ch], ofm.voltages[ch])
                     currents[ch] = np.append(currents[ch], ofm.currents[ch])
 
-                for gain in [0,1]:
+                    for gain in [0,1]:
+                        voltage_raw[ch][gain] = np.append(
+                                voltage_raw[ch][gain],
+                                ofm.voltage(ch, gain)
+                            )
 
-                    i_0[gain] = ofm.current(0,gain)
-                    i_1[gain] = ofm.current(1,gain)
-
-                    u_0[gain] = ofm.voltage(0,gain)
-                    u_1[gain] = ofm.voltage(1,gain)
-
-                    # exclude the saturation points
-                    sat_i_0 = i_0[gain] > 4020
-                    sat_u_0 = u_0[gain] > 4020
-                    sat_i_1 = i_1[gain] > 4020
-                    sat_u_1 = u_1[gain] > 4020
-
-                    u_0[gain] = convertVoltage(u_0[gain], gain)
-                    # prevent division by zero
-                    i_0[gain] = max( convertCurrent(i_0[gain], gain) , 0.00001)
-
-                    u_1[gain] = convertVoltage(u_1[gain], gain)
-                    # prevent division by zero
-                    i_1[gain] = max( convertCurrent(i_1[gain], gain) , 0.00001)
-
-                    # check for high gain setting, whether saturation has
-                    # happened and if so, use the lower gain value
-                    if gain == 1:
-                        if sat_i_0:
-                            i_0[gain] = i_0[0]
-                        if sat_u_0:
-                            u_0[gain] = u_0[0]
-
-                        if sat_i_1:
-                            i_1[gain] = i_1[0]
-                        if sat_u_1:
-                            u_1[gain] = u_1[0]
-
-                    # only, if both are saturated ignore points
-                    if sat_i_0 and sat_u_0:
-                        r_0[gain] = np.append(r_0[gain], np.nan)
-                    else:
-                        r_0[gain] = np.append(r_0[gain], u_0[gain] / i_0[gain])
-
-                    if sat_i_1 and sat_u_1:
-                        r_1[gain] = np.append(r_1[gain], np.nan)
-                    else:
-                        r_1[gain] = np.append(r_1[gain], u_1[gain] / i_1[gain])
+                        current_raw[ch][gain] = np.append(
+                                voltage_raw[ch][gain],
+                                ofm.current(ch, gain)
+                            )
 
         except KeyboardInterrupt:
             pass
