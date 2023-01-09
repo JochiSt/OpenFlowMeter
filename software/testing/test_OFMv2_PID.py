@@ -3,13 +3,10 @@
 import sys
 sys.path.append("../")
 from OpenFlowMeter import OpenFlowMeter
-from OpenFlowMeter import PT100
-from OpenFlowMeter import convertVoltage, convertCurrent
 from CANsetup import CANsetup
 
 from plot_OFMv2_PID import plot_OFMv2_PID
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 import time
@@ -73,8 +70,6 @@ def main():
         voltages = [np.array([]), np.array([])]
         currents = [np.array([]), np.array([])]
         gains = np.array([])
-        r_0  = [np.array([]), np.array([])]
-        r_1  = [np.array([]), np.array([])]
 
         current_raw = [
             [np.array([]), np.array([])],
