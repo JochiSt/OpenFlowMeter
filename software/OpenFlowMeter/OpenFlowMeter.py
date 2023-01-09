@@ -198,16 +198,13 @@ class OpenFlowMeter(object):
 
         elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
-                cfgbytes = self.config.toBytes()
-
                 #print(msg[0], msg[1], end="", flush=True)
-                if (msg[0] < len(cfgbytes)):
-                    cfgbytes[msg[0]] = msg[1]
-                else:
+                try:
+                    self.config[msg[0]] = msg[1]
+                except IndexError:
                     #print(" <- ", end="", flush=True)
                     pass
                 #print()
-                self.config.fromBytes(cfgbytes)
             else:
                 print(msg)
         else:
