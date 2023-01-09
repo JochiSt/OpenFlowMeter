@@ -136,10 +136,11 @@ def plot_OFMv2_PID(filename):
         for gain in [0,1]:
             ax6[i].plot(timestamp, current_raw[i][gain][:len(timestamp)],
                     label="current G=%d"%(gain), color=color, marker='',
-                    linestyle='-', linewidth=1-gain*0.4)
+                    linestyle='-', linewidth=1+gain)
+
             ax6[i].plot(timestamp, voltage_raw[i][gain][:len(timestamp)],
-                    label="current G=%d"%(gain), color=color, marker='',
-                    linestyle='--', linewidth=1-gain*0.4)
+                    label="current G=%d"%(gain), color='gray', marker='',
+                    linestyle='-', linewidth=1+gain)
         ax6[i].set_ylim([1,4400])
 
 
