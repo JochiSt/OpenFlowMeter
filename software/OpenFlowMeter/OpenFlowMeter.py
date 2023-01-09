@@ -19,6 +19,8 @@ class OpenFlowMeter(object):
         Class for handling the OpenFlowMeter using USBTIN with python
     """
 
+    CHANGE_CFG_DELAY    = 0.05
+
     # message IDs (have to match those in can.h)
     CAN_CONFIG_ID       = 0x100     # handling of the configuration register
     CAN_UC_STATUS       = 0x101     # microcontroller status
@@ -315,4 +317,4 @@ class OpenFlowMeter(object):
                                     dlc=8,
                                     data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
             self.usbtin.send(canmessage)
-            time.sleep(0.05)
+            time.sleep(OpenFlowMeter.CHANGE_CFG_DELAY)
