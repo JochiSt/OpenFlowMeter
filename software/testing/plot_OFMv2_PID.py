@@ -80,7 +80,6 @@ def plot_OFMv2_PID(filename):
         ax[0].twinx(),
         ax[1].twinx()
         ]
-    # current
     color = 'tab:green'
     for i in [0,1]:
         ax3[i].set_ylabel("current / mA", color=color)
@@ -95,8 +94,7 @@ def plot_OFMv2_PID(filename):
         ax[0].twinx(),
         ax[1].twinx()
         ]
-    # voltage
-    color = 'tab:blue'
+    color = 'tab:olive'
     for i in [0,1]:
         ax4[i].set_ylabel("voltage / V", color=color)
         ax4[i].spines['right'].set_position(('outward', 55+55))
