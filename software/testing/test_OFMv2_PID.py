@@ -163,7 +163,7 @@ def main():
         except Exception as e:
             print(e)
 
-        filename = "PIDtest%s_.npz"%(time.strftime("%Y%m%d_%H%M%S"))
+        filename = "PIDtest_%s.npz"%(time.strftime("%Y%m%d_%H%M%S"))
         np.savez(filename,
                     timestamp=timestamp,
                     dac0  = dac[0],  dac1  = dac[1],
