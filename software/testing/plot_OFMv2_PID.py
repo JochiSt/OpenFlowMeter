@@ -140,8 +140,8 @@ def plot_OFMv2_PID(filename):
             ax6[i].plot(timestamp, voltage_raw[i][gain][:len(timestamp)],
                     label="current G=%d"%(gain), color=color, marker='',
                     linestyle='--', linewidth=1-gain*0.4)
+        ax6[i].set_ylim([1,4400])
 
-        ax6[i].set_ylim([1,4096])
 
 
 
