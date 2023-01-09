@@ -132,7 +132,7 @@ def plot_OFMv2_PID(filename):
     ###########################################################################
     # PID information
     for i in [0,1]:
-        ax[i].text(0.1, 0.95, "T %f\nP %f\nI %f\nD %f"%(
+        ax5[i].text(0.1, 0.95, "T %f\nP %f\nI %f\nD %f"%(
                 ofmcfg.PID_T[i],
                 ofmcfg.PID_P[i],
                 ofmcfg.PID_I[i],
@@ -142,7 +142,11 @@ def plot_OFMv2_PID(filename):
              verticalalignment='top',
              transform=ax[i].transAxes,
              fontfamily = 'monospace',
-             fontsize = 'medium')
+             fontsize = 'medium',
+             bbox = dict(facecolor='white',
+                         ec="0.5",
+                         alpha=0.5)
+             )
 
     fig.tight_layout()
     plt.show()
