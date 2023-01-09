@@ -466,41 +466,22 @@ int main(void)
 
         /**********************************************************************/
         // CHANNEL 0
-        // position 0 - 3 GAIN_0
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
-        }
-        // position 4 - 7 GAIN_1
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i]);
-            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
-        }
-        // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID_CH0 | (cfg.board_ID << 4), 8, data);
+        CAN_send_uint16s(CAN_ADC_MSG_ID_CH0 | (cfg.board_ID << 4), 4,
+            avr_adcBuf_GAIN_0[0], avr_adcBuf_GAIN_0[1],
+            avr_adcBuf_GAIN_1[0], avr_adcBuf_GAIN_1[1]
+            );
 
         /**********************************************************************/
         // CHANNEL 1
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i+2]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i+2]);
-        }
-        // position 4 - 7 GAIN_1
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i+2]);
-            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
-        }
-        // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID_CH1 | (cfg.board_ID << 4), 8, data);
-
+        CAN_send_uint16s(CAN_ADC_MSG_ID_CH1 | (cfg.board_ID << 4), 4,
+            avr_adcBuf_GAIN_0[2], avr_adcBuf_GAIN_0[3],
+            avr_adcBuf_GAIN_1[2], avr_adcBuf_GAIN_1[3]
+            );
         /**********************************************************************/
         // send internal data
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 4]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 4]);
-        }
-        // sendout frame with data
-        CAN_send_data_frame(CAN_UC_STATUS | (cfg.board_ID << 4), 4, data);
+        CAN_send_uint16s(CAN_UC_STATUS | (cfg.board_ID << 4), 2,
+            avr_adcBuf_GAIN_0[4], avr_adcBuf_GAIN_0[5]
+            );
     }
 
     /***************************************************************************
@@ -511,9 +492,7 @@ int main(void)
         && cfg.interval_I2C_TMP100 < 255){
       cnt_can_i2c_tmp100 = 0;
       uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
-      data[0] = upper(tmp100);
-      data[1] = lower(tmp100);
-      CAN_send_data_frame(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 2, data);
+      CAN_send_uint16s(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 1, tmp100 );
     }
     if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680
         && cfg.interval_I2C_BME680 < 255){
