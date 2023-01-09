@@ -196,10 +196,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 
   // fill the values according to the gain settings
   if( !gain_status ){
-      for(uint8_t i = 0; i<ADC_BUFLEN; i++){
-        // moving average
-        avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( cfg.SMOO_MAX - cfg.SMOO ) + avr_adcBuf_GAIN_0[i]*cfg.SMOO) / cfg.SMOO_MAX;
-      }
+    for(uint8_t i = 0; i<ADC_BUFLEN; i++){
+      // moving average
+      avr_adcBuf_GAIN_0[i] = (adcBuf[i]*( cfg.SMOO_MAX - cfg.SMOO ) + avr_adcBuf_GAIN_0[i]*cfg.SMOO) / cfg.SMOO_MAX;
+    }
   }else{
     for(uint8_t i = 0; i<ADC_BUFLEN; i++){
       // moving average
@@ -209,13 +209,13 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 
   // handle the gain switching
   if (!gain_status){
-      gain_status = true;
-      GAIN_I(SET);
-      GAIN_U(SET);
+    gain_status = true;
+    GAIN_I(SET);
+    GAIN_U(SET);
   }else{
-      gain_status = false;
-      GAIN_I(RESET);
-      GAIN_U(RESET);
+    gain_status = false;
+    GAIN_I(RESET);
+    GAIN_U(RESET);
   }
   adc_result_received ++;
 }
