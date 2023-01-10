@@ -11,11 +11,16 @@ sys.path.append( os.path.dirname(os.path.realpath(__file__)) + "../pyUSBtin")
 sys.path.append("../pyUSBtin")
 from pyusbtin.canmessage import CANMessage
 import time
+import copy
+
+import numpy as np
 
 class OpenFlowMeter(object):
     """
         Class for handling the OpenFlowMeter using USBTIN with python
     """
+
+    CHANGE_CFG_DELAY    = 0.05
 
     # message IDs (have to match those in can.h)
     CAN_CONFIG_ID       = 0x100     # handling of the configuration register
@@ -23,6 +28,9 @@ class OpenFlowMeter(object):
     CAN_DAC_ID          = 0x102     # DAC setpoints
     CAN_ADC_MSG_ID_CH0  = 0x103     # ADC channel 0
     CAN_ADC_MSG_ID_CH1  = 0x104     # ADC channel 1
+    CAN_TEMPERATURE_ID  = 0x105     # calculated temperatures (2x float)
+    CAN_VOLTAGE_ID      = 0x106     # calculated voltage (2x float)
+    CAN_CURRENT_ID      = 0x107     # calculated current (2x float)
     CAN_I2C_MSG_TMP100  = 0x108     # on board TMP100
     CAN_I2C_MSG_BME680  = 0x109     # on board BME680
 
@@ -55,12 +63,19 @@ class OpenFlowMeter(object):
         self.uCtemperature = 0
         self.uCrefvoltage  = 0
 
+        self.temperatures = [0]*2
+        self.voltages = [0]*2
+        self.currents = [0]*2
+        self.ADCgains = 0
+
         self.TMP100_T = 0
 
         self.hasNewMessage = False
 
         self.config = OpenFlowMeter_Config()
         self.config.boardID = boardID
+        # store configuration, which is in the device
+        self._deviceconfig = copy.deepcopy(self.config)
 
         # register this module to the USBtin interface
         self.usbtin.add_message_listener(self.handleCANmessage)
@@ -128,13 +143,6 @@ class OpenFlowMeter(object):
         """
             handle a can message from USBtin
         """
-        # first check, that the message belongs to our module
-
-        # for(uint8_t i = 0; i<4; i++){
-        #  data[2*i    ] = upper(adcBuf[i]);
-        #  data[2*i + 1] = lower(adcBuf[i]);
-        # }
-
         if msg.mid == OpenFlowMeter.CAN_ADC_MSG_ID_CH0 | (self.config.boardID << 4):    # channel 0
             if msg.dlc < 8:
                 return
@@ -158,28 +166,42 @@ class OpenFlowMeter(object):
             self.uCrefvoltage  = (msg[2] << 8)  + msg[3]
 
         elif msg.mid == OpenFlowMeter.CAN_DAC_ID | (self.config.boardID << 4):  # DAC readback
-            if msg.dlc < 4:
+            if msg.dlc < 6:
                 return
             self.DACreadback[0] = (msg[0] << 8)  + msg[1]
             self.DACreadback[1]  = (msg[2] << 8)  + msg[3]
+            self.ADCgains = (msg[4] << 8)  + msg[5]
 
         elif msg.mid == OpenFlowMeter.CAN_I2C_MSG_TMP100 |  (self.config.boardID << 4):
             if msg.dlc > 2:
                 return
             self.TMP100_T =  ((msg[0] << 8)  + msg[1] ) * 0.0625;
 
+        elif msg.mid == OpenFlowMeter.CAN_TEMPERATURE_ID | (self.config.boardID << 4):
+            if msg.dlc != 8:
+                return
+            self.temperatures = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
+
+        elif msg.mid == OpenFlowMeter.CAN_VOLTAGE_ID | (self.config.boardID << 4):
+            if msg.dlc != 8:
+                return
+            self.voltages = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
+
+        elif msg.mid == OpenFlowMeter.CAN_CURRENT_ID | (self.config.boardID << 4):
+            if msg.dlc != 8:
+                return
+            self.currents = np.frombuffer( bytearray([ data for data in msg ]), dtype=np.float32)
+
         elif msg.mid == OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4):
             if msg.dlc == 2:
-                cfgbytes = self.config.toBytes()
-
                 #print(msg[0], msg[1], end="", flush=True)
-                if (msg[0] < len(cfgbytes)):
-                    cfgbytes[msg[0]] = msg[1]
-                else:
+                try:
+                    self.config[msg[0]] = msg[1]
+                    self._deviceconfig[msg[0]] = msg[1]
+                except IndexError:
                     #print(" <- ", end="", flush=True)
                     pass
                 #print()
-                self.config.fromBytes(cfgbytes)
             else:
                 print(msg)
         else:
@@ -274,7 +296,7 @@ class OpenFlowMeter(object):
                                 data=[0x12,0x34,0x56,0x78,0x90,0x01,0xFF,0xFD])
         self.usbtin.send(canmessage)
 
-    def changeConfig(self):
+    def changeConfig(self, everything=False):
         """
         send the full configuration to the OpenFlowMeter. This is not stored
         inside the EEPROM unless the OFM is told to do so.
@@ -284,9 +306,17 @@ class OpenFlowMeter(object):
         None.
 
         """
-        for i, byte in enumerate(self.config.toBytes()):
-            canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
-                                    dlc=8,
-                                    data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
-            self.usbtin.send(canmessage)
-            time.sleep(0.05)
+        if everything:
+            for i, byte in enumerate(self.config.toBytes()):
+                canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
+                                        dlc=8,
+                                        data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
+                self.usbtin.send(canmessage)
+                time.sleep(OpenFlowMeter.CHANGE_CFG_DELAY)
+        else:
+            for i, byte in self._deviceconfig.delta(self.config):
+                canmessage = CANMessage( mid=OpenFlowMeter.CAN_CONFIG_ID | (self.config.boardID << 4),
+                                        dlc=8,
+                                        data=[0x12,0x34,0x56,0x78,0x90,0x01, i, byte])
+                self.usbtin.send(canmessage)
+                time.sleep(OpenFlowMeter.CHANGE_CFG_DELAY)

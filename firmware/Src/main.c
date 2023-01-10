@@ -53,6 +53,8 @@
 //#define PRINT_UART_PID          // print PID performance
 //#define PRINT_UART_ADC        // print the ADC data
 //#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
+
+//#define WRITE_DEFAULT_CFG_EEPROM_STARTUP
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -70,6 +72,12 @@ float voltage0, voltage1;
 /// temperature
 float temperature0, temperature1;
 
+// avoid flickering saturation non saturation
+#define SAT_CNT_PRESET  10
+uint8_t current0_sat_cnt, current1_sat_cnt;
+uint8_t voltage0_sat_cnt, voltage1_sat_cnt;
+
+/// output from PID, which is connected to the PWM output, if the PID is active
 uint16_t PIDout0, PIDout1;
 
 /* USER CODE END PV */
@@ -165,7 +173,9 @@ int main(void)
   printf("\r\n\r\nDEFAULT config:\r\n");
   printCfg(&default_cfg);
 
-  //write_EEPROM_cfg(&hi2c1, &default_cfg);
+#ifdef WRITE_DEFAULT_CFG_EEPROM_STARTUP
+  write_EEPROM_cfg(&hi2c1, &default_cfg);
+#endif
 
   read_EEPROM_cfg(&hi2c1, &cfg, &default_cfg);
 
@@ -242,6 +252,8 @@ int main(void)
   uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
   uint8_t cnt_print_uart = 0;     ///< counter for UART output
 
+  uint8_t ADCgainUsed = 0;        ///< which ADC gain is used for calculation
+
   /****************************************************************************/
   printf("successfully started everything\r\n");
   // Main loop
@@ -288,21 +300,60 @@ int main(void)
          */
         // calculate current and voltage of each channel
         // use the highest possible gain
+
+        ADCgainUsed = 0;
         /** CHANNEL 0 *********************************************************/
-        if( avr_adcBuf_GAIN_1[0] < 4020 && avr_adcBuf_GAIN_1[1] < 4020 ){
-          current0 = avr_adcBuf_GAIN_1[0] * 3.3 / 4096 * 10e-3;
-          voltage0 = avr_adcBuf_GAIN_1[1] * 3.3 / 4096;
+        current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
+        if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
+          // high gain setting
+          if(!current0_sat_cnt){
+            current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
+            ADCgainUsed |= (1 << 0);
+          }else{
+            current0_sat_cnt--;
+          }
         }else{
-          current0 = avr_adcBuf_GAIN_0[0] * 3.3 / 4096 * 10e-3;
-          voltage0 = avr_adcBuf_GAIN_0[1] * 3.3 / 4096;
+          current0_sat_cnt = SAT_CNT_PRESET;
         }
-        /** CHANNEL 1 *********************************************************/
-        if( avr_adcBuf_GAIN_1[2] < 4020 && avr_adcBuf_GAIN_1[3] < 4020 ){
-          current1 = avr_adcBuf_GAIN_1[2] * 3.3 / 4096 * 10e-3;
-          voltage1 = avr_adcBuf_GAIN_1[3] * 3.3 / 4096;
+
+        voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN0.Ubias;
+        if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
+          // high gain setting
+          if(!voltage0_sat_cnt){
+            voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
+            ADCgainUsed |= (1 << 1);
+          }else{
+            voltage0_sat_cnt--;
+          }
         }else{
-          current1 = avr_adcBuf_GAIN_0[2] * 3.3 / 4096 * 10e-3;
-          voltage1 = avr_adcBuf_GAIN_0[3] * 3.3 / 4096;
+          voltage0_sat_cnt = SAT_CNT_PRESET;
+        }
+
+        /** CHANNEL 1 *********************************************************/
+        current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
+        if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
+          // high gain setting
+          if(!current1_sat_cnt){
+            current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
+            ADCgainUsed |= (1 << 2);
+          }else{
+            current1_sat_cnt--;
+          }
+        }else{
+          current1_sat_cnt = SAT_CNT_PRESET;
+        }
+
+        voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN1.Ubias;
+        if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
+          // high gain setting
+          if(!voltage1_sat_cnt){
+            voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
+            ADCgainUsed |= (1 << 3);
+          }else{
+            voltage1_sat_cnt--;
+          }
+        }else{
+          voltage1_sat_cnt = SAT_CNT_PRESET;
         }
 
         /** calculate temperatures ********************************************/
@@ -380,8 +431,13 @@ int main(void)
 #endif
 #ifdef PRINT_UART_CALC_TEMP
       printf("Temperatures:\r\n");
+      printf("ADC gain selection %x \r\n", ADCgainUsed);
       printf("CH0: %f\r\n", temperature0);
+      printf(" - I   %f\r\n",  current0);
+      printf(" - U   %f\r\n",  voltage0);
       printf("CH1: %f\r\n", temperature1);
+      printf(" - I   %f\r\n",  current1);
+      printf(" - U   %f\r\n",  voltage1);
 #endif
     }
 
@@ -394,7 +450,15 @@ int main(void)
         cnt_can_adc = 0;
 
         // TODO remove debug CAN message transmission
-        CAN_send_DAC_readback();
+        //CAN_send_DAC_readback();
+        CAN_send_uint16s(CAN_DAC_ID         | (cfg.board_ID << 4),
+                             3, TIM3->CCR2, TIM3->CCR1, (uint16_t)ADCgainUsed );
+        CAN_send_floats( CAN_TEMPERATURE_ID | (cfg.board_ID << 4) ,
+                                                  &temperature0, &temperature1);
+        CAN_send_floats( CAN_VOLTAGE_ID     | (cfg.board_ID << 4) ,
+                                                  &voltage0, &voltage1);
+        CAN_send_floats( CAN_CURRENT_ID     | (cfg.board_ID << 4) ,
+                                                  &current0, &current1);
 
         /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
@@ -402,41 +466,22 @@ int main(void)
 
         /**********************************************************************/
         // CHANNEL 0
-        // position 0 - 3 GAIN_0
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i]);
-        }
-        // position 4 - 7 GAIN_1
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i]);
-            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i]);
-        }
-        // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID_CH0 | (cfg.board_ID << 4), 8, data);
+        CAN_send_uint16s(CAN_ADC_MSG_ID_CH0 | (cfg.board_ID << 4), 4,
+            avr_adcBuf_GAIN_0[0], avr_adcBuf_GAIN_0[1],
+            avr_adcBuf_GAIN_1[0], avr_adcBuf_GAIN_1[1]
+            );
 
         /**********************************************************************/
         // CHANNEL 1
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i+2]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i+2]);
-        }
-        // position 4 - 7 GAIN_1
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i     + 4] = upper(avr_adcBuf_GAIN_1[i+2]);
-            data[2*i + 1 + 4] = lower(avr_adcBuf_GAIN_1[i+2]);
-        }
-        // sendout frame with data
-        CAN_send_data_frame(CAN_ADC_MSG_ID_CH1 | (cfg.board_ID << 4), 8, data);
-
+        CAN_send_uint16s(CAN_ADC_MSG_ID_CH1 | (cfg.board_ID << 4), 4,
+            avr_adcBuf_GAIN_0[2], avr_adcBuf_GAIN_0[3],
+            avr_adcBuf_GAIN_1[2], avr_adcBuf_GAIN_1[3]
+            );
         /**********************************************************************/
         // send internal data
-        for(uint8_t i = 0; i<2; i++) {
-            data[2*i    ] = upper(avr_adcBuf_GAIN_0[i + 4]);
-            data[2*i + 1] = lower(avr_adcBuf_GAIN_0[i + 4]);
-        }
-        // sendout frame with data
-        CAN_send_data_frame(CAN_UC_STATUS | (cfg.board_ID << 4), 4, data);
+        CAN_send_uint16s(CAN_UC_STATUS | (cfg.board_ID << 4), 2,
+            avr_adcBuf_GAIN_0[4], avr_adcBuf_GAIN_0[5]
+            );
     }
 
     /***************************************************************************
@@ -447,9 +492,7 @@ int main(void)
         && cfg.interval_I2C_TMP100 < 255){
       cnt_can_i2c_tmp100 = 0;
       uint16_t tmp100 = i2c_read_TMP100(&hi2c1, 0x48);
-      data[0] = upper(tmp100);
-      data[1] = lower(tmp100);
-      CAN_send_data_frame(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 2, data);
+      CAN_send_uint16s(CAN_I2C_MSG_TMP100 | (cfg.board_ID << 4), 1, tmp100 );
     }
     if( cnt_can_i2c_bme680 >= cfg.interval_I2C_BME680
         && cfg.interval_I2C_BME680 < 255){

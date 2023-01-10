@@ -363,13 +363,38 @@ void CAN_send_data_frame(uint16_t can_id, uint8_t size, uint8_t *data){
 }
 
 void CAN_send_DAC_readback(void){
-  data[0] = upper(TIM3->CCR2);
-  data[1] = lower(TIM3->CCR2);
-  data[2] = upper(TIM3->CCR1);
-  data[3] = lower(TIM3->CCR1);
-
-  CAN_send_data_frame( CAN_DAC_ID | (cfg.board_ID << 4), 4, data);
+  CAN_send_uint16s(CAN_DAC_ID | (cfg.board_ID << 4), 2, TIM3->CCR2, TIM3->CCR1);
 }
+
+void CAN_send_uint16s(uint16_t can_id, uint8_t n, ...){
+  va_list args;
+  if(n > 4){
+    return;
+  }
+  va_start(args, n);
+
+  for( uint8_t i=0; i<n; i++){
+    uint16_t value = (uint16_t)va_arg(args, int);
+    data[i*2]     = upper(value);
+    data[i*2 + 1] = lower(value);
+  }
+
+  va_end(args);
+  CAN_send_data_frame( can_id, n*2, data);
+}
+
+void CAN_send_floats(uint16_t can_id, float *float0, float *float1){
+  uint8_t *ptr_t0 = (uint8_t*)float0;
+  uint8_t *ptr_t1 = (uint8_t*)float1;
+  for( uint8_t i=0; i<4; i++){
+    data[i] = ptr_t0[i];
+  }
+  for( uint8_t i=0; i<4; i++){
+    data[i+4] = ptr_t1[i];
+  }
+  CAN_send_data_frame( can_id, 8, data);
+}
+
 
 void CAN_send_Configuration(void){
   uint8_t *ptr = (uint8_t*)&cfg;
