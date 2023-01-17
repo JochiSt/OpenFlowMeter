@@ -60,6 +60,7 @@ void DMA1_Channel1_IRQHandler(void);
 void USB_LP_CAN1_RX0_IRQHandler(void);
 void CAN1_RX1_IRQHandler(void);
 void TIM2_IRQHandler(void);
+void I2C2_EV_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
@@ -69,5 +70,3 @@ void TIM2_IRQHandler(void);
 #endif
 
 #endif /* __STM32F1xx_IT_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
