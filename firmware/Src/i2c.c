@@ -188,5 +188,44 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 }
 
 /* USER CODE BEGIN 1 */
+// interrupt driven I2C RX and TX according to
+// https://www.mikrocontroller.net/topic/459202#6441255
+/*
+1. HAL_I2C_EnableListen_IT
+2. Der Master sendet die Nachricht
+3. HAL_I2C_AddrCallback kommt: Dort HAL_I2C_Slave_Receive_IT aufrufen
+4. HAL_I2C_SlaveRxCpltCallback
+5. HAL_I2C_ListenCpltCallback
+*/
+// gets called on address match
+void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, uint16_t AddrMatchCode){
+  UNUSED(hi2c);
+  UNUSED(TransferDirection);
+  UNUSED(AddrMatchCode);
+
+  switch (TransferDirection) {
+    case I2C_DIRECTION_TRANSMIT:
+      //HAL_StatusTypeDef HAL_I2C_Slave_Receive_IT(I2C_HandleTypeDef *hi2c, uint8_t *pData, uint16_t Size);
+      break;
+
+    case I2C_DIRECTION_RECEIVE:
+      //HAL_StatusTypeDef HAL_I2C_Slave_Transmit_IT(I2C_HandleTypeDef *hi2c, uint8_t *pData, uint16_t Size);
+      break;
+  }
+}
+
+// gets called when RX / TX done
+void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c){
+  UNUSED(hi2c);
+}
+void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c){
+  UNUSED(hi2c);
+}
+//
+void HAL_I2C_ListenCpltCallback(I2C_HandleTypeDef *hi2c){
+  // (re-) enable the listen mode
+  HAL_I2C_EnableListen_IT(hi2c);
+}
+
 
 /* USER CODE END 1 */
