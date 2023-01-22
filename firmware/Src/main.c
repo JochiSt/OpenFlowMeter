@@ -213,6 +213,10 @@ int main(void)
 	  Error_Handler();
   }
   /****************************************************************************/
+  // STARTING the I2C slave
+  printf("starting I2C slave...\r\n");
+  HAL_I2C_EnableListen_IT(&hi2c2);
+  /****************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
 
