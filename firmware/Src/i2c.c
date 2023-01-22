@@ -20,7 +20,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
 
+
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
 
 /* USER CODE END 0 */
 
