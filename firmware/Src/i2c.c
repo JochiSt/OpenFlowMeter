@@ -24,6 +24,14 @@
 /* USER CODE BEGIN 0 */
 #include <stdio.h>
 
+enum I2CDeviceState {
+  /// initial state
+  STATE_INITIAL = 0,
+  /// receiving the first byte of word addr
+  STATE_RECEIVING_ADDRESS,
+  /// after the 2nd byte of word addr
+  STATE_HAVE_ADDRESS
+};
 /* USER CODE END 0 */
 
 I2C_HandleTypeDef hi2c1;
@@ -192,6 +200,8 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 /* USER CODE BEGIN 1 */
 // interrupt driven I2C RX and TX according to
 // https://www.mikrocontroller.net/topic/459202#6441255
+// and
+// https://github.com/smx-smx/stm32-eeprom/blob/master/src/main.c
 /*
 1. HAL_I2C_EnableListen_IT
 2. Der Master sendet die Nachricht
@@ -199,32 +209,74 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 4. HAL_I2C_SlaveRxCpltCallback
 5. HAL_I2C_ListenCpltCallback
 */
+
+/** eeprom data **/
+#define EEPROM_SIZE (1024)
+#define EEPROM_OFFSET(x) ((x) & (sizeof(ram) - 1))
+
+static uint8_t ram[EEPROM_SIZE];
+static uint16_t word_addr = 0;
+static enum I2CDeviceState state = STATE_INITIAL;
+static uint8_t word_addr_byte = 0;
+
 // gets called on address match
 void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, uint16_t AddrMatchCode){
-  UNUSED(hi2c);
-  UNUSED(TransferDirection);
+
   UNUSED(AddrMatchCode);
 
   switch (TransferDirection) {
     case I2C_DIRECTION_TRANSMIT:
-      //HAL_StatusTypeDef HAL_I2C_Slave_Receive_IT(I2C_HandleTypeDef *hi2c, uint8_t *pData, uint16_t Size);
+      // master is sending, start first receive
+      // if the master is writing, it always writes the address first
+      if( HAL_I2C_Slave_Seq_Receive_IT(hi2c, &word_addr_byte, 1, I2C_NEXT_FRAME) != HAL_OK){
+        printf("I2C error: slave receive\r\n");
+      }
       break;
 
     case I2C_DIRECTION_RECEIVE:
-      //HAL_StatusTypeDef HAL_I2C_Slave_Transmit_IT(I2C_HandleTypeDef *hi2c, uint8_t *pData, uint16_t Size);
+      // master is receiving, start first transmit
+      word_addr = EEPROM_OFFSET(word_addr);
+      if( HAL_I2C_Slave_Seq_Transmit_IT(hi2c, &ram[word_addr], 1, I2C_NEXT_FRAME) != HAL_OK){
+        printf("I2C error: slave transmit\r\n");
+      }
       break;
   }
 }
 
 // gets called when RX / TX done
 void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c){
-  UNUSED(hi2c);
+  // we just sent something to the master
+
+  // offer the next eeprom byte (the master will NACK if it doesn't want it)
+  word_addr = EEPROM_OFFSET(word_addr + 1);
+  HAL_I2C_Slave_Seq_Transmit_IT(hi2c, &ram[word_addr], 1, I2C_NEXT_FRAME);
 }
+
+
 void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c){
-  UNUSED(hi2c);
+  // we just received something from the master
+  if(state == STATE_INITIAL){ // received byte0 of addr
+    // [DE] AD
+    // overwrite previous word_addr
+    word_addr = word_addr_byte << 8;
+    state = STATE_RECEIVING_ADDRESS;
+
+    // start to receive next addr byte
+    HAL_I2C_Slave_Seq_Receive_IT(hi2c, &word_addr_byte, 1, I2C_NEXT_FRAME);
+  } else {
+    if(state == STATE_RECEIVING_ADDRESS){ // received byte1 of addr
+      // DE [AD]
+      word_addr |= word_addr_byte;
+      state = STATE_HAVE_ADDRESS;
+    }
+    // handle next (or first) data RX
+    HAL_I2C_Slave_Seq_Receive_IT(hi2c, &ram[word_addr], 1, I2C_NEXT_FRAME);
+    word_addr = EEPROM_OFFSET(word_addr + 1);
+  }
 }
 //
 void HAL_I2C_ListenCpltCallback(I2C_HandleTypeDef *hi2c){
+  state = STATE_INITIAL;
   // (re-) enable the listen mode
   HAL_I2C_EnableListen_IT(hi2c);
 }
