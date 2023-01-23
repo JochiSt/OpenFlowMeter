@@ -214,10 +214,9 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 */
 
 /** eeprom data **/
-#define EEPROM_SIZE (1024)
-#define EEPROM_OFFSET(x) ((x) & (sizeof(ram) - 1))
+#define EEPROM_OFFSET(x) ((x) & (sizeof(cfg) - 1))
+uint8_t *cfg_ptr = (uint8_t*)&cfg;
 
-static uint8_t ram[EEPROM_SIZE];
 static uint16_t word_addr = 0;
 static enum I2CDeviceState state = STATE_INITIAL;
 static uint8_t word_addr_byte = 0;
@@ -239,7 +238,7 @@ void HAL_I2C_AddrCallback(I2C_HandleTypeDef *hi2c, uint8_t TransferDirection, ui
     case I2C_DIRECTION_RECEIVE:
       // master is receiving, start first transmit
       word_addr = EEPROM_OFFSET(word_addr);
-      if( HAL_I2C_Slave_Seq_Transmit_IT(hi2c, &ram[word_addr], 1, I2C_NEXT_FRAME) != HAL_OK){
+      if( HAL_I2C_Slave_Seq_Transmit_IT(hi2c, &cfg_ptr[word_addr], 1, I2C_NEXT_FRAME) != HAL_OK){
         printf("I2C error: slave transmit\r\n");
       }
       break;
@@ -252,7 +251,7 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c){
 
   // offer the next eeprom byte (the master will NACK if it doesn't want it)
   word_addr = EEPROM_OFFSET(word_addr + 1);
-  HAL_I2C_Slave_Seq_Transmit_IT(hi2c, &ram[word_addr], 1, I2C_NEXT_FRAME);
+  HAL_I2C_Slave_Seq_Transmit_IT(hi2c, &cfg_ptr[word_addr], 1, I2C_NEXT_FRAME);
 }
 
 
@@ -273,7 +272,7 @@ void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef *hi2c){
       state = STATE_HAVE_ADDRESS;
     }
     // handle next (or first) data RX
-    HAL_I2C_Slave_Seq_Receive_IT(hi2c, &ram[word_addr], 1, I2C_NEXT_FRAME);
+    HAL_I2C_Slave_Seq_Receive_IT(hi2c, &cfg_ptr[word_addr], 1, I2C_NEXT_FRAME);
     word_addr = EEPROM_OFFSET(word_addr + 1);
   }
 }
