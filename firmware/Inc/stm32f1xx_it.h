@@ -61,6 +61,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void);
 void CAN1_RX1_IRQHandler(void);
 void TIM2_IRQHandler(void);
 void I2C2_EV_IRQHandler(void);
+void I2C2_ER_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
