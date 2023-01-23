@@ -155,7 +155,7 @@ int main(void)
 
   // do an I2C scan of both I2C ports
   i2c_scan(&hi2c1);   // PORT 1
-  i2c_scan(&hi2c2);   // PORT 2
+  //i2c_scan(&hi2c2);   // PORT 2
 
   // all LEDs off
   LED_ERROR(SET);
