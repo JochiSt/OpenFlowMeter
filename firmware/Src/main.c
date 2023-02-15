@@ -155,7 +155,7 @@ int main(void)
 
   // do an I2C scan of both I2C ports
   i2c_scan(&hi2c1);   // PORT 1
-  i2c_scan(&hi2c2);   // PORT 2
+  //i2c_scan(&hi2c2);   // PORT 2
 
   // all LEDs off
   LED_ERROR(SET);
@@ -212,6 +212,10 @@ int main(void)
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING)!= HAL_OK){
 	  Error_Handler();
   }
+  /****************************************************************************/
+  // STARTING the I2C slave
+  printf("starting I2C slave...\r\n");
+  HAL_I2C_EnableListen_IT(&hi2c2);
   /****************************************************************************/
   printf("starting TIM2...\r\n");
   HAL_TIM_Base_Start_IT(&htim2);
@@ -526,6 +530,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -585,5 +590,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
