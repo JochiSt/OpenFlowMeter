@@ -40,9 +40,9 @@
 
   (setup
     (stackup
-      (layer "F.SilkS" (type "Top Silk Screen") (color "White") (color "White"))
+      (layer "F.SilkS" (type "Top Silk Screen") (color "White"))
       (layer "F.Paste" (type "Top Solder Paste"))
-      (layer "F.Mask" (type "Top Solder Mask") (color "Green") (color "Green") (thickness 0.0037) (material "Liquid Ink") (epsilon_r 3.7) (loss_tangent 0))
+      (layer "F.Mask" (type "Top Solder Mask") (color "Green") (thickness 0.0037) (material "Liquid Ink") (epsilon_r 3.7) (loss_tangent 0))
       (layer "F.Cu" (type "copper") (thickness 0.04))
       (layer "dielectric 1" (type "prepreg") (thickness 0.06813 locked) (material "FR4") (epsilon_r 4.3) (loss_tangent 0.02)
         addsublayer (thickness 0.06813 locked) (material "FR4") (epsilon_r 4.3) (loss_tangent 0.02))
@@ -52,9 +52,9 @@
       (layer "dielectric 3" (type "prepreg") (thickness 0.06813 locked) (material "FR4") (epsilon_r 4.3) (loss_tangent 0.02)
         addsublayer (thickness 0.06813 locked) (material "FR4") (epsilon_r 4.3) (loss_tangent 0.02))
       (layer "B.Cu" (type "copper") (thickness 0.04))
-      (layer "B.Mask" (type "Bottom Solder Mask") (color "Green") (color "Green") (thickness 0.0037) (material "Liquid Ink") (epsilon_r 3.7) (loss_tangent 0))
+      (layer "B.Mask" (type "Bottom Solder Mask") (color "Green") (thickness 0.0037) (material "Liquid Ink") (epsilon_r 3.7) (loss_tangent 0))
       (layer "B.Paste" (type "Bottom Solder Paste"))
-      (layer "B.SilkS" (type "Bottom Silk Screen") (color "White") (color "White"))
+      (layer "B.SilkS" (type "Bottom Silk Screen") (color "White"))
       (copper_finish "ENIG")
       (dielectric_constraints no)
     )
@@ -11800,7 +11800,7 @@
     (gr_text "74 mm" (at 154.135 113.4294) (layer "Dwgs.User") (tstamp 3743c54c-2b84-460c-9a08-d9077f73bc63)
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (format (units 2) (units_format 1) (precision 2) suppress_zeroes)
+    (format (prefix "") (suffix "") (units 2) (units_format 1) (precision 2) suppress_zeroes)
     (style (thickness 0.1) (arrow_length 1.27) (text_position_mode 0) (extension_height 0.58642) (extension_offset 0.5) keep_text_aligned)
   )
   (dimension (type aligned) (layer "Dwgs.User") (tstamp ca56e1ad-54bf-4df5-a4f7-99f5d61d0de9)
@@ -11809,7 +11809,7 @@
     (gr_text "28 mm" (at 111.675 96.7694 90) (layer "Dwgs.User") (tstamp ca56e1ad-54bf-4df5-a4f7-99f5d61d0de9)
       (effects (font (size 1 1) (thickness 0.15)))
     )
-    (format (units 2) (units_format 1) (precision 2) suppress_zeroes)
+    (format (prefix "") (suffix "") (units 2) (units_format 1) (precision 2) suppress_zeroes)
     (style (thickness 0.15) (arrow_length 1.27) (text_position_mode 0) (extension_height 0.58642) (extension_offset 0) keep_text_aligned)
   )
 
