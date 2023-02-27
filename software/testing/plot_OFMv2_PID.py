@@ -154,7 +154,7 @@ def plot_OFMv2_PID(filename):
 
         #ax[i].set_xlim([45,48])
 
-        ax[i].legend()
+        ax[i].legend('lower right')
 
     ###########################################################################
     # PID information
