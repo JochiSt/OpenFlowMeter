@@ -5,6 +5,7 @@ PID pid0;
 PID pid1;
 
 const uint16_t MAX_PID_OUTPUT = (512<<2);  //TODO just for debugging purpose can be
+                                      // increased to fullscale
 const uint16_t MIN_PID_OUTPUT = (0x0A<<2); // a minimal current is needed to measure
                                       // the resistance.
 
