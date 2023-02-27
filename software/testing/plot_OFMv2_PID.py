@@ -179,6 +179,6 @@ def plot_OFMv2_PID(filename):
     plt.show()
 
 if __name__ == "__main__":
-    plot_OFMv2_PID('PIDtest20230107_102652_.npz')
+    plot_OFMv2_PID('PIDtest_20230227_153203.npz')
 
 
