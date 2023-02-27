@@ -45,7 +45,7 @@ def main():
 
         # PID settings channel 1
         ofm.config.PID_T[1] = 30.0
-        ofm.config.PID_P[1] = 12
+        ofm.config.PID_P[1] = 8
         ofm.config.PID_I[1] = 0.00002
         ofm.config.PID_D[1] = 0.01
 
