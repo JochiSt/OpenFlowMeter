@@ -550,4 +550,3 @@ if __name__ == "__main__":
     print('CHANNEL1')
     #plot_calibration('calibration_20230104_113819_CH1_20.npz')
     plot_calibration('calibration_20230104_122100_CH1_20.npz')
-    """

@@ -33,14 +33,14 @@ def test_calibration():
         measurement_successful = False
 
         # configuration
-        channel = 0            # channels, we want to analyse
+        channel = 1           # channels, we want to analyse
         repetitions = 10      # repeat how many times
         dac_steps = np.linspace(0, 128, 129).astype(int)
-        dac_steps = np.append(dac_steps, np.linspace(128, 1024, 100).astype(int))
+        dac_steps = np.append(dac_steps, np.linspace(128, 4096, 100).astype(int))
 
         # just for testing python
-    #    repetitions = 1
-    #    dac_steps = [128]
+        #repetitions = 1
+        #dac_steps = [128]
 
         try:
             voltage, current, MMcurrent = CurrentCalibration(ofm=ofm, dmm=dmm, channel=channel, repetitions = repetitions, DACs = dac_steps)
