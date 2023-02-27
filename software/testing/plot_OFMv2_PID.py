@@ -191,7 +191,7 @@ def plot_OFMv2_PID(filename):
              fontsize = 'medium',
              bbox = dict(facecolor='white',
                          ec="0.5",
-                         alpha=0.7)
+                         alpha=0.8)
              )
 
     fig.tight_layout()
