@@ -50,7 +50,7 @@ void runPID(PID* pid){
 
     *pid->output = (uint16_t) output;
   }else{
-    // TODO implement some default output, which is used, when the PIC is not
+    // TODO implement some default output, which is used, when the PID is not
     // operating
     *pid->output = MIN_PID_OUTPUT;
   }
