@@ -69,7 +69,7 @@ def plot_OFMv2_PID(filename):
     color = 'tab:orange'
     for i in [0,1]:
         ax2[i].set_ylabel("DAC value / LSB", color=color)
-        ax2[i].set_ylim([0,1024])
+        ax2[i].set_ylim([0,4096])
         ax2[i].tick_params(axis='y', labelcolor=color)
         ax2[i].plot( timestamp, dac[i], label="DAC", color=color)
 

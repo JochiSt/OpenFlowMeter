@@ -11,6 +11,8 @@ import numpy as np
 
 import time
 
+OFM_ADC_MIN = 40
+
 def main():
     setup = None
     filename = None
@@ -43,9 +45,9 @@ def main():
 
         # PID settings channel 1
         ofm.config.PID_T[1] = 30.0
-        ofm.config.PID_P[1] = 4
+        ofm.config.PID_P[1] = 12
         ofm.config.PID_I[1] = 0.00002
-        ofm.config.PID_D[1] = 0.1
+        ofm.config.PID_D[1] = 0.01
 
         time.sleep(1)
         ofm.changeConfig()
@@ -57,7 +59,7 @@ def main():
         time.sleep(1)
         ofm.config.printout()
 
-        ofm.setDAC(10, 10)
+        ofm.setDAC(OFM_ADC_MIN, OFM_ADC_MIN)
         time.sleep(2)
 
         time0 = time.time()
@@ -119,7 +121,7 @@ def main():
                     ofm.changeConfig()
                     print("PID disabled")
                     events.append( (runtime, "PID disabled") )
-                    ofm.setDAC(10,10)
+                    ofm.setDAC(OFM_ADC_MIN, OFM_ADC_MIN)
 
                 if runtime > TIME_START + TIME_PID_ACTIVE + TIME_STOP:
                     break
@@ -175,7 +177,7 @@ def main():
                     gains = gains
                     )
 
-        ofm.setDAC(10,10)
+        ofm.setDAC(OFM_ADC_MIN, OFM_ADC_MIN)
         ofm.config.PID_flags = 0b00000000
         ofm.changeConfig()
 
