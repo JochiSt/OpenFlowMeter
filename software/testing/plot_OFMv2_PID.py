@@ -143,8 +143,27 @@ def plot_OFMv2_PID(filename):
                     linestyle='-', linewidth=1+gain)
         ax6[i].set_ylim([1,4400])
 
+    ###########################################################################
+    # evaluate stable temperature
 
+    # get starting time
+    t_start = None
+    t_stop  = None
 
+    for (t, event) in events:
+        if event == "PID enabled":
+            t_start = float(t) + 20
+        elif event == "PID disabled":
+            t_stop = float(t)
+        elif "PID setpoint" in event:
+            t_stop = float(t)
+            break
+
+    sel_times = np.where( (t_start < timestamp) & ( timestamp < t_stop) )
+
+    for ch in [0,1]:
+        print("Temperature", ch)
+        print("", np.mean(temperatures[ch][sel_times]), "+-", np.std(temperatures[ch][sel_times]))
 
     ###########################################################################
     # X axis
