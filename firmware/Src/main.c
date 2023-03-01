@@ -130,6 +130,8 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
+  MX_TIM1_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
   /****************************************************************************/
   printf("\r\n\r\n");
@@ -213,8 +215,8 @@ int main(void)
 	  Error_Handler();
   }
   /****************************************************************************/
-  printf("starting TIM2...\r\n");
-  HAL_TIM_Base_Start_IT(&htim2);
+  printf("starting periodic timer TIM1...\r\n");
+  HAL_TIM_Base_Start_IT(&htim1);
 
   printf("starting TIM3 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
@@ -244,7 +246,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   /// store the old timer2 value
-  uint8_t timer2_elapsed_old = 0;
+  uint8_t timer_elapsed_old = 0;
 
   // variables for transmitting CAN messages
   uint8_t cnt_can_adc = 0;        ///< counter for the CAN ADC message rate
@@ -283,8 +285,8 @@ int main(void)
      * check timer 2 for doing periodic tasks
      * one timer2_elapsed is equal to 125ms
      **************************************************************************/
-    if( timer2_elapsed >= timer2_elapsed_old){
-        timer2_elapsed_old = timer2_elapsed + 1;	// important to add +1, in
+    if( timer_elapsed >= timer_elapsed_old){
+        timer_elapsed_old = timer_elapsed + 1;	// important to add +1, in
                                                   // order to catch overflow
 
         // increase the interval counters every time this counter is evaluated
