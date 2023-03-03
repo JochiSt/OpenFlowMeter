@@ -5,3 +5,6 @@
 [submodule "software/LabDeviceControl"]
 	path = software/LabDeviceControl
 	url = https://github.com/JochiSt/LabDeviceControl.git
+[submodule "Kicad-Wago-733"]
+	path = Kicad-Wago-733
+	url = https://github.com/phd0/Kicad-Wago-733.git

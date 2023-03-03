@@ -1,3 +1,5 @@
 (fp_lib_table
+  (version 7)
   (lib (name "w_conn_strip")(type "KiCad")(uri "${KIPRJMOD}/w_conn_strip.pretty")(options "")(descr ""))
+  (lib (name "Connector_Wago")(type "KiCad")(uri "${KIPRJMOD}/Kicad-Wago-733/Connector_Wago.pretty")(options "")(descr ""))
 )
