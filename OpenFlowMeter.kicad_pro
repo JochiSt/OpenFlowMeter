@@ -576,6 +576,10 @@
     [
       "100f98e3-4296-40f9-94c5-6b164cc256aa",
       "PWM Filter1"
+    ],
+    [
+      "6940572e-be43-4dbe-a74a-6ddd0312cd29",
+      "DifferentialAmplifier"
     ]
   ],
   "text_variables": {}
