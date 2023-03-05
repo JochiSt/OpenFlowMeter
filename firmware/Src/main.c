@@ -205,7 +205,7 @@ int main(void)
       CAN_DAC_ID    | (cfg.board_ID << 4),
       0);
   // FIFO 1
-  CAN_prepare_filter_id(0x125, 0x126, 1);
+  //CAN_prepare_filter_id(0x125, 0x126, 1);   // not needed?
 
   // activate notifications
   if(HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING)!= HAL_OK){
