@@ -1139,12 +1139,33 @@
     (uuid fe1b1674-1346-47f3-8c83-9dd14a16433e)
   )
 
+  (text_box "set voltage for current source"
+    (at 127 119.38 0) (size 17.78 5.08)
+    (stroke (width 0) (type default))
+    (fill (type none))
+    (effects (font (size 1.27 1.27)))
+    (uuid 18a5cfa9-c386-43eb-92d9-e64f10855950)
+  )
+  (text_box ""
+    (at 199.39 123.19 0) (size 0 0)
+    (stroke (width 0) (type default))
+    (fill (type none))
+    (effects (font (size 1.27 1.27)) (justify top))
+    (uuid 20d4e36d-51ce-4f57-812d-53accfdaaa13)
+  )
   (text_box "The differential amplifier allows usage of 4 wire connection to the PT100.\n"
     (at 156.21 91.44 0) (size 20.32 11.43)
     (stroke (width 0) (type default))
     (fill (type none))
-    (effects (font (size 1.27 1.27)) (justify left top))
+    (effects (font (size 1.27 1.27)))
     (uuid 6a94c41a-32a1-491e-ae98-8ddd500b3342)
+  )
+  (text_box "two voltage controlled current sources."
+    (at 196.85 123.19 0) (size 40.64 3.81)
+    (stroke (width 0) (type default))
+    (fill (type none))
+    (effects (font (size 1.27 1.27)))
+    (uuid 8de0cc99-28f8-4c74-86d8-0daac2414f55)
   )
   (text_box ""
     (at 152.4 104.14 0) (size 0 0)
@@ -1157,7 +1178,7 @@
     (at 133.35 101.6 0) (size 21.59 10.16)
     (stroke (width 0) (type default))
     (fill (type none))
-    (effects (font (size 1.27 1.27)) (justify left top))
+    (effects (font (size 1.27 1.27)))
     (uuid c38108f3-8433-4eea-8e9d-c5ee7e7ddbd1)
   )
 
