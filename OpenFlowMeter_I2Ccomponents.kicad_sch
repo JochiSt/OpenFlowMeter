@@ -982,7 +982,7 @@
   )
 
   (symbol (lib_id "Jumper:Jumper_2_Bridged") (at 246.38 49.53 90) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 1a10e7f2-6d1c-49ed-9c91-29242a110a6b)
     (property "Reference" "JP2" (at 247.523 50.009 90)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -1633,7 +1633,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_3_Bridged12") (at 257.81 142.24 270) (mirror x) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f147e97e-3b3f-4792-a2e8-dedfd7beaf8d)
     (property "Reference" "JP3" (at 260.35 142.2399 90)
       (effects (font (size 1.27 1.27)) (justify left))

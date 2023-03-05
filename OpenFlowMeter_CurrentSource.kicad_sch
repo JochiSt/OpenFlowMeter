@@ -663,10 +663,6 @@
     (stroke (width 0) (type default))
     (uuid 10e52e95-44f3-4059-a86d-dcda603e0623)
   )
-  (polyline (pts (xy 215.9 129.54) (xy 195.58 138.43))
-    (stroke (width 0.3) (type solid) (color 0 194 0 1))
-    (uuid 11da1bb9-4f69-4b5f-971f-e779a6acea21)
-  )
 
   (wire (pts (xy 96.52 147.32) (xy 93.98 147.32))
     (stroke (width 0) (type default))
@@ -1859,7 +1855,7 @@
   )
 
   (symbol (lib_id "Device:R") (at 124.46 152.4 270) (unit 1)
-    (in_bom yes) (on_board yes) (dnp yes) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp yes) (fields_autoplaced)
     (uuid 75df4664-c7f2-4d53-b3ec-3f25740ffff1)
     (property "Reference" "R27" (at 124.46 156.21 90)
       (effects (font (size 1.27 1.27)))
@@ -1977,7 +1973,7 @@
   )
 
   (symbol (lib_id "Device:R") (at 124.46 144.78 270) (unit 1)
-    (in_bom yes) (on_board yes) (dnp yes)
+    (in_bom no) (on_board yes) (dnp yes)
     (uuid e98026a6-eea5-4b77-b24b-f80e68fb1a3b)
     (property "Reference" "R66" (at 124.46 139.5222 90)
       (effects (font (size 1.27 1.27)))

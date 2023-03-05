@@ -2426,7 +2426,7 @@
   )
 
   (symbol (lib_id "Connector_Generic:Conn_02x03_Odd_Even") (at 35.56 151.13 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp yes) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp yes) (fields_autoplaced)
     (uuid 28df57cc-4f6e-4307-8575-9d80b1692bb1)
     (property "Reference" "J7" (at 36.83 146.1285 0)
       (effects (font (size 1.27 1.27)))
@@ -2887,7 +2887,7 @@
   )
 
   (symbol (lib_id "Device:R") (at 57.15 83.82 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp yes) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp yes) (fields_autoplaced)
     (uuid 55239883-1505-442d-a87e-c1ad3bdc00c1)
     (property "Reference" "R33" (at 58.928 82.9115 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -3426,7 +3426,7 @@
   )
 
   (symbol (lib_id "Connector_Generic:Conn_02x04_Odd_Even") (at 35.56 180.34 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp yes) (fields_autoplaced)
+    (in_bom no) (on_board yes) (dnp yes) (fields_autoplaced)
     (uuid 8bd41956-dab4-45d7-a91f-5425c79d3445)
     (property "Reference" "J6" (at 36.83 172.5635 0)
       (effects (font (size 1.27 1.27)))
