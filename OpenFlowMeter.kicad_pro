@@ -56,7 +56,34 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "courtyards_overlap|126601601|101708201|00000000-0000-0000-0000-000061b0c61d|09ddebc6-9fdc-41dc-a2de-ae94b8c84107",
+        "courtyards_overlap|126601601|83535001|00000000-0000-0000-0000-000061b0c63f|5bce3e75-0b42-4965-ad6f-64f599a7e31e",
+        "courtyards_overlap|126614601|103181401|00000000-0000-0000-0000-0000619e1b3d|09ddebc6-9fdc-41dc-a2de-ae94b8c84107",
+        "courtyards_overlap|126614601|85008201|00000000-0000-0000-0000-0000619e8b1c|5bce3e75-0b42-4965-ad6f-64f599a7e31e",
+        "courtyards_overlap|128538599|106026201|00000000-0000-0000-0000-0000619e1b0a|09ddebc6-9fdc-41dc-a2de-ae94b8c84107",
+        "courtyards_overlap|128538599|87853001|00000000-0000-0000-0000-0000619e8b2c|5bce3e75-0b42-4965-ad6f-64f599a7e31e",
+        "courtyards_overlap|143213201|107366301|894d228e-3f36-435c-85bf-bb9c1c5b3323|8d9bc2bc-c0c2-4428-a349-896c76225276",
+        "courtyards_overlap|151764271|89587163|00000000-0000-0000-0000-000061b0fbbc|2952439a-4d93-45a3-a998-2b2fce2c5fe9",
+        "courtyards_overlap|162696199|89000599|3795d44a-10ba-4bac-936f-e2f21b352e89|d439baaa-b5fc-47dc-b615-34374fe25696",
+        "courtyards_overlap|165755601|102846427|8aeae536-fd36-430e-be47-1a856eced2fc|ac400113-5b0c-4ba3-90f5-fba5c1ab46ed",
+        "courtyards_overlap|172929001|106937401|49575217-40b0-4890-8acf-12982cca52b5|bfcdffb4-9a75-4453-a5cf-48d0c88fa2a7",
+        "courtyards_overlap|175700801|85845201|1e747565-f7ad-415f-b1ff-c794f09a92cc|fe6381fb-e684-46de-8891-ee7b19da70c7",
+        "lib_footprint_mismatch|116985000|103819399|a7605bec-94c1-48c7-b934-7cc3ad2efecf|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|116985000|89719399|00000000-0000-0000-0000-0000619e8b6c|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|185885000|96769400|bd5408e4-362d-4e43-9d39-78fb99eb52c8|00000000-0000-0000-0000-000000000000",
+        "silk_overlap|128223409|102947710|a0d60062-2053-43e0-93e8-dc89fb17b24a|f5254720-0137-41fe-9884-df37f44c42d4",
+        "silk_overlap|128223409|84774510|a53e8f7d-fed2-4175-bd91-9c420d454d56|275c3e87-6b92-4445-ae44-835199568f46",
+        "silk_overlap|128354588|103384193|a0d60062-2053-43e0-93e8-dc89fb17b24a|5dfc427e-2725-44b1-8331-b15265d8790c",
+        "silk_overlap|128354588|104438607|305963a0-7ec2-4781-aaf8-6417cff3b151|f38b7666-67bb-4c73-93c4-347ed560b579",
+        "silk_overlap|128354588|85210993|27bfdb5a-d4d9-4caf-821e-0fed526dbe2a|275c3e87-6b92-4445-ae44-835199568f46",
+        "silk_overlap|128354588|86265407|26876a32-8807-4cfb-b77d-1e29e6d8b522|157f825a-1e00-4887-8c58-60ef9269fb2d",
+        "silk_overlap|161490047|88708553|1c2527a6-6625-4d54-9018-eb72b29acbe0|d2de4093-1fc2-4bc1-94b6-4d0fe3426c6f",
+        "silk_overlap|161490047|88708553|d2de4093-1fc2-4bc1-94b6-4d0fe3426c6f|1c2527a6-6625-4d54-9018-eb72b29acbe0",
+        "silk_overlap|173399000|107407400|781602e4-fe25-4da3-a788-0c3d20aafcb7|842cf2c0-60fb-4450-a98f-bb4d1ac9ffd9",
+        "silk_overlap|173519000|107407400|1009eeb8-4be8-49ff-871d-1e30079ffe54|bf760e7a-17ef-47d4-b7f8-3e196e7e7eac",
+        "silk_overlap|173519000|107407400|781602e4-fe25-4da3-a788-0c3d20aafcb7|bf760e7a-17ef-47d4-b7f8-3e196e7e7eac"
+      ],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -82,7 +109,7 @@
         "item_on_disabled_layer": "error",
         "items_not_allowed": "error",
         "length_out_of_range": "error",
-        "lib_footprint_issues": "warning",
+        "lib_footprint_issues": "ignore",
         "lib_footprint_mismatch": "warning",
         "malformed_courtyard": "error",
         "microvia_drill_out_of_range": "error",
@@ -93,7 +120,7 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_edge_clearance": "warning",
+        "silk_edge_clearance": "ignore",
         "silk_over_copper": "warning",
         "silk_overlap": "warning",
         "skew_out_of_range": "error",
@@ -174,12 +201,20 @@
         }
       ],
       "track_widths": [
-        0.0
+        0.0,
+        0.0,
+        0.2,
+        0.254,
+        0.5
       ],
       "via_dimensions": [
         {
           "diameter": 0.0,
           "drill": 0.0
+        },
+        {
+          "diameter": 0.6,
+          "drill": 0.3
         }
       ],
       "zones_allow_external_fillets": false,
@@ -370,13 +405,14 @@
     "rule_severities": {
       "bus_definition_conflict": "error",
       "bus_entry_needed": "error",
-      "bus_label_syntax": "error",
       "bus_to_bus_conflict": "error",
       "bus_to_net_conflict": "error",
+      "conflicting_netclasses": "error",
       "different_unit_footprint": "error",
       "different_unit_net": "error",
       "duplicate_reference": "error",
       "duplicate_sheet_names": "error",
+      "endpoint_off_grid": "warning",
       "extra_units": "error",
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
@@ -527,7 +563,9 @@
     "page_layout_descr_file": "",
     "plot_directory": "output/schematic/",
     "spice_adjust_passive_values": false,
+    "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
+    "spice_model_current_sheet_as_root": true,
     "spice_save_all_currents": false,
     "spice_save_all_voltages": false,
     "subpart_first_id": 65,
@@ -561,6 +599,14 @@
     [
       "b9eee879-01fc-4990-ba41-0cf4f1ff1316",
       "I2C components"
+    ],
+    [
+      "100f98e3-4296-40f9-94c5-6b164cc256aa",
+      "PWM Filter1"
+    ],
+    [
+      "6940572e-be43-4dbe-a74a-6ddd0312cd29",
+      "DifferentialAmplifier"
     ]
   ],
   "text_variables": {}
