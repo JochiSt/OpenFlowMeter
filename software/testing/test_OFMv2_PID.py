@@ -88,7 +88,8 @@ def main():
         dac_on = False
 
         TIME_START = 30
-        TIME_PID_ACTIVE = 300
+        TIME_PID_ACTIVE = 600
+        TIME_DISTURB = 500
         TIME_STOP = 60
 
         # for debugging
@@ -96,7 +97,6 @@ def main():
         #TIME_PID_ACTIVE = 10
         #TIME_STOP = 2
 
-        TIME_DISTURB = 200
         disturbed = False
 
         events = []
