@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (date "2023-03-05")
+    (rev "3")
+  )
+
   (lib_symbols
     (symbol "Amplifier_Operational:LT1492" (pin_names (offset 0.127)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (at 0 5.08 0)
