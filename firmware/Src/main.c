@@ -218,13 +218,24 @@ int main(void)
   printf("starting periodic timer TIM1...\r\n");
   HAL_TIM_Base_Start_IT(&htim1);
 
+  // PWM for driving the bias of the amplifier
+  printf("starting TIM2 PWM...\r\n");
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // start channel 1
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2); // start channel 2
+
+  // Initialize PWM outputs with 0
+  TIM2->CCR1 = 0; // set channel 1
+  TIM2->CCR2 = 0; // set channel 2
+
+  // PWM for driving the current sources
   printf("starting TIM3 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // start channel 1
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2); // start channel 2
 
   // Initialize PWM outputs with 0
-  TIM3->CCR1 = 0; // set channel 1 max. 1024
-  TIM3->CCR2 = 0; // set channel 2 max. 1024
+  TIM3->CCR1 = 0; // set channel 1
+  TIM3->CCR2 = 0; // set channel 2
+
   /****************************************************************************/
   // Calibrate The ADC On Power-Up For Better Accuracy
   printf("calibrating ADC...\r\n");
