@@ -235,13 +235,11 @@ int main(void)
   printCfg(&cfg);
 
   // link configuration to PID controllers
-  pid[0].PIDcfg = &cfg.PID[0];
-  pid[0].input  = &temperature[0];
-  pid[0].output = &PIDout[0];
-
-  pid[1].PIDcfg = &cfg.PID[1];
-  pid[1].input  = &temperature[1];
-  pid[1].output = &PIDout[1];
+  for(int i=0; i<2; i++){
+    pid[i].PIDcfg = &cfg.PID[i];
+    pid[i].input  = &temperature[i];
+    pid[i].output = &PIDout[i];
+  }
 
   printf("\r\n\r\n");
   /****************************************************************************/
@@ -307,11 +305,13 @@ int main(void)
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
   /****************************************************************************/
   // create a pointer map for easy access
+  // low gain
   avr_current[0][0] = &avr_adcBuf_GAIN_0[0];
   avr_voltage[0][0] = &avr_adcBuf_GAIN_0[1];
   avr_current[1][0] = &avr_adcBuf_GAIN_0[2];
   avr_voltage[1][0] = &avr_adcBuf_GAIN_0[3];
 
+  // high gain
   avr_current[0][1] = &avr_adcBuf_GAIN_1[0];
   avr_voltage[0][1] = &avr_adcBuf_GAIN_1[1];
   avr_current[1][1] = &avr_adcBuf_GAIN_1[2];
