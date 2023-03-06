@@ -54,6 +54,37 @@
 //#define PRINT_UART_ADC        // print the ADC data
 //#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
 
+/**
+ * PCB v1 compatibility mode
+ */
+//#define PCB_V1
+
+/**
+ * PCB v2 compatibility mode
+ * enables:
+ *  - dual gain ADC readout
+ *  - I2C sensor readout
+ */
+//#define PCB_V2
+#ifdef PCB_V2
+#undef PCB_V1
+#define I2C_SENSOR_READOUT
+#endif
+
+/**
+ * PCB v3 compatibility mode
+ * enables:
+ *  - dual gain ADC readout
+ *  - offset for ADC / differential amplifier
+ *  - I2C sensor readout
+ */
+//#define PCB_V3
+#ifdef PCB_V3
+#undef PCB_V1
+#undef PCB_V2
+#define I2C_SENSOR_READOUT
+#endif
+
 //#define WRITE_DEFAULT_CFG_EEPROM_STARTUP
 /* USER CODE END PD */
 
@@ -218,6 +249,7 @@ int main(void)
   printf("starting periodic timer TIM1...\r\n");
   HAL_TIM_Base_Start_IT(&htim1);
 
+#ifdef PCB_V3
   // PWM for driving the bias of the amplifier
   printf("starting TIM2 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // start channel 1
@@ -226,6 +258,7 @@ int main(void)
   // Initialize PWM outputs with 0
   TIM2->CCR1 = 0; // set channel 1
   TIM2->CCR2 = 0; // set channel 2
+#endif
 
   // PWM for driving the current sources
   printf("starting TIM3 PWM...\r\n");
@@ -242,9 +275,11 @@ int main(void)
   HAL_ADCEx_Calibration_Start(&hadc1);
 
   /****************************************************************************/
+#ifdef I2C_SENSOR_READOUT
   // Test of TMP100 / TMP101
   i2c_init_TMP100(&hi2c1, 0x48);
   i2c_read_TMP100(&hi2c1, 0x48);
+#endif
 
   // start ADC DMA
   printf("starting ADC DMA...\r\n");
@@ -261,8 +296,12 @@ int main(void)
 
   // variables for transmitting CAN messages
   uint8_t cnt_can_adc = 0;        ///< counter for the CAN ADC message rate
+
+#ifdef I2C_SENSOR_READOUT
   uint8_t cnt_can_i2c_tmp100 = 0; ///< counter for the CAN I2C TMP100 rate
   uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
+#endif
+
   uint8_t cnt_print_uart = 0;     ///< counter for UART output
 
   uint8_t ADCgainUsed = 0;        ///< which ADC gain is used for calculation
@@ -303,8 +342,11 @@ int main(void)
         // increase the interval counters every time this counter is evaluated
         cnt_can_adc++;
         cnt_print_uart++;
+
+#ifdef I2C_SENSOR_READOUT
         cnt_can_i2c_tmp100++;
         cnt_can_i2c_bme680++;
+#endif
 
         /***********************************************************************
          * PID handling
@@ -317,6 +359,7 @@ int main(void)
         ADCgainUsed = 0;
         /** CHANNEL 0 *********************************************************/
         current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
+#ifdef PCB_V2
         if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
           // high gain setting
           if(!current0_sat_cnt){
@@ -328,8 +371,10 @@ int main(void)
         }else{
           current0_sat_cnt = SAT_CNT_PRESET;
         }
+#endif
 
         voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN0.Ubias;
+#ifdef PCB_V2
         if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
           // high gain setting
           if(!voltage0_sat_cnt){
@@ -341,9 +386,10 @@ int main(void)
         }else{
           voltage0_sat_cnt = SAT_CNT_PRESET;
         }
-
+#endif
         /** CHANNEL 1 *********************************************************/
         current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
+#ifdef PCB_V2
         if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
           // high gain setting
           if(!current1_sat_cnt){
@@ -355,8 +401,10 @@ int main(void)
         }else{
           current1_sat_cnt = SAT_CNT_PRESET;
         }
+#endif
 
         voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN1.Ubias;
+#ifdef PCB_V2
         if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
           // high gain setting
           if(!voltage1_sat_cnt){
@@ -368,7 +416,7 @@ int main(void)
         }else{
           voltage1_sat_cnt = SAT_CNT_PRESET;
         }
-
+#endif
         /** calculate temperatures ********************************************/
         temperature0 = convertPT100_R2T( voltage0 / current0 );
         temperature1 = convertPT100_R2T( voltage1 / current1 );
@@ -500,6 +548,7 @@ int main(void)
     /***************************************************************************
      * Send out periodic CAN messages for I2C bus
      **************************************************************************/
+#ifdef I2C_SENSOR_READOUT
     // I2C sensors
     if( cnt_can_i2c_tmp100 >= cfg.interval_I2C_TMP100
         && cfg.interval_I2C_TMP100 < 255){
@@ -511,9 +560,10 @@ int main(void)
         && cfg.interval_I2C_BME680 < 255){
       //TODO to be implemented
     }
-  }
+#endif
+  } // while(1)
   /* USER CODE END 3 */
-}
+} // void main()
 
 /**
   * @brief System Clock Configuration
