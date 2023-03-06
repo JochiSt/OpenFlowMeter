@@ -26,10 +26,13 @@ temperature = 40
 R_PT100 = PT100.convertPT100_R(temperature)
 print("Temperature", temperature, "degC", "PT100", R_PT100, "Ohm")
 
-Uoffset = 2.25
+
 
 Ibias = 20e-3 - 0.3e-3
 IbiasU = I2U(Ibias)
+
+Uoffset = IbiasU * 1.1
+
 Upt100 = R_PT100 * Ibias
 
 print("Voltages before amplification:")
