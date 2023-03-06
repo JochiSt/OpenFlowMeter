@@ -49,16 +49,19 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-// select, what should be printed via UART
+/******************************************************************************/
+/**
+ * select, what should be printed via UART
+ */
 //#define PRINT_UART_PID          // print PID performance
 //#define PRINT_UART_ADC        // print the ADC data
 //#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
-
+/******************************************************************************/
 /**
  * PCB v1 compatibility mode
  */
 #define PCB_V1
-
+/******************************************************************************/
 /**
  * PCB v2 compatibility mode
  * enables:
@@ -70,7 +73,7 @@
 #undef PCB_V1
 #define I2C_SENSOR_READOUT
 #endif
-
+/******************************************************************************/
 /**
  * PCB v3 compatibility mode
  * enables:
@@ -84,8 +87,12 @@
 #undef PCB_V2
 #define I2C_SENSOR_READOUT
 #endif
-
+/******************************************************************************/
+/**
+ * Write the configuration at startup into the EEPROM
+ */
 //#define WRITE_DEFAULT_CFG_EEPROM_STARTUP
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -95,7 +102,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-/* at the moment, just for one gain */
 /// current
 float current[2];
 /// voltage
