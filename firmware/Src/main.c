@@ -57,7 +57,7 @@
 /**
  * PCB v1 compatibility mode
  */
-//#define PCB_V1
+#define PCB_V1
 
 /**
  * PCB v2 compatibility mode
@@ -173,6 +173,14 @@ int main(void)
   printf("\r\n\r\n");
   printf("Compiled at "__DATE__" - "__TIME__"\r\n");
   printf("Compiled with GCC Version "__VERSION__"\r\n");
+
+#if defined(PCB_V1)
+  printf("PCB version 1\r\n");
+#elif defined(PCB_V2)
+  printf("PCB version 2\r\n");
+#elif defined(PCB_V3)
+  printf("PCB version 3\r\n");
+#endif
   /****************************************************************************/
   // all OFF
   LED_ERROR(SET);    // red      -> failure
