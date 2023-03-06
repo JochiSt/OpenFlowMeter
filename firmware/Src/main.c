@@ -427,12 +427,14 @@ int main(void)
         }
 #endif
         /** calculate temperatures ********************************************/
-        temperature[0] = convertPT100_R2T( voltage[0] / current[0] );
-        temperature[1] = convertPT100_R2T( voltage[1] / current[1] );
+        for(int i=0; i<2; i++){
+          temperature[i] = convertPT100_R2T( voltage[i] / current[i] );
+        }
 
         /** run the PID controllers *******************************************/
-        runPID(&pid[0]);
-        runPID(&pid[1]);
+        for(int i=0; i<2; i++){
+          runPID(&pid[i]);
+        }
 
         /** update the output, if the PID is active ***************************/
         if(pid[0].active){
@@ -479,35 +481,30 @@ int main(void)
 
 #endif
 #if defined(PRINT_UART_PID)
-      printf("PID0 %d\r\n",  pid0.active);
-      printf(" - I   %f\r\n",  current[0]);
-      printf(" - U   %f\r\n",  voltage[0]);
-      printf(" - PWM %ld\r\n", TIM3->CCR2);
-      printf(" - Tm  %f\r\n",  temperature[0]);
-      printf(" - Ts  %f\r\n",  pid[0].PIDcfg->PID_T );
-      printf(" - P   %f\r\n",  pid[0].PIDcfg->PID_P );
-      printf(" - I   %f\r\n",  pid[0].PIDcfg->PID_I );
-      printf(" - D   %f\r\n",  pid[0].PIDcfg->PID_D );
-
-      printf("PID1 %d\r\n", pid[1].active);
-      printf(" - I   %f\r\n",  current[1]);
-      printf(" - U   %f\r\n",  voltage[1]);
-      printf(" - PWM %ld\r\n", TIM3->CCR1);
-      printf(" - Tm  %f\r\n",  temperature[1]);
-      printf(" - Ts  %f\r\n",  pid[1].PIDcfg->PID_T );
-      printf(" - P   %f\r\n",  pid[1].PIDcfg->PID_P );
-      printf(" - I   %f\r\n",  pid[1].PIDcfg->PID_I );
-      printf(" - D   %f\r\n",  pid[1].PIDcfg->PID_D );
+      for(int i=0; i<2; i++){
+        printf("PID%d %d\r\n",  i, pid[0].active);
+        printf(" - I   %f\r\n",  current[i]);
+        printf(" - U   %f\r\n",  voltage[i]);
+        if(i==0){
+          printf(" - PWM %ld\r\n", TIM3->CCR2);
+        }else{
+          printf(" - PWM %ld\r\n", TIM3->CCR1);
+        }
+        printf(" - Tm  %f\r\n",  temperature[i]);
+        printf(" - Ts  %f\r\n",  pid[i].PIDcfg->PID_T );
+        printf(" - P   %f\r\n",  pid[i].PIDcfg->PID_P );
+        printf(" - I   %f\r\n",  pid[i].PIDcfg->PID_I );
+        printf(" - D   %f\r\n",  pid[i].PIDcfg->PID_D );
+      }
 #endif
 #if defined(PRINT_UART_CALC_TEMP)
       printf("Temperatures:\r\n");
       printf("ADC gain selection %x \r\n", ADCgainUsed);
-      printf("CH0: %f\r\n", temperature[0]);
-      printf(" - I   %f\r\n",  current[0]);
-      printf(" - U   %f\r\n",  voltage[0]);
-      printf("CH1: %f\r\n", temperature[1]);
-      printf(" - I   %f\r\n",  current[1]);
-      printf(" - U   %f\r\n",  voltage[1]);
+      for(int i=0; i<2; i++){
+        printf("CH%d: %f\r\n", i, temperature[i]);
+        printf(" - I   %f\r\n",  current[i]);
+        printf(" - U   %f\r\n",  voltage[i]);
+      }
 #endif
     }
 
