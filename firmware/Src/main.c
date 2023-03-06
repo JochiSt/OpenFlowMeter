@@ -97,19 +97,19 @@
 /* USER CODE BEGIN PV */
 /* at the moment, just for one gain */
 /// current
-float current0, current1;
+float current[2];
 /// voltage
-float voltage0, voltage1;
+float voltage[2];
 /// temperature
-float temperature0, temperature1;
+float temperature[2];
 
 // avoid flickering saturation non saturation
 #define SAT_CNT_PRESET  10
-uint8_t current0_sat_cnt, current1_sat_cnt;
-uint8_t voltage0_sat_cnt, voltage1_sat_cnt;
+uint8_t current_sat_cnt[2];
+uint8_t voltage_sat_cnt[2];
 
 /// output from PID, which is connected to the PWM output, if the PID is active
-uint16_t PIDout0, PIDout1;
+uint16_t PIDout[2];
 
 /* USER CODE END PV */
 
@@ -222,12 +222,12 @@ int main(void)
 
   // link configuration to PID controllers
   pid[0].PIDcfg = &cfg.PID[0];
-  pid[0].input  = &temperature0;
-  pid[0].output = &PIDout0;
+  pid[0].input  = &temperature[0];
+  pid[0].output = &PIDout[0];
 
   pid[1].PIDcfg = &cfg.PID[1];
-  pid[1].input  = &temperature1;
-  pid[1].output = &PIDout1;
+  pid[1].input  = &temperature[1];
+  pid[1].output = &PIDout[1];
 
   printf("\r\n\r\n");
   /****************************************************************************/
@@ -364,71 +364,71 @@ int main(void)
 
         ADCgainUsed = 0;
         /** CHANNEL 0 *********************************************************/
-        current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN[0].Ibias/1000.;
+        current[0] = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN[0].Ibias/1000.;
 #if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
           // high gain setting
-          if(!current0_sat_cnt){
-            current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN[0].Igain;
+          if(!current_sat_cnt[0]){
+            current[0] = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN[0].Igain;
             ADCgainUsed |= (1 << 0);
           }else{
-            current0_sat_cnt--;
+            current_sat_cnt[0]--;
           }
         }else{
-          current0_sat_cnt = SAT_CNT_PRESET;
+          current_sat_cnt[0] = SAT_CNT_PRESET;
         }
 #elif defined(PCB_V3)
 
 #endif
 
-        voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN[0].Ubias;
+        voltage[0] = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN[0].Ubias;
 #if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
           // high gain setting
-          if(!voltage0_sat_cnt){
-            voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN[0].Ugain;
+          if(!voltage_sat_cnt[0]){
+            voltage[0] = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN[0].Ugain;
             ADCgainUsed |= (1 << 1);
           }else{
-            voltage0_sat_cnt--;
+            voltage_sat_cnt[0]--;
           }
         }else{
-          voltage0_sat_cnt = SAT_CNT_PRESET;
+          voltage_sat_cnt[0] = SAT_CNT_PRESET;
         }
 #elif defined(PCB_V3)
 #endif
         /** CHANNEL 1 *********************************************************/
-        current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN[1].Ibias/1000.;
+        current[1] = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN[1].Ibias/1000.;
 #if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
           // high gain setting
-          if(!current1_sat_cnt){
-            current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN[1].Igain;
+          if(!current_sat_cnt[1]){
+            current[1] = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN[1].Igain;
             ADCgainUsed |= (1 << 2);
           }else{
-            current1_sat_cnt--;
+            current_sat_cnt[1]--;
           }
         }else{
-          current1_sat_cnt = SAT_CNT_PRESET;
+          current_sat_cnt[1] = SAT_CNT_PRESET;
         }
 #endif
 
-        voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN[1].Ubias;
+        voltage[1] = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN[1].Ubias;
 #if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
           // high gain setting
-          if(!voltage1_sat_cnt){
-            voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN[1].Ugain;
+          if(!voltage_sat_cnt[1]){
+            voltage[1] = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN[1].Ugain;
             ADCgainUsed |= (1 << 3);
           }else{
-            voltage1_sat_cnt--;
+            voltage_sat_cnt[1]--;
           }
         }else{
-          voltage1_sat_cnt = SAT_CNT_PRESET;
+          voltage_sat_cnt[1] = SAT_CNT_PRESET;
         }
 #endif
         /** calculate temperatures ********************************************/
-        temperature0 = convertPT100_R2T( voltage0 / current0 );
-        temperature1 = convertPT100_R2T( voltage1 / current1 );
+        temperature[0] = convertPT100_R2T( voltage[0] / current[0] );
+        temperature[1] = convertPT100_R2T( voltage[1] / current[1] );
 
         /** run the PID controllers *******************************************/
         runPID(&pid[0]);
@@ -436,14 +436,14 @@ int main(void)
 
         /** update the output, if the PID is active ***************************/
         if(pid[0].active){
-          TIM3->CCR2 = PIDout0;
+          TIM3->CCR2 = PIDout[0];
         }else{
-          TIM3->CCR2 = PWM0;
+          TIM3->CCR2 = PWM[0];
         }
         if(pid[1].active){
-          TIM3->CCR1 = PIDout1;
+          TIM3->CCR1 = PIDout[1];
         }else{
-          TIM3->CCR1 = PWM1;
+          TIM3->CCR1 = PWM[1];
         }
 
         // link the PID active to the configuration active
@@ -480,34 +480,34 @@ int main(void)
 #endif
 #if defined(PRINT_UART_PID)
       printf("PID0 %d\r\n",  pid0.active);
-      printf(" - I   %f\r\n",  current0);
-      printf(" - U   %f\r\n",  voltage0);
+      printf(" - I   %f\r\n",  current[0]);
+      printf(" - U   %f\r\n",  voltage[0]);
       printf(" - PWM %ld\r\n", TIM3->CCR2);
-      printf(" - Tm  %f\r\n",  temperature0);
-      printf(" - Ts  %f\r\n",  pid0.PIDcfg->PID_T );
-      printf(" - P   %f\r\n",  pid0.PIDcfg->PID_P );
-      printf(" - I   %f\r\n",  pid0.PIDcfg->PID_I );
-      printf(" - D   %f\r\n",  pid0.PIDcfg->PID_D );
+      printf(" - Tm  %f\r\n",  temperature[0]);
+      printf(" - Ts  %f\r\n",  pid[0].PIDcfg->PID_T );
+      printf(" - P   %f\r\n",  pid[0].PIDcfg->PID_P );
+      printf(" - I   %f\r\n",  pid[0].PIDcfg->PID_I );
+      printf(" - D   %f\r\n",  pid[0].PIDcfg->PID_D );
 
-      printf("PID1 %d\r\n", pid1.active);
-      printf(" - I   %f\r\n",  current1);
-      printf(" - U   %f\r\n",  voltage1);
+      printf("PID1 %d\r\n", pid[1].active);
+      printf(" - I   %f\r\n",  current[1]);
+      printf(" - U   %f\r\n",  voltage[1]);
       printf(" - PWM %ld\r\n", TIM3->CCR1);
-      printf(" - Tm  %f\r\n",  temperature1);
-      printf(" - Ts  %f\r\n",  pid1.PIDcfg->PID_T );
-      printf(" - P   %f\r\n",  pid1.PIDcfg->PID_P );
-      printf(" - I   %f\r\n",  pid1.PIDcfg->PID_I );
-      printf(" - D   %f\r\n",  pid1.PIDcfg->PID_D );
+      printf(" - Tm  %f\r\n",  temperature[1]);
+      printf(" - Ts  %f\r\n",  pid[1].PIDcfg->PID_T );
+      printf(" - P   %f\r\n",  pid[1].PIDcfg->PID_P );
+      printf(" - I   %f\r\n",  pid[1].PIDcfg->PID_I );
+      printf(" - D   %f\r\n",  pid[1].PIDcfg->PID_D );
 #endif
 #if defined(PRINT_UART_CALC_TEMP)
       printf("Temperatures:\r\n");
       printf("ADC gain selection %x \r\n", ADCgainUsed);
-      printf("CH0: %f\r\n", temperature0);
-      printf(" - I   %f\r\n",  current0);
-      printf(" - U   %f\r\n",  voltage0);
-      printf("CH1: %f\r\n", temperature1);
-      printf(" - I   %f\r\n",  current1);
-      printf(" - U   %f\r\n",  voltage1);
+      printf("CH0: %f\r\n", temperature[0]);
+      printf(" - I   %f\r\n",  current[0]);
+      printf(" - U   %f\r\n",  voltage[0]);
+      printf("CH1: %f\r\n", temperature[1]);
+      printf(" - I   %f\r\n",  current[1]);
+      printf(" - U   %f\r\n",  voltage[1]);
 #endif
     }
 
@@ -524,11 +524,11 @@ int main(void)
         CAN_send_uint16s(CAN_DAC_ID         | (cfg.board_ID << 4),
                              3, TIM3->CCR2, TIM3->CCR1, (uint16_t)ADCgainUsed );
         CAN_send_floats( CAN_TEMPERATURE_ID | (cfg.board_ID << 4) ,
-                                                  &temperature0, &temperature1);
+                                                  &temperature[0], &temperature[1]);
         CAN_send_floats( CAN_VOLTAGE_ID     | (cfg.board_ID << 4) ,
-                                                  &voltage0, &voltage1);
+                                                  &voltage[0], &voltage[1]);
         CAN_send_floats( CAN_CURRENT_ID     | (cfg.board_ID << 4) ,
-                                                  &current0, &current1);
+                                                  &current[0], &current[1]);
 
         /**********************************************************************/
         // convert 16bit ADC result into 2x 8bit for CAN message
