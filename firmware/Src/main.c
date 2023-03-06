@@ -109,6 +109,11 @@ float voltage[2];
 /// temperature
 float temperature[2];
 
+#if defined(PCB_V3)
+  // There are two offsets one for each channel
+  float offset[2];
+#endif
+
 // avoid flickering saturation non saturation
 #define SAT_CNT_PRESET  10
 uint8_t current_sat_cnt[2];
@@ -422,6 +427,9 @@ int main(void)
           }
         }
 #elif defined(PCB_V3)
+        // get the offset voltage
+        offset[0] = 3.3 * TIM2->CCR2 / 4096;
+        offset[1] = 3.3 * TIM2->CCR1 / 4096;
 
 
 #endif
