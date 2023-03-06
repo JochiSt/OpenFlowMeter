@@ -292,6 +292,16 @@ int main(void)
   // start first ADC conversion
   HAL_ADC_Start_DMA(&hadc1, adcBuf, ADC_BUFLEN); //Link DMA to ADC1
   /****************************************************************************/
+  // create a pointer map for easy access
+  avr_current[0][0] = &avr_adcBuf_GAIN_0[0];
+  avr_voltage[0][0] = &avr_adcBuf_GAIN_0[1];
+  avr_current[1][0] = &avr_adcBuf_GAIN_0[2];
+  avr_voltage[1][0] = &avr_adcBuf_GAIN_0[3];
+
+  avr_current[0][1] = &avr_adcBuf_GAIN_1[0];
+  avr_voltage[0][1] = &avr_adcBuf_GAIN_1[1];
+  avr_current[1][1] = &avr_adcBuf_GAIN_1[2];
+  avr_voltage[1][1] = &avr_adcBuf_GAIN_1[3];
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -363,68 +373,43 @@ int main(void)
         // use the highest possible gain
 
         ADCgainUsed = 0;
-        /** CHANNEL 0 *********************************************************/
-        current[0] = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN[0].Ibias/1000.;
+
+        // calculate coarse current and voltage for each channel
+        for(int i=0; i<2; i++){
+          current[i] = (*avr_current[i][0] * LSB2I) + cfg.GAIN[i].Ibias/1000.;
+          voltage[i] = (*avr_voltage[i][0] * LSB2U) + cfg.GAIN[i].Ubias;
+        }
+
 #if defined(PCB_V2)
-        if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
-          // high gain setting
-          if(!current_sat_cnt[0]){
-            current[0] = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN[0].Igain;
-            ADCgainUsed |= (1 << 0);
+        for(int i=0; i<2; i++){
+
+          if( *avr_current[i][1] < ISATURATION_LSB ){
+            // high gain setting
+            if(!current_sat_cnt[i]){
+              current[i] = *avr_current[i][1] * LSB2I / cfg.GAIN[i].Igain;
+              ADCgainUsed |= (1 << (0 + 2*i));
+            }else{
+              current_sat_cnt[i]--;
+            }
           }else{
-            current_sat_cnt[0]--;
+            current_sat_cnt[i] = SAT_CNT_PRESET;
           }
-        }else{
-          current_sat_cnt[0] = SAT_CNT_PRESET;
+
+          if( *avr_voltage[i][1] < USATURATION_LSB ){
+            // high gain setting
+            if(!voltage_sat_cnt[i]){
+              voltage[i] = *avr_voltage[i][1] * LSB2U / cfg.GAIN[i].Ugain;
+              ADCgainUsed |= (1 << (1 + 2*i));
+            }else{
+              voltage_sat_cnt[i]--;
+            }
+          }else{
+            voltage_sat_cnt[i] = SAT_CNT_PRESET;
+          }
         }
 #elif defined(PCB_V3)
 
-#endif
 
-        voltage[0] = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN[0].Ubias;
-#if defined(PCB_V2)
-        if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
-          // high gain setting
-          if(!voltage_sat_cnt[0]){
-            voltage[0] = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN[0].Ugain;
-            ADCgainUsed |= (1 << 1);
-          }else{
-            voltage_sat_cnt[0]--;
-          }
-        }else{
-          voltage_sat_cnt[0] = SAT_CNT_PRESET;
-        }
-#elif defined(PCB_V3)
-#endif
-        /** CHANNEL 1 *********************************************************/
-        current[1] = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN[1].Ibias/1000.;
-#if defined(PCB_V2)
-        if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
-          // high gain setting
-          if(!current_sat_cnt[1]){
-            current[1] = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN[1].Igain;
-            ADCgainUsed |= (1 << 2);
-          }else{
-            current_sat_cnt[1]--;
-          }
-        }else{
-          current_sat_cnt[1] = SAT_CNT_PRESET;
-        }
-#endif
-
-        voltage[1] = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN[1].Ubias;
-#if defined(PCB_V2)
-        if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
-          // high gain setting
-          if(!voltage_sat_cnt[1]){
-            voltage[1] = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN[1].Ugain;
-            ADCgainUsed |= (1 << 3);
-          }else{
-            voltage_sat_cnt[1]--;
-          }
-        }else{
-          voltage_sat_cnt[1] = SAT_CNT_PRESET;
-        }
 #endif
         /** calculate temperatures ********************************************/
         for(int i=0; i<2; i++){

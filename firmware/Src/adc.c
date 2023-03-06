@@ -31,6 +31,12 @@ uint16_t avr_adcBuf_GAIN_0[ADC_BUFLEN] = {0};   // average the ADC samples with
                                                 // moving average
 uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN] = {0};
 
+/**
+ * pointers to the right ADC channels
+ */
+uint16_t* avr_current[2][2];
+uint16_t* avr_voltage[2][2];
+
 bool gain_status = false;
 
 uint16_t adc_result_cnt = 0;  ///< count the received ADC results

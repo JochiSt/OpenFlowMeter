@@ -44,6 +44,10 @@ extern uint16_t avr_adcBuf_GAIN_1[ADC_BUFLEN];
 extern uint16_t adc_result_cnt;  ///< count the received ADC results
 
 extern uint8_t adc_result_received;
+
+extern uint16_t* avr_current[2][2];
+extern uint16_t* avr_voltage[2][2];
+
 /* USER CODE END Private defines */
 
 void MX_ADC1_Init(void);
