@@ -23,8 +23,7 @@ typedef struct {
     float lastError;
 } PID;
 
-extern PID pid0;
-extern PID pid1;
+extern PID pid[2];
 
 void runPID(PID* pid);
 

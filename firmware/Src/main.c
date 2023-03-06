@@ -66,7 +66,7 @@
  *  - I2C sensor readout
  */
 //#define PCB_V2
-#ifdef PCB_V2
+#if defined(PCB_V2)
 #undef PCB_V1
 #define I2C_SENSOR_READOUT
 #endif
@@ -79,7 +79,7 @@
  *  - I2C sensor readout
  */
 //#define PCB_V3
-#ifdef PCB_V3
+#if defined(PCB_V3)
 #undef PCB_V1
 #undef PCB_V2
 #define I2C_SENSOR_READOUT
@@ -155,14 +155,19 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_CAN_Init();
+
   MX_I2C1_Init();
   MX_I2C2_Init();
+
   MX_USART1_UART_Init();
+
   MX_SPI2_Init();
-  MX_TIM3_Init();
-  MX_TIM2_Init();
+
   MX_TIM1_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
   MX_TIM4_Init();
+
   /* USER CODE BEGIN 2 */
   /****************************************************************************/
   printf("\r\n\r\n");
@@ -206,7 +211,7 @@ int main(void)
   printf("\r\n\r\nDEFAULT config:\r\n");
   printCfg(&default_cfg);
 
-#ifdef WRITE_DEFAULT_CFG_EEPROM_STARTUP
+#if defined(WRITE_DEFAULT_CFG_EEPROM_STARTUP)
   write_EEPROM_cfg(&hi2c1, &default_cfg);
 #endif
 
@@ -216,12 +221,13 @@ int main(void)
   printCfg(&cfg);
 
   // link configuration to PID controllers
-  pid0.PIDcfg = &cfg.PID0;
-  pid1.PIDcfg = &cfg.PID1;
-  pid0.input  = &temperature0;
-  pid1.input  = &temperature1;
-  pid0.output = &PIDout0;
-  pid1.output = &PIDout1;
+  pid[0].PIDcfg = &cfg.PID[0];
+  pid[0].input  = &temperature0;
+  pid[0].output = &PIDout0;
+
+  pid[1].PIDcfg = &cfg.PID[1];
+  pid[1].input  = &temperature1;
+  pid[1].output = &PIDout1;
 
   printf("\r\n\r\n");
   /****************************************************************************/
@@ -249,7 +255,7 @@ int main(void)
   printf("starting periodic timer TIM1...\r\n");
   HAL_TIM_Base_Start_IT(&htim1);
 
-#ifdef PCB_V3
+#if defined(PCB_V3)
   // PWM for driving the bias of the amplifier
   printf("starting TIM2 PWM...\r\n");
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); // start channel 1
@@ -275,7 +281,7 @@ int main(void)
   HAL_ADCEx_Calibration_Start(&hadc1);
 
   /****************************************************************************/
-#ifdef I2C_SENSOR_READOUT
+#if defined(I2C_SENSOR_READOUT)
   // Test of TMP100 / TMP101
   i2c_init_TMP100(&hi2c1, 0x48);
   i2c_read_TMP100(&hi2c1, 0x48);
@@ -297,7 +303,7 @@ int main(void)
   // variables for transmitting CAN messages
   uint8_t cnt_can_adc = 0;        ///< counter for the CAN ADC message rate
 
-#ifdef I2C_SENSOR_READOUT
+#if defined(I2C_SENSOR_READOUT)
   uint8_t cnt_can_i2c_tmp100 = 0; ///< counter for the CAN I2C TMP100 rate
   uint8_t cnt_can_i2c_bme680 = 0; ///< counter for the CAN I2C BME680 rate
 #endif
@@ -343,7 +349,7 @@ int main(void)
         cnt_can_adc++;
         cnt_print_uart++;
 
-#ifdef I2C_SENSOR_READOUT
+#if defined(I2C_SENSOR_READOUT)
         cnt_can_i2c_tmp100++;
         cnt_can_i2c_bme680++;
 #endif
@@ -358,12 +364,12 @@ int main(void)
 
         ADCgainUsed = 0;
         /** CHANNEL 0 *********************************************************/
-        current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN0.Ibias/1000.;
-#ifdef PCB_V2
+        current0 = (avr_adcBuf_GAIN_0[0] * LSB2I) + cfg.GAIN[0].Ibias/1000.;
+#if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[0] < ISATURATION_LSB ){
           // high gain setting
           if(!current0_sat_cnt){
-            current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN0.Igain;
+            current0 = avr_adcBuf_GAIN_1[0] * LSB2I / cfg.GAIN[0].Igain;
             ADCgainUsed |= (1 << 0);
           }else{
             current0_sat_cnt--;
@@ -371,14 +377,16 @@ int main(void)
         }else{
           current0_sat_cnt = SAT_CNT_PRESET;
         }
+#elif defined(PCB_V3)
+
 #endif
 
-        voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN0.Ubias;
-#ifdef PCB_V2
+        voltage0 = (avr_adcBuf_GAIN_0[1] * LSB2U) + cfg.GAIN[0].Ubias;
+#if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[1] < USATURATION_LSB ){
           // high gain setting
           if(!voltage0_sat_cnt){
-            voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN0.Ugain;
+            voltage0 = avr_adcBuf_GAIN_1[1] * LSB2U / cfg.GAIN[0].Ugain;
             ADCgainUsed |= (1 << 1);
           }else{
             voltage0_sat_cnt--;
@@ -386,14 +394,15 @@ int main(void)
         }else{
           voltage0_sat_cnt = SAT_CNT_PRESET;
         }
+#elif defined(PCB_V3)
 #endif
         /** CHANNEL 1 *********************************************************/
-        current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN1.Ibias/1000.;
-#ifdef PCB_V2
+        current1 = (avr_adcBuf_GAIN_0[2] * LSB2I) + cfg.GAIN[1].Ibias/1000.;
+#if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[2] < ISATURATION_LSB ){
           // high gain setting
           if(!current1_sat_cnt){
-            current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN1.Igain;
+            current1 = avr_adcBuf_GAIN_1[2] * LSB2I / cfg.GAIN[1].Igain;
             ADCgainUsed |= (1 << 2);
           }else{
             current1_sat_cnt--;
@@ -403,12 +412,12 @@ int main(void)
         }
 #endif
 
-        voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN1.Ubias;
-#ifdef PCB_V2
+        voltage1 = (avr_adcBuf_GAIN_0[3] * LSB2U) + cfg.GAIN[1].Ubias;
+#if defined(PCB_V2)
         if( avr_adcBuf_GAIN_1[3] < USATURATION_LSB ){
           // high gain setting
           if(!voltage1_sat_cnt){
-            voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN1.Ugain;
+            voltage1 = avr_adcBuf_GAIN_1[3] * LSB2U / cfg.GAIN[1].Ugain;
             ADCgainUsed |= (1 << 3);
           }else{
             voltage1_sat_cnt--;
@@ -422,24 +431,24 @@ int main(void)
         temperature1 = convertPT100_R2T( voltage1 / current1 );
 
         /** run the PID controllers *******************************************/
-        runPID(&pid0);
-        runPID(&pid1);
+        runPID(&pid[0]);
+        runPID(&pid[1]);
 
         /** update the output, if the PID is active ***************************/
-        if(pid0.active){
+        if(pid[0].active){
           TIM3->CCR2 = PIDout0;
         }else{
           TIM3->CCR2 = PWM0;
         }
-        if(pid1.active){
+        if(pid[1].active){
           TIM3->CCR1 = PIDout1;
         }else{
           TIM3->CCR1 = PWM1;
         }
 
         // link the PID active to the configuration active
-        pid0.active = cfg.PID_flags.PID0_active;
-        pid1.active = cfg.PID_flags.PID1_active;
+        pid[0].active = cfg.PID_flags.PID0_active;
+        pid[1].active = cfg.PID_flags.PID1_active;
     }
 
     /*************************************************************************
@@ -450,7 +459,7 @@ int main(void)
         ){
       cnt_print_uart = 0;
 
-#ifdef PRINT_UART_ADC
+#if defined(PRINT_UART_ADC)
       printf("collected ADC results %d\r\n", adc_result_cnt);
       // reset ADC result counter
       adc_result_cnt = 0;
@@ -469,7 +478,7 @@ int main(void)
       printf("T= %ld\tU= %ld\r\n", adcBuf[4], adcBuf[5]);
 
 #endif
-#ifdef PRINT_UART_PID
+#if defined(PRINT_UART_PID)
       printf("PID0 %d\r\n",  pid0.active);
       printf(" - I   %f\r\n",  current0);
       printf(" - U   %f\r\n",  voltage0);
@@ -490,7 +499,7 @@ int main(void)
       printf(" - I   %f\r\n",  pid1.PIDcfg->PID_I );
       printf(" - D   %f\r\n",  pid1.PIDcfg->PID_D );
 #endif
-#ifdef PRINT_UART_CALC_TEMP
+#if defined(PRINT_UART_CALC_TEMP)
       printf("Temperatures:\r\n");
       printf("ADC gain selection %x \r\n", ADCgainUsed);
       printf("CH0: %f\r\n", temperature0);
@@ -548,7 +557,7 @@ int main(void)
     /***************************************************************************
      * Send out periodic CAN messages for I2C bus
      **************************************************************************/
-#ifdef I2C_SENSOR_READOUT
+#if defined(I2C_SENSOR_READOUT)
     // I2C sensors
     if( cnt_can_i2c_tmp100 >= cfg.interval_I2C_TMP100
         && cfg.interval_I2C_TMP100 < 255){

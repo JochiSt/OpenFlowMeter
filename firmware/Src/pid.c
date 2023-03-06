@@ -1,8 +1,7 @@
 #include "pid.h"
 #include <stdio.h>
 
-PID pid0;
-PID pid1;
+PID pid[2];
 
 const uint16_t MAX_PID_OUTPUT = (512<<2);  //TODO just for debugging purpose can be
                                       // increased to fullscale

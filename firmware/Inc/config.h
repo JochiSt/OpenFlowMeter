@@ -72,8 +72,7 @@ typedef struct {
         uint8_t raw;
     } PID_flags;
 
-    PID_config_t PID0; ///< configuration of PID channel 0
-    PID_config_t PID1; ///< configuration of PID channel 1
+    PID_config_t PID[2]; ///< configuration of PID channels
 
     /** @}*/
 
@@ -84,8 +83,7 @@ typedef struct {
      *  only the high gain is stored here, the lower gain is always 1
      *  @{
      */
-    gain_config_t GAIN0;
-    gain_config_t GAIN1;
+    gain_config_t GAIN[2];
 
     /** @}*/
 
