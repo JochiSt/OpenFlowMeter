@@ -3,7 +3,7 @@
 /**
  * PCB v1 compatibility mode
  */
-#define PCB_V1
+//#define PCB_V1
 /******************************************************************************/
 /**
  * PCB v2 compatibility mode
