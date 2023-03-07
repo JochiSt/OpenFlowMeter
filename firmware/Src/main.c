@@ -373,8 +373,13 @@ int main(void)
 
         // calculate coarse current and voltage for each channel
         for(int i=0; i<2; i++){
+#if defined(PCB_V1)
+          current[i] = (*avr_current[i][0] * LSB2I);
+          voltage[i] = (*avr_voltage[i][0] * LSB2U);
+#else
           current[i] = (*avr_current[i][0] * LSB2I) + cfg.GAIN[i].Ibias/1000.;
           voltage[i] = (*avr_voltage[i][0] * LSB2U) + cfg.GAIN[i].Ubias;
+#endif
         }
 
 #if defined(PCB_V2)
