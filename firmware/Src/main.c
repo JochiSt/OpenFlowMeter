@@ -102,6 +102,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+/// pointer to the current setting PWM
+volatile uint32_t *PWMcurrent[2] = {&TIM3->CCR2, &TIM3->CCR1};
 /// current
 float current[2];
 /// voltage
@@ -121,6 +123,7 @@ uint8_t voltage_sat_cnt[2];
 
 /// output from PID, which is connected to the PWM output, if the PID is active
 uint16_t PIDout[2];
+
 
 /* USER CODE END PV */
 
@@ -441,18 +444,13 @@ int main(void)
         /** run the PID controllers *******************************************/
         for(int i=0; i<2; i++){
           runPID(&pid[i]);
-        }
 
-        /** update the output, if the PID is active ***************************/
-        if(pid[0].active){
-          TIM3->CCR2 = PIDout[0];
-        }else{
-          TIM3->CCR2 = PWM[0];
-        }
-        if(pid[1].active){
-          TIM3->CCR1 = PIDout[1];
-        }else{
-          TIM3->CCR1 = PWM[1];
+          /** update the output, if the PID is active *************************/
+          if(pid[0].active){
+            *PWMcurrent[i] = PIDout[i];
+          }else{
+            *PWMcurrent[i] = PWM[i];
+          }
         }
 
         // link the PID active to the configuration active
@@ -526,7 +524,7 @@ int main(void)
         // TODO remove debug CAN message transmission
         //CAN_send_DAC_readback();
         CAN_send_uint16s(CAN_DAC_ID         | (cfg.board_ID << 4),
-                             3, TIM3->CCR2, TIM3->CCR1, (uint16_t)ADCgainUsed );
+                             3, *PWMcurrent[0], *PWMcurrent[1], (uint16_t)ADCgainUsed );
         CAN_send_floats( CAN_TEMPERATURE_ID | (cfg.board_ID << 4) ,
                                                   &temperature[0], &temperature[1]);
         CAN_send_floats( CAN_VOLTAGE_ID     | (cfg.board_ID << 4) ,
