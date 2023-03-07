@@ -89,6 +89,13 @@ typedef struct {
 
     /** @}*/
 
+#if defined(PCB_V3)
+    float U_R1[2];
+    float U_R2[2];
+    float I_R1[2];
+    float I_R2[2];
+#endif
+
     /** @}*/
 } config_t;
 

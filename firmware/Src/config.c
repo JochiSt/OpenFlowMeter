@@ -51,6 +51,14 @@ void generateDefaultCFG(config_t *cfg){
   cfg->GAIN[1].Ibias = 0.12;
   cfg->GAIN[1].Ubias = 0.01;
 #endif
+#if defined(PCB_V3)
+  for(int i=0; i<2; i++){
+    cfg->U_R1[i] = 47e3;
+    cfg->U_R2[i] = 5.6e3;
+    cfg->I_R1[i] = 47e3;
+    cfg->I_R2[i] = 5.6e3;
+  }
+#endif
 
 }
 
@@ -80,6 +88,14 @@ void printCfg(config_t *cfg){
   printf("Offset:");
   printf("  CH0 I %f U%f\r\n", cfg->GAIN[0].Ibias, cfg->GAIN[0].Ubias);
   printf("  CH1 I %f U%f\r\n", cfg->GAIN[1].Ibias, cfg->GAIN[1].Ubias);
+#endif
+#if defined(PCB_V3)
+  printf("\r\n");
+  printf("Resistors:\r\n");
+  for(int i=0; i<2; i++){
+    printf("  U R1 %f R2 %f\r\n", cfg->U_R1[i], cfg->U_R2[i]);
+    printf("  I R1 %f R2 %f\r\n", cfg->I_R1[i], cfg->I_R2[i]);
+  }
 #endif
 
   printf("\r\n");
