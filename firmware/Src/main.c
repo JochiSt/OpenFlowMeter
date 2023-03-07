@@ -376,9 +376,13 @@ int main(void)
 #if defined(PCB_V1)
           current[i] = (*avr_current[i][0] * LSB2I);
           voltage[i] = (*avr_voltage[i][0] * LSB2U);
-#else
+#elif defined(PCB_V2)
           current[i] = (*avr_current[i][0] * LSB2I) + cfg.GAIN[i].Ibias/1000.;
           voltage[i] = (*avr_voltage[i][0] * LSB2U) + cfg.GAIN[i].Ubias;
+#elif defined(PCB_V3)
+          // TODO implement proper voltage / current reading
+          current[i] = (*avr_current[i][0] * LSB2I);
+          voltage[i] = (*avr_voltage[i][0] * LSB2U);
 #endif
         }
 
