@@ -10,6 +10,8 @@ config_t cfg;
 const float LSB2U = 3.3 / 4096;
 const float LSB2I = 3.3 / 4096 * 10e-3;
 
+const float U2I = 10e-3;  // TODO insert right value here
+
 void generateDefaultCFG(config_t *cfg){
   // set the board ID
   cfg->board_ID = 1;

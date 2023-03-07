@@ -14,6 +14,7 @@ extern "C" {
 
 extern const float LSB2U;
 extern const float LSB2I;
+extern const float U2I;
 
 typedef struct {
     float Ugain;
