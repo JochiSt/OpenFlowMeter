@@ -114,6 +114,7 @@ float temperature[2];
 #if defined(PCB_V3)
   // There are two offsets one for each channel
   float offset[2];
+  volatile uint32_t *PWMoffset[2] = {&TIM2->CCR2, &TIM2->CCR1};
 #endif
 
 // avoid flickering saturation non saturation
@@ -431,9 +432,13 @@ int main(void)
         }
 #elif defined(PCB_V3)
         // get the offset voltage
-        offset[0] = 3.3 * TIM2->CCR2 / 4096;
-        offset[1] = 3.3 * TIM2->CCR1 / 4096;
+        for(int i=0; i<2; i++){
+          offset[i] = 3.3 * (*PWMoffset[i]) / 4096;
+        }
 
+        // adjust the offset voltage
+
+        // if offset voltage is fine, we can use the high gain
 
 #endif
         /** calculate temperatures ********************************************/
