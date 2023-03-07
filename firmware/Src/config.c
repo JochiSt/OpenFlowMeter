@@ -84,10 +84,10 @@ void printCfg(config_t *cfg){
 
 #if defined(PCB_V2)
   printf("\r\n");
-  printf("Gain:");
+  printf("Gain:\r\n");
   printf("  CH0 I %f U%f\r\n", cfg->GAIN[0].Igain, cfg->GAIN[0].Ugain);
   printf("  CH1 I %f U%f\r\n", cfg->GAIN[1].Igain, cfg->GAIN[1].Ugain);
-  printf("Offset:");
+  printf("Offset:\r\n");
   printf("  CH0 I %f U%f\r\n", cfg->GAIN[0].Ibias, cfg->GAIN[0].Ubias);
   printf("  CH1 I %f U%f\r\n", cfg->GAIN[1].Ibias, cfg->GAIN[1].Ubias);
 #endif
