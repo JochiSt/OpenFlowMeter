@@ -419,10 +419,22 @@ int main(void)
           offset[i] = 3.3 * (*PWMoffset[i]) / 4096;
         }
 
-        // adjust the offset voltage
-
-        // if offset voltage is fine, we can use the high gain
-
+        for(int i=0; i<2; i++){
+          // check for saturation
+          if(*avr_voltage[i][1] >= USATURATION_LSB || *avr_current[i][1] >= ISATURATION_LSB){
+            // one of the high gain measurement is in saturation
+            // adjust the offset voltage
+            *PWMoffset[i] += 10;
+            continue;
+          }else if(*avr_voltage[i][1] == 0 || *avr_current[i][1] == 0){
+            *PWMoffset[i] += 10;
+            continue;
+          }else{
+            // if offset voltage is fine, we can use the high gain
+            voltage[i] = getVoltageBeforeAmplifier(*avr_voltage[i][1] * LSB2U, offset[i], cfg.U_R1[i], cfg.U_R2[i]);
+            current[i] = getVoltageBeforeAmplifier(*avr_current[i][1] * LSB2U, offset[i], cfg.I_R1[i], cfg.I_R2[i]) * U2I;
+          }
+        }
 #endif
         /** calculate temperatures ********************************************/
         for(int i=0; i<2; i++){
@@ -432,13 +444,14 @@ int main(void)
         /** run the PID controllers *******************************************/
         for(int i=0; i<2; i++){
           runPID(&pid[i]);
-
           /** update the output, if the PID is active *************************/
           if(pid[0].active){
             *PWMcurrent[i] = PIDout[i];
           }else{
             *PWMcurrent[i] = PWM[i];
           }
+          /** update the offset ***********************************************/
+          *PWMoffset[i] = 0.9 * (*PWMcurrent[i]);
         }
 
         /** link the PID active to the configuration active *******************/
