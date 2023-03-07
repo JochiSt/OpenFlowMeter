@@ -437,14 +437,14 @@ int main(void)
           }
         }
 
-        // link the PID active to the configuration active
+        /** link the PID active to the configuration active *******************/
         pid[0].active = cfg.PID_flags.PID0_active;
         pid[1].active = cfg.PID_flags.PID1_active;
     }
 
-    /*************************************************************************
+    /***************************************************************************
      * Print some variables via UART
-     ************************************************************************/
+     **************************************************************************/
     if( cnt_print_uart >= cfg.interval_PRINT_UART
         && cfg.interval_PRINT_UART < 255
         ){
