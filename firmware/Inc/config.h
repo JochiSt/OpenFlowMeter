@@ -83,7 +83,9 @@ typedef struct {
      *  only the high gain is stored here, the lower gain is always 1
      *  @{
      */
+#if defined(PCB_V2)
     gain_config_t GAIN[2];
+#endif
 
     /** @}*/
 

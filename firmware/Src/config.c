@@ -39,6 +39,7 @@ void generateDefaultCFG(config_t *cfg){
   cfg->PID_flags.PID0_active = 0;
   cfg->PID_flags.PID1_active = 0;
 
+#if defined(PCB_V2)
   // gain settings from calculations / optimisation
   cfg->GAIN[0].Igain = 1 + 47.0e3 / 5.6e3;
   cfg->GAIN[0].Ugain = 1 + 33.0e3 / 5.6e3;
@@ -49,6 +50,8 @@ void generateDefaultCFG(config_t *cfg){
   cfg->GAIN[1].Ugain = 1 + 33.0e3 / 5.6e3;
   cfg->GAIN[1].Ibias = 0.12;
   cfg->GAIN[1].Ubias = 0.01;
+#endif
+
 }
 
 /**
@@ -69,6 +72,7 @@ void printCfg(config_t *cfg){
   printf("SMOO:    %d\r\n", cfg->SMOO);
   printf("SMOOMAX: %d\r\n", cfg->SMOO_MAX);
 
+#if defined(PCB_V2)
   printf("\r\n");
   printf("Gain:");
   printf("  CH0 I %f U%f\r\n", cfg->GAIN[0].Igain, cfg->GAIN[0].Ugain);
@@ -76,6 +80,7 @@ void printCfg(config_t *cfg){
   printf("Offset:");
   printf("  CH0 I %f U%f\r\n", cfg->GAIN[0].Ibias, cfg->GAIN[0].Ubias);
   printf("  CH1 I %f U%f\r\n", cfg->GAIN[1].Ibias, cfg->GAIN[1].Ubias);
+#endif
 
   printf("\r\n");
   printf("PID 0: (%d)\r\n", cfg->PID_flags.PID0_active);
