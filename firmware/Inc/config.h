@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-
+#include "pcb_version.h"
 #include "pid.h"
 
 #define ISATURATION_LSB   3970
