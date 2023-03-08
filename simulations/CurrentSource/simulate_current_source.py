@@ -43,7 +43,10 @@ def processing_data(raw_filename, log_file, Uset):
 
 # select spice model
 
-LTC = SimCommander("./current_source_mod_v1.asc")
+LTC = SimCommander(
+    "./current_source_mod_v1.asc",
+    parallel_sims=2             # limit number of parallel simulations)
+    )
 LTC.set_parameters(temp=40)
 
 LTC.wait_completion()
