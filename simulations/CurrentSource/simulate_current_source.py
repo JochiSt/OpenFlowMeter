@@ -11,6 +11,10 @@ import numpy as np
 sys.path.append("../PyLTSpice/")
 from PyLTSpice import SimCommander, LTSteps, RawRead
 
+sys.path.append("../../software/")
+sys.path.append("../../software/pyUSBtin")
+from OpenFlowMeter import PT100
+
 def processing_data(raw_filename, log_file, Uset):
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
