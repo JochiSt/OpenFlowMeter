@@ -31,10 +31,10 @@ def processing_data(raw_filename, log_file, Uset):
     current_measure = np.mean(LTR.get_trace("V(current_measure)").get_wave(0))
     voltage_measure = np.mean(LTR.get_trace("V(voltage_measure)").get_wave(0))
 
-    print(current_setpoint)
-    print(current_pt100)
-    print(current_measure)
-    print(voltage_measure)
+    print("I set    ", current_setpoint)
+    print("I PT100  ", current_pt100)
+    print("I measure", current_measure)
+    print("U measure", voltage_measure)
 
     R_PT100 = voltage_measure / (current_measure * 10 / 1000)
     print("R_PT100: ", R_PT100)
@@ -48,6 +48,10 @@ LTC = SimCommander(
     parallel_sims=2             # limit number of parallel simulations)
     )
 LTC.set_parameters(temp=40)
+
+for Uset in [0.5, 1, 1.5, 2, 2.5, 3, 3.3]:
+    LTC.set_component_value('V3', Uset)
+    LTC.run(callback=partial(processing_data, Uset=None))
 
 LTC.wait_completion()
 
