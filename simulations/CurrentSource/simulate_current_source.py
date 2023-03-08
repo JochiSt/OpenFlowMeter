@@ -19,10 +19,10 @@ def processing_data(raw_filename, log_file, Uset):
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
     # print all stored traces
-    print(LTR.get_trace_names())
+    #print(LTR.get_trace_names())
 
     # print simulation properties
-    print(LTR.get_raw_property())
+    #print(LTR.get_raw_property())
 
     current_measure = LTR.get_trace("V(current_measure)").get_wave(0)
     voltage_measure = LTR.get_trace("V(voltage_measure)").get_wave(0)
