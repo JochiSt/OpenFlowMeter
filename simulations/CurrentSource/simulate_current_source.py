@@ -4,13 +4,11 @@
 """
 import os
 import sys
+
+from functools import partial # import partial for tweaking callback
+import numpy as np
+
 sys.path.append("../PyLTSpice/")
-
-# import partial for tweaking callback
-from functools import partial
-
-
-#from PyLTSpice import LTSpiceBatch, LTSteps, LTSpice_RawRead
 from PyLTSpice import SimCommander, LTSteps, RawRead
 
 def processing_data(raw_filename, log_file, Uset):
