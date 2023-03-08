@@ -8,3 +8,6 @@
 [submodule "Kicad-Wago-733"]
 	path = Kicad-Wago-733
 	url = https://github.com/phd0/Kicad-Wago-733.git
+[submodule "simulations/PyLTSpice"]
+	path = simulations/PyLTSpice
+	url = https://github.com/nunobrum/PyLTSpice.git
