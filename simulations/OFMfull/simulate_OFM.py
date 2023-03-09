@@ -22,25 +22,14 @@ def processing_data(raw_filename, log_file):
     print(LTR.get_trace_names())
 
     # print simulation properties
-    print(LTR.get_raw_property())
+    #print(LTR.get_raw_property())
 
-"""
-    current_setpoint= np.mean(LTR.get_trace("V(current_setpoint)").get_wave(0))
+    uadc_in = np.mean(LTR.get_trace("V(uadc)").get_wave(0)[:-10])
+    iadc_in = np.mean(LTR.get_trace("V(iadc)").get_wave(0)[:-10])
 
-    current_pt100   = np.mean(LTR.get_trace("I(PT100)").get_wave(0))*1000
 
-    current_measure = np.mean(LTR.get_trace("V(current_measure)").get_wave(0))
-    voltage_measure = np.mean(LTR.get_trace("V(voltage_measure)").get_wave(0))
+    print(uadc_in, iadc_in)
 
-    print("I set    ", current_setpoint)
-    print("I PT100  ", current_pt100)
-    print("I measure", current_measure)
-    print("U measure", voltage_measure)
-
-    R_PT100 = voltage_measure / (current_measure * 10 / 1000)
-    print("R_PT100: ", R_PT100)
-    print("Temperature", PT100.convertPT100_T(R_PT100))
-"""
 
 # select spice model
 
