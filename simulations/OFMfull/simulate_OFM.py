@@ -15,6 +15,11 @@ sys.path.append("../../software/")
 sys.path.append("../../software/pyUSBtin")
 from OpenFlowMeter import PT100
 
+def SimADC(Uin = 0, Uref = 3.3):
+    LSBs = Uin / Uref * 4096
+    return int(np.round(LSBs))
+
+
 def processing_data(raw_filename, log_file):
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
@@ -27,8 +32,11 @@ def processing_data(raw_filename, log_file):
     uadc_in = np.mean(LTR.get_trace("V(uadc)").get_wave(0)[:-10])
     iadc_in = np.mean(LTR.get_trace("V(iadc)").get_wave(0)[:-10])
 
+    uadc = SimADC(uadc_in)
+    iadc = SimADC(iadc_in)
 
     print(uadc_in, iadc_in)
+    print(uadc, iadc)
 
 
 # select spice model
