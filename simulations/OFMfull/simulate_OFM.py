@@ -35,14 +35,22 @@ def processing_data(raw_filename, log_file):
     print(LTR.get_raw_property())
     pprint.pprint(LTR.get_raw_property())
 
-    uadc_in = np.mean(LTR.get_trace("V(uadc)").get_wave(0)[:-10])
-    iadc_in = np.mean(LTR.get_trace("V(iadc)").get_wave(0)[:-10])
+    steps = LTR.get_steps()
+    for step in range(len(steps)):
 
-    uadc = SimADC(uadc_in)
-    iadc = SimADC(iadc_in)
+        print("Steps", steps[step])
 
-    print(uadc_in, iadc_in)
-    print(uadc, iadc)
+        uswitch = np.mean(LTR.get_trace("V(switch)").get_wave(step)[:-10])
+
+        uadc_in = np.mean(LTR.get_trace("V(uadc)").get_wave(step)[:-10])
+        iadc_in = np.mean(LTR.get_trace("V(iadc)").get_wave(step)[:-10])
+
+        uadc = SimADC(uadc_in)
+        iadc = SimADC(iadc_in)
+
+        print(uswitch)
+        print(uadc_in, iadc_in)
+        print(uadc, iadc)
 
 
 # select spice model
@@ -54,7 +62,7 @@ LTC = SimCommander(
 LTC.set_parameters(temp=40)
 
 
-LTC.set_component_value('Vswitch', '0')
+#LTC.set_component_value('Vswitch', '0')
 print("PWM I", LTC.get_parameter('CCR_I'))
 print("PWM B", LTC.get_parameter('CCR_B'))
 
