@@ -5,6 +5,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from simulate_OFM import SimADC
+
 def analyse_OFMfull(filename):
     if not filename:
         return
@@ -16,6 +18,11 @@ def analyse_OFMfull(filename):
     result_uadc_in = npzfile['result_uadc_in']
     result_iadc_in = npzfile['result_iadc_in']
     result_uswitch = npzfile['result_uswitch']
+
+    print(result_uadc_in)
+
+    result_uadc = SimADC(result_uadc_in)
+    result_iadc = SimADC(result_iadc_in)
 
 
     fig, ax = plt.subplots(2, 1, figsize=(8,10))
