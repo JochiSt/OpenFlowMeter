@@ -71,9 +71,11 @@ software/FlowMeasurement/*.png
 firmware/.settings/*.prefs
 firmware/.project
 firmware/Debug/*
+firmware/Debug*
 firmware/Release/*
 *.launch
 
 # EmBitz
 *.ebTemp
 
+*.fail
