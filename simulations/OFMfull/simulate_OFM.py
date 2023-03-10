@@ -22,7 +22,7 @@ def SimADC(Uin = 0, Uref = 3.3):
     return int(np.round(LSBs))
 
 
-def processing_data(raw_filename, log_file):
+def processing_data(raw_filename, log_file, PWMI, PWMB):
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
     # print all stored traces
@@ -34,6 +34,9 @@ def processing_data(raw_filename, log_file):
     # print simulation properties
     print(LTR.get_raw_property())
     pprint.pprint(LTR.get_raw_property())
+
+    print("PWM I", PWMI)
+    print("PWM B", PWMB)
 
     steps = LTR.get_steps()
     for step in range(len(steps)):
