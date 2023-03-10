@@ -58,6 +58,29 @@ def analyse_OFMfull(filename):
     #for i in [0,1]:
         #ax[i].plot( timestamp, temperatures[i], label="calc. T", color='deeppink', linewidth=1)
 
+    ax2 = [
+        ax[0].twinx(),
+        ax[1].twinx()
+        ]
+
+    color = 'black'
+    for i in [0,1]:
+        ax2[i].set_ylabel("raw values / LSB", color=color)
+        ax2[i].spines['right'].set_position(('outward', 0))
+        ax2[i].tick_params(axis='y', labelcolor=color)
+        #ax2[i].set_yscale('log', base=2)
+
+        ax2[i].plot(
+            result_PWM_I[switch_pos[i]][index],
+            result_uadc[switch_pos[i]][index],
+            label="UADC")
+
+        ax2[i].plot(
+            result_PWM_I[switch_pos[i]][index],
+            result_iadc[switch_pos[i]][index],
+            label="IADC")
+
+
     for i in[0,1]:
         ax[i].legend()
 
