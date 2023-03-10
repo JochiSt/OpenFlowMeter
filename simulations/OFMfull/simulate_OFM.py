@@ -9,6 +9,7 @@ from functools import partial, update_wrapper # import partial for tweaking call
 import numpy as np
 
 import pprint
+import time
 
 sys.path.append("../PyLTSpice/")
 from PyLTSpice import SimCommander, LTSteps, RawRead
