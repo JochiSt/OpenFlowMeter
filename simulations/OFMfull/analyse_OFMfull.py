@@ -10,7 +10,7 @@ from simulate_OFM import SimADC
 def PWM2Voltage(PWM):
     return 3.3 * PWM / 4096
 
-def getVoltageBeforeAmplifier(UADC, Uoffset, R1=56e3, R2=5.6e3):
+def getVoltageBeforeAmplifier(UADC, Uoffset, R1=39e3, R2=5.6e3):
     return (R1 * Uoffset + R2 * UADC)/(R1 + R2)
 
 def LSB2U(LSB):
