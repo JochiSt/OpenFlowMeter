@@ -77,15 +77,20 @@ LTC = SimCommander(
     )
 LTC.set_parameters(temp=40)
 
-PWMI = LTC.get_parameter('CCR_I')
-PWMB = LTC.get_parameter('CCR_B')
 
-sim_callback = partial(processing_data, PWMI=PWMI, PWMB=PWMB)
-update_wrapper(sim_callback, processing_data)
+for pwm_set_i in [ 10, 1024, 2048, 4096]:
 
-LTC.run(callback=sim_callback)
+    LTC.set_parameter('CCR_I', pwm_set_i)
+    LTC.set_parameter('CCR_B', pwm_set_i)
+
+    PWMI = LTC.get_parameter('CCR_I')
+    PWMB = LTC.get_parameter('CCR_B')
+
+    sim_callback = partial(processing_data, PWMI=PWMI, PWMB=PWMB)
+    update_wrapper(sim_callback, processing_data)
+    LTC.run(callback=sim_callback)
+
 LTC.wait_completion()
-
 # Sim Statistics
 print('Successful/Total Simulations: ' + str(LTC.okSim) + '/' + str(LTC.runno))
 
