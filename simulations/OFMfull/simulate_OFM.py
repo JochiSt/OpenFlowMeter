@@ -32,7 +32,7 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
     #print()
 
     # print simulation properties
-    print(LTR.get_raw_property())
+    #print(LTR.get_raw_property())
     pprint.pprint(LTR.get_raw_property())
 
     print("PWM I", PWMI)
