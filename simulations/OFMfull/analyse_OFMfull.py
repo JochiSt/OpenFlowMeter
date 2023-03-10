@@ -40,10 +40,20 @@ def analyse_OFMfull(filename):
         ax[i].tick_params(axis='y', labelcolor=color)
 
         index = np.argsort(result_PWM_I[switch_pos[i]])
-        ax[i].plot( result_PWM_I[switch_pos[i]][index], result_uadc_in[switch_pos[i]][index], label="UADC in")
-        ax[i].plot( result_PWM_I[switch_pos[i]][index], result_iadc_in[switch_pos[i]][index], label="IADC in")
+        ax[i].plot(
+            result_PWM_I[switch_pos[i]][index],
+            result_uadc_in[switch_pos[i]][index],
+            label="UADC in")
 
-        ax[i].plot( result_PWM_I[switch_pos[i]][index], result_uswitch[switch_pos[i]][index], label="switch voltage")
+        ax[i].plot(
+            result_PWM_I[switch_pos[i]][index],
+            result_iadc_in[switch_pos[i]][index],
+            label="IADC in")
+
+        ax[i].plot(
+            result_PWM_I[switch_pos[i]][index],
+            result_uswitch[switch_pos[i]][index],
+            label="switch voltage")
 
     #for i in [0,1]:
         #ax[i].plot( timestamp, temperatures[i], label="calc. T", color='deeppink', linewidth=1)
