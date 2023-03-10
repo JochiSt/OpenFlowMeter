@@ -75,8 +75,8 @@ def analyse_OFMfull(filename):
             label="switch voltage"
             )
 
-    #for i in [0,1]:
-        #ax[i].plot( timestamp, temperatures[i], label="calc. T", color='deeppink', linewidth=1)
+    for i in [0,1]:
+        ax[i].set_xlabel("current PWM setting / LSB")
 
     ax2 = [
         ax[0].twinx(),
