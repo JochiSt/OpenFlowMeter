@@ -26,10 +26,10 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
     # print all stored traces
-    print("Traces:")
-    for name in LTR.get_trace_names():
-        print(name)
-    print()
+    #print("Traces:")
+    #for name in LTR.get_trace_names():
+    #    print(name)
+    #print()
 
     # print simulation properties
     print(LTR.get_raw_property())
