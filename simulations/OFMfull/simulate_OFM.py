@@ -21,6 +21,11 @@ def SimADC(Uin = 0, Uref = 3.3):
     LSBs = Uin / Uref * 4096
     return int(np.round(LSBs))
 
+result_PWM_I = np.array([])
+result_PWM_B = np.array([])
+result_uadc_in = np.array([])
+result_iadc_in = np.array([])
+result_uswitch = np.array([])
 
 def processing_data(raw_filename, log_file, PWMI, PWMB):
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
@@ -28,6 +33,12 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
 
     # print simulation properties
     #pprint.pprint(LTR.get_raw_property())
+
+    global result_PWM_I
+    global result_PWM_B
+    global result_uadc_in
+    global result_iadc_in
+    global result_uswitch
 
     print("PWM I", PWMI)
     print("PWM B", PWMB)
@@ -49,9 +60,17 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
         print(uadc_in, iadc_in)
         print(uadc, iadc)
 
+        result_PWM_I = np.append(result_PWM_I, PWMI)
+        result_PWM_B = np.append(result_PWM_B, PWMB)
+
+        result_uadc_in =  np.append(result_uadc_in, uadc_in)
+        result_iadc_in =  np.append(result_iadc_in, iadc_in)
+        result_uswitch =  np.append(result_uswitch, uswitch)
+
+
+###############################################################################
 
 # select spice model
-
 LTC = SimCommander(
     "./OFMfull.asc",
     parallel_sims=2             # limit number of parallel simulations)
@@ -69,3 +88,13 @@ LTC.wait_completion()
 
 # Sim Statistics
 print('Successful/Total Simulations: ' + str(LTC.okSim) + '/' + str(LTC.runno))
+
+
+# save results in numpy file format
+np.savez("OFMfull_%s.npz"%(time.strftime("%Y%m%d_%H%M%S")),
+         result_PWM_I   = result_PWM_I,
+         result_PWM_B   = result_PWM_B,
+         result_uadc_in = result_uadc_in,
+         result_iadc_in = result_iadc_in,
+         result_uswitch = result_uswitch,
+         )
