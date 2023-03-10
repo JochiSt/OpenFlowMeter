@@ -89,7 +89,7 @@ if __name__ == "__main__":
     for pwm_set_i in [ 10, 100, 512, 1024, 1500, 2048, 4096 ]:
     #for pwm_set_i in [ 10, 1024 ]:
 
-        LTC.set_parameter('temp', 50)
+        LTC.set_parameter('temp', 40)
 
 
         LTC.set_parameter('CCR_I', pwm_set_i)
