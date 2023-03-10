@@ -50,6 +50,7 @@ def analyse_OFMfull(filename):
     for i in [0,1]:
         ax[i].set_ylabel("ADC input voltage", color=color)
         ax[i].tick_params(axis='y', labelcolor=color)
+        ax[i].set_ylim( [0,3.5] )
 
         index = np.argsort(result_PWM_I[switch_pos[i]])
         ax[i].plot(
@@ -89,6 +90,7 @@ def analyse_OFMfull(filename):
         ax2[i].spines['right'].set_position(('outward', 0))
         ax2[i].tick_params(axis='y', labelcolor=color)
         #ax2[i].set_yscale('log', base=2)
+        ax2[i].set_ylim( [0,5000] )
 
         ax2[i].plot(
             result_PWM_I[switch_pos[i]][index],
@@ -121,6 +123,8 @@ def analyse_OFMfull(filename):
         ax3[i].set_ylabel("voltage before amplifier / V", color=color)
         ax3[i].spines['right'].set_position(('outward', 55))
         ax3[i].tick_params(axis='y', labelcolor=color)
+        ax3[i].set_ylim( [0,3.5] )
+
 
         if i == 1:
             ax3[i].plot(
