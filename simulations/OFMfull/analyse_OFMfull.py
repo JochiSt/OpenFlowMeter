@@ -129,12 +129,14 @@ def analyse_OFMfull(filename):
                     LSB2U(result_uadc[switch_pos[i]][index]),
                     PWM2Voltage(result_PWM_B[switch_pos[i]][index])),
                 color=color,
+                linewidth=5,
                 label="voltage before amplifier")
         else:
             ax3[i].plot(
                 result_PWM_I[switch_pos[i]][index],
                 LSB2U(result_uadc[switch_pos[i]][index]),
                 color=color,
+                linewidth=5,
                 label="voltage before amplifier")
 
     ###########################################################################
