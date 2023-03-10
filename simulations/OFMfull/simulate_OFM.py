@@ -10,7 +10,7 @@ import time
 
 def SimADC(Uin = 0, Uref = 3.3):
     LSBs = Uin / Uref * 4096
-    return int(np.round(LSBs))
+    return np.round(LSBs).astype(int)
 
 result_PWM_I = np.array([])
 result_PWM_B = np.array([])
