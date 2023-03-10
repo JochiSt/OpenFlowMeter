@@ -5,18 +5,8 @@
 import os
 import sys
 
-from functools import partial, update_wrapper # import partial for tweaking callback
 import numpy as np
-
-import pprint
 import time
-
-sys.path.append("../PyLTSpice/")
-from PyLTSpice import SimCommander, LTSteps, RawRead
-
-sys.path.append("../../software/")
-sys.path.append("../../software/pyUSBtin")
-from OpenFlowMeter import PT100
 
 def SimADC(Uin = 0, Uref = 3.3):
     LSBs = Uin / Uref * 4096
@@ -29,6 +19,10 @@ result_iadc_in = np.array([])
 result_uswitch = np.array([])
 
 def processing_data(raw_filename, log_file, PWMI, PWMB):
+    sys.path.append("../PyLTSpice/")
+    from PyLTSpice import RawRead
+    import pprint
+
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
 
@@ -80,37 +74,41 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
             pass
 
 ###############################################################################
+if __name__ == "__main__":
+    sys.path.append("../PyLTSpice/")
+    from PyLTSpice import SimCommander, LTSteps
+    from functools import partial, update_wrapper # import partial for tweaking callback
 
-# select spice model
-LTC = SimCommander(
-    "./OFMfull.asc",
-    parallel_sims=2             # limit number of parallel simulations)
-    )
-LTC.set_parameters(temp=40)
-
-
-for pwm_set_i in [ 10, 1024, 2048, 4096]:
-
-    LTC.set_parameter('CCR_I', pwm_set_i)
-    LTC.set_parameter('CCR_B', pwm_set_i)
-
-    PWMI = LTC.get_parameter('CCR_I')
-    PWMB = LTC.get_parameter('CCR_B')
-
-    sim_callback = partial(processing_data, PWMI=PWMI, PWMB=PWMB)
-    update_wrapper(sim_callback, processing_data)
-    LTC.run(callback=sim_callback)
-
-LTC.wait_completion()
-# Sim Statistics
-print('Successful/Total Simulations: ' + str(LTC.okSim) + '/' + str(LTC.runno))
+    # select spice model
+    LTC = SimCommander(
+        "./OFMfull.asc",
+        parallel_sims=2             # limit number of parallel simulations)
+        )
+    LTC.set_parameters(temp=40)
 
 
-# save results in numpy file format
-np.savez("OFMfull_%s.npz"%(time.strftime("%Y%m%d_%H%M%S")),
-         result_PWM_I   = result_PWM_I,
-         result_PWM_B   = result_PWM_B,
-         result_uadc_in = result_uadc_in,
-         result_iadc_in = result_iadc_in,
-         result_uswitch = result_uswitch,
-         )
+    for pwm_set_i in [ 0, 10, 100, 512, 1024, 1500, 2048, 4096 ]:
+
+        LTC.set_parameter('CCR_I', pwm_set_i)
+        LTC.set_parameter('CCR_B', pwm_set_i)
+
+        PWMI = LTC.get_parameter('CCR_I')
+        PWMB = LTC.get_parameter('CCR_B')
+
+        sim_callback = partial(processing_data, PWMI=float(PWMI), PWMB=float(PWMB))
+        update_wrapper(sim_callback, processing_data)
+        LTC.run(callback=sim_callback)
+
+    LTC.wait_completion()
+    # Sim Statistics
+    print('Successful/Total Simulations: ' + str(LTC.okSim) + '/' + str(LTC.runno))
+
+
+    # save results in numpy file format
+    np.savez("OFMfull_%s.npz"%(time.strftime("%Y%m%d_%H%M%S")),
+             result_PWM_I   = result_PWM_I,
+             result_PWM_B   = result_PWM_B,
+             result_uadc_in = result_uadc_in,
+             result_iadc_in = result_iadc_in,
+             result_uswitch = result_uswitch,
+             )
