@@ -21,12 +21,12 @@ result_uswitch = np.array([])
 def processing_data(raw_filename, log_file, PWMI, PWMB):
     sys.path.append("../PyLTSpice/")
     from PyLTSpice import RawRead
-    import pprint
 
     print("Handling the simulation data of %s, log file %s" % (raw_filename, log_file))
     LTR = RawRead(raw_filename)
 
     # print simulation properties
+    #import pprint
     #pprint.pprint(LTR.get_raw_property())
 
     global result_PWM_I
