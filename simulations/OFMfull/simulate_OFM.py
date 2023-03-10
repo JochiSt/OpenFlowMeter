@@ -76,7 +76,7 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
 ###############################################################################
 if __name__ == "__main__":
     sys.path.append("../PyLTSpice/")
-    from PyLTSpice import SimCommander, LTSteps
+    from PyLTSpice import SimCommander
     from functools import partial, update_wrapper # import partial for tweaking callback
 
     # select spice model
