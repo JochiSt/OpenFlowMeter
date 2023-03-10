@@ -103,6 +103,13 @@ def analyse_OFMfull(filename):
             linestyle='--',
             color=color)
 
+        ax2[i].plot(
+            result_PWM_I[switch_pos[i]][index],
+            result_PWM_B[switch_pos[i]][index],
+            label="bias PWM",
+            linestyle='-',
+            color=color)
+
     ax3 = [
         ax[0].twinx(),
         ax[1].twinx()
