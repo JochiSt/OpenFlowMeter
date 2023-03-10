@@ -61,13 +61,9 @@ LTC = SimCommander(
     )
 LTC.set_parameters(temp=40)
 
+PWMI = LTC.get_parameter('CCR_I')
+PWMB = LTC.get_parameter('CCR_B')
 
-#LTC.set_component_value('Vswitch', '0')
-print("PWM I", LTC.get_parameter('CCR_I'))
-print("PWM B", LTC.get_parameter('CCR_B'))
-
-#for Uset in [0.5, 1, 1.5, 2, 2.5, 3, 3.3]:
-#    LTC.set_component_value('V3', Uset)
 
 LTC.run(callback=processing_data)
 LTC.wait_completion()
