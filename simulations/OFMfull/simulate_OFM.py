@@ -68,6 +68,16 @@ def processing_data(raw_filename, log_file, PWMI, PWMB):
         result_iadc_in =  np.append(result_iadc_in, iadc_in)
         result_uswitch =  np.append(result_uswitch, uswitch)
 
+    ###########################################################################
+    # we no longer need the simulation output, so we can delete the files
+    # otherwise the discspace might become problematic
+    prefix = str(raw_filename).split('.raw')[0]
+    for ending in ['raw','net','op.raw','log']:
+        try:
+            os.remove(prefix + '.' + ending)
+        except Exception as e:
+            print(e)
+            pass
 
 ###############################################################################
 
