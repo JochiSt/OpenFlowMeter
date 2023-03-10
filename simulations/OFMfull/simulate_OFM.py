@@ -5,7 +5,7 @@
 import os
 import sys
 
-from functools import partial # import partial for tweaking callback
+from functools import partial, update_wrapper # import partial for tweaking callback
 import numpy as np
 
 import pprint
@@ -64,8 +64,10 @@ LTC.set_parameters(temp=40)
 PWMI = LTC.get_parameter('CCR_I')
 PWMB = LTC.get_parameter('CCR_B')
 
+sim_callback = partial(processing_data, PWMI=PWMI, PWMB=PWMB)
+update_wrapper(sim_callback, processing_data)
 
-LTC.run(callback=processing_data)
+LTC.run(callback=sim_callback)
 LTC.wait_completion()
 
 # Sim Statistics
