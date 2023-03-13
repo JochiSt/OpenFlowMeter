@@ -8,9 +8,8 @@ import sys
 import numpy as np
 import time
 
-def SimADC(Uin = 0, Uref = 3.3):
-    LSBs = Uin / Uref * 4096
-    return np.round(LSBs).astype(int)
+from analyse_OFMfull import analyse_OFMfull
+from simADC import SimADC
 
 result_PWM_I = np.array([])
 result_PWM_B = np.array([])

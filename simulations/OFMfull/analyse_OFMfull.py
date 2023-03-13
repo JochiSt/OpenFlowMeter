@@ -5,7 +5,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from simulate_OFM import SimADC
+from simADC import SimADC
 
 def PWM2Voltage(PWM):
     return 3.3 * PWM / 4096
