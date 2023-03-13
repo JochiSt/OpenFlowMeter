@@ -107,10 +107,15 @@ if __name__ == "__main__":
 
 
     # save results in numpy file format
-    np.savez("OFMfull_%s.npz"%(time.strftime("%Y%m%d_%H%M%S")),
+    npz_filename = "OFMfull_%s.npz"%(time.strftime("%Y%m%d_%H%M%S"))
+
+    np.savez(npz_filename,
              result_PWM_I   = result_PWM_I,
              result_PWM_B   = result_PWM_B,
              result_uadc_in = result_uadc_in,
              result_iadc_in = result_iadc_in,
              result_uswitch = result_uswitch,
              )
+
+    analyse_OFMfull(npz_filename)
+
