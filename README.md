@@ -17,7 +17,8 @@ The controller provides the ADCs for reading the voltages and current as well as
 # References
 The working principle of this device is adapted from a proposal of the LHC gas group at CERN. In addition there is a report of a student, explaining / proposing this technique more in detail.
 
-[1] M. van der Klis. PT100 channel flow meter for the LHC experiments, Technical Student Report Feb. 2001
+[1] [M. van der Klis. PT100 channel flow meter for the LHC experiments, Technical Student Report Feb. 2001](https://cernbox.cern.ch/s/Kf3zl0SAsNUGON4)
+[2] [F.Hahn, S.Haider, M. v.d. Klis, C. Zinoni, Proposal for a gas flow meter at LHC, 10.2.2001](https://cernbox.cern.ch/s/3Rpv9e0gEgKwOim)
 
 # PCBs
 PCBs are available from AISLER https://aisler.net/p/MVHMBVKT
