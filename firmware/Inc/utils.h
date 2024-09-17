@@ -25,5 +25,6 @@ uint8_t upper(uint16_t val);
 uint8_t lower(uint16_t val);
 
 float convertPT100_R2T(float resistance);
+float getVoltageBeforeAmplifier(float Uadc, float Ubias, float R1, float R2);
 
 #endif //__UTILS_H__

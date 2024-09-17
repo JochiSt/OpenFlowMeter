@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-
+#include "pcb_version.h"
 #include "pid.h"
 
 #define ISATURATION_LSB   3970
@@ -14,6 +14,7 @@ extern "C" {
 
 extern const float LSB2U;
 extern const float LSB2I;
+extern const float U2I;
 
 typedef struct {
     float Ugain;
@@ -83,9 +84,18 @@ typedef struct {
      *  only the high gain is stored here, the lower gain is always 1
      *  @{
      */
+#if defined(PCB_V2)
     gain_config_t GAIN[2];
+#endif
 
     /** @}*/
+
+#if defined(PCB_V3)
+    float U_R1[2];
+    float U_R2[2];
+    float I_R1[2];
+    float I_R2[2];
+#endif
 
     /** @}*/
 } config_t;

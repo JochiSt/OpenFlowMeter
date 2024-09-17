@@ -19,3 +19,14 @@ float convertPT100_R2T(float resistance){
     const float R0 = 100;
     return (resistance - R0)/(R0 * A);
 }
+
+/**
+ * calculate the voltage before the biases amplifier
+ * @param Ubias bias voltage
+ * @param Uadc measured voltage of the ADC (amplifier output)
+ * @param R1 gain setting resistor (upper)
+ * @param R2 gain setting resistor (lower)
+ */
+float getVoltageBeforeAmplifier(float Uadc, float Ubias, float R1, float R2){
+  return (R1 * Ubias + R2 * Uadc)/(R1 + R2);
+}

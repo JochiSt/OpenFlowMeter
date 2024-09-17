@@ -30,6 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "pcb_version.h"
 #include "syscalls.h"
 #include "utils.h"
 #include "i2c_scanner.h"
@@ -57,34 +58,7 @@
 //#define PRINT_UART_ADC        // print the ADC data
 //#define PRINT_UART_CALC_TEMP  // print the calculated temperatures
 /******************************************************************************/
-/**
- * PCB v1 compatibility mode
- */
-#define PCB_V1
-/******************************************************************************/
-/**
- * PCB v2 compatibility mode
- * enables:
- *  - dual gain ADC readout
- *  - I2C sensor readout
- */
-//#define PCB_V2
-#if defined(PCB_V2)
-#undef PCB_V1
-#define I2C_SENSOR_READOUT
-#endif
-/******************************************************************************/
-/**
- * PCB v3 compatibility mode
- * enables:
- *  - dual gain ADC readout
- *  - offset for ADC / differential amplifier
- *  - I2C sensor readout
- */
-//#define PCB_V3
-#if defined(PCB_V3)
-#undef PCB_V1
-#undef PCB_V2
+#if defined(PCB_V2) || defined(PCB_V3)
 #define I2C_SENSOR_READOUT
 #endif
 /******************************************************************************/
@@ -399,8 +373,17 @@ int main(void)
 
         // calculate coarse current and voltage for each channel
         for(int i=0; i<2; i++){
+#if defined(PCB_V1)
+          current[i] = (*avr_current[i][0] * LSB2I);
+          voltage[i] = (*avr_voltage[i][0] * LSB2U);
+#elif defined(PCB_V2)
           current[i] = (*avr_current[i][0] * LSB2I) + cfg.GAIN[i].Ibias/1000.;
           voltage[i] = (*avr_voltage[i][0] * LSB2U) + cfg.GAIN[i].Ubias;
+#elif defined(PCB_V3)
+          // TODO implement proper voltage / current reading
+          current[i] = (*avr_current[i][0] * LSB2I);
+          voltage[i] = (*avr_voltage[i][0] * LSB2U);
+#endif
         }
 
 #if defined(PCB_V2)
@@ -436,10 +419,22 @@ int main(void)
           offset[i] = 3.3 * (*PWMoffset[i]) / 4096;
         }
 
-        // adjust the offset voltage
-
-        // if offset voltage is fine, we can use the high gain
-
+        for(int i=0; i<2; i++){
+          // check for saturation
+          if(*avr_voltage[i][1] >= USATURATION_LSB || *avr_current[i][1] >= ISATURATION_LSB){
+            // one of the high gain measurement is in saturation
+            // adjust the offset voltage
+            *PWMoffset[i] += 10;
+            continue;
+          }else if(*avr_voltage[i][1] == 0 || *avr_current[i][1] == 0){
+            *PWMoffset[i] += 10;
+            continue;
+          }else{
+            // if offset voltage is fine, we can use the high gain
+            voltage[i] = getVoltageBeforeAmplifier(*avr_voltage[i][1] * LSB2U, offset[i], cfg.U_R1[i], cfg.U_R2[i]);
+            current[i] = getVoltageBeforeAmplifier(*avr_current[i][1] * LSB2U, offset[i], cfg.I_R1[i], cfg.I_R2[i]) * U2I;
+          }
+        }
 #endif
         /** calculate temperatures ********************************************/
         for(int i=0; i<2; i++){
@@ -449,23 +444,24 @@ int main(void)
         /** run the PID controllers *******************************************/
         for(int i=0; i<2; i++){
           runPID(&pid[i]);
-
           /** update the output, if the PID is active *************************/
           if(pid[0].active){
             *PWMcurrent[i] = PIDout[i];
           }else{
             *PWMcurrent[i] = PWM[i];
           }
+          /** update the offset ***********************************************/
+          *PWMoffset[i] = 0.9 * (*PWMcurrent[i]);
         }
 
-        // link the PID active to the configuration active
+        /** link the PID active to the configuration active *******************/
         pid[0].active = cfg.PID_flags.PID0_active;
         pid[1].active = cfg.PID_flags.PID1_active;
     }
 
-    /*************************************************************************
+    /***************************************************************************
      * Print some variables via UART
-     ************************************************************************/
+     **************************************************************************/
     if( cnt_print_uart >= cfg.interval_PRINT_UART
         && cfg.interval_PRINT_UART < 255
         ){
