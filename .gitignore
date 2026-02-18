@@ -77,3 +77,4 @@ firmware/Release/*
 # EmBitz
 *.ebTemp
 
+*.lck
